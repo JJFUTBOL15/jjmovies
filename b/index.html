@@ -4,62 +4,41 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>JJMOVIES</title>
-  <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    .hidden-force { display: none !important; }
-    #backdrop-img {
-      position: fixed;
-      top: 0; left: 0; width: 100%; height: 100%;
-      background-size: cover; background-position: center;
-      filter: blur(20px) brightness(0.5);
-      z-index: -1;
-    }
-    #player { width: 100%; max-width: 900px; margin: 20px auto; display: block; }
-    #server-list-container { margin-top: 20px; text-align: center; }
-    #server-list-container button {
-      margin: 5px; padding: 8px 12px;
-      background: #dc2626; /* rojo */
-      color: white;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-    }
-    #server-list-container button:hover {
-      background: #b91c1c;
-    }
+    body { background-color: #000; color: white; }
+    .highlight { color: #ef4444; font-weight: bold; }
   </style>
-  <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
 </head>
-<body class="bg-black text-white min-h-screen">
-  <div id="backdrop-img"></div>
+<body class="min-h-screen flex flex-col items-center justify-center px-4 text-center">
+  <h1 class="text-4xl md:text-5xl font-bold mb-4">
+    <span class="highlight">JJMOVIES</span>
+  </h1>
+  <p class="text-gray-400 max-w-md mb-6">
+    Plataforma de streaming personalizada.  
+    Usa enlaces con <code class="bg-gray-900 px-2 rounded">?id=...</code> para reproducir contenido.
+  </p>
+  <p class="text-sm text-gray-600 mb-8">
+    Ejemplo: <code class="bg-gray-800 px-2 py-1 rounded">/play?id=550</code>
+  </p>
 
-  <div class="container mx-auto px-4 py-8 text-center">
-    <h1 id="movie-title" class="text-3xl md:text-4xl font-bold mb-4">Cargando...</h1>
-    <p id="movie-overview" class="max-w-2xl mx-auto mb-6 text-gray-300"></p>
-
-    <!-- Controles de series -->
-    <div id="series-controls" class="hidden-force flex flex-col sm:flex-row justify-center gap-4 mb-6">
-      <select id="season-select" class="bg-gray-900 text-white p-2 rounded"></select>
-      <select id="episode-select" class="bg-gray-900 text-white p-2 rounded"></select>
+  <!-- Sección "¿Quién está viendo ahora?" -->
+  <div class="w-full max-w-lg mb-8">
+    <h2 class="text-xl font-semibold mb-3">👥 ¿Quién está viendo ahora?</h2>
+    <div class="flex flex-wrap gap-3 justify-center">
+      <button class="px-4 py-2 bg-gray-900 rounded hover:bg-gray-800">Agregar Perfil</button>
+      <button class="px-4 py-2 bg-red-700 text-white rounded hover:bg-red-600">Mi Lista</button>
     </div>
-
-    <!-- Lista de servidores -->
-    <div id="server-list-container"></div>
-
-    <!-- Reproductor -->
-    <video id="player" controls crossorigin></video>
-    <div id="iframe-container" class="w-full max-w-4xl mx-auto mt-4"></div>
-
-    <!-- Contacto -->
-    <p class="mt-10 text-gray-500 text-sm">
-      Contacto: <a href="https://t.me/TumbadoStreaming" target="_blank" class="text-red-500">@TumbadoStreaming</a>
-    </p>
   </div>
 
-  <!-- Librerías -->
-  <script src="https://cdn.plyr.io/3.7.8/plyr.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
-  <script src="app.js"></script>
+  <!-- Resultados (simulado) -->
+  <div class="text-gray-500">
+    <h3 class="font-semibold">🔍 Resultados</h3>
+    <p>No encontramos nada con ese nombre.</p>
+  </div>
+
+  <footer class="mt-16 text-gray-600 text-sm">
+    <p>Contacto: <a href="https://t.me/TumbadoStreaming" target="_blank" class="text-red-500">@TumbadoStreaming</a></p>
+  </footer>
 </body>
 </html>
