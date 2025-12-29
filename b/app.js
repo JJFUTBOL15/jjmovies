@@ -1,6 +1,3 @@
-// ============================
-// CONFIGURACIÓN
-// ============================
 const API_KEY = '936410eebae74f9895643e085cc4a740';
 const PROXY_URL = 'https://api.codetabs.com/v1/proxy?quest=';
 
@@ -14,9 +11,6 @@ let movieData = {
   backdrop: ''
 };
 
-// ============================
-// INICIO
-// ============================
 document.addEventListener('DOMContentLoaded', () => {
   const urlParams = new URLSearchParams(window.location.search);
   const id = urlParams.get('id');
@@ -24,7 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const episode = urlParams.get('episode');
 
   if (!id) {
-    document.getElementById('movie-title').textContent = 'Error: ID no proporcionado';
+    window.location.href = '/'; // Redirige a home si no hay ID
     return;
   }
 
@@ -40,35 +34,28 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 
-// ============================
-// TMDB: PELÍCULAS
-// ============================
+// --- TMDB: Película ---
 async function fetchTMDBData(id) {
   try {
     const res = await fetch(`https://api.themoviedb.org/3/movie/${id}?api_key=${API_KEY}&append_to_response=external_ids`);
     const data = await res.json();
-    if (data.success === false) throw new Error('Película no encontrada');
-    
+    if (data.success === false) throw new Error('Not found');
     movieData.title = data.title;
     movieData.backdrop = data.backdrop_path ? `https://image.tmdb.org/t/p/original${data.backdrop_path}` : '';
     movieData.imdb_id = data.external_ids?.imdb_id || null;
-    
     updateUI(data.title, data.overview, movieData.backdrop);
     setTimeout(startScraping, 1500);
   } catch (e) {
     document.getElementById('movie-title').textContent = 'Error al cargar película';
-    console.error(e);
   }
 }
 
-// ============================
-// TMDB: SERIES
-// ============================
+// --- TMDB: Serie ---
 async function fetchTMDBTVData(id, season, episode) {
   try {
     const seriesRes = await fetch(`https://api.themoviedb.org/3/tv/${id}?api_key=${API_KEY}&append_to_response=external_ids`);
     const seriesData = await seriesRes.json();
-    if (seriesData.success === false) throw new Error('Serie no encontrada');
+    if (seriesData.success === false) throw new Error('Not found');
 
     movieData.title = seriesData.name;
     movieData.backdrop = seriesData.backdrop_path ? `https://image.tmdb.org/t/p/original${seriesData.backdrop_path}` : '';
@@ -78,13 +65,11 @@ async function fetchTMDBTVData(id, season, episode) {
     const epData = await epRes.json();
 
     updateUI(`${seriesData.name} - T${season} E${episode}`, epData.overview || 'Sinopsis no disponible.', movieData.backdrop);
-
     populateSeasons(seriesData.seasons, season);
     populateEpisodes(id, season, episode);
     setTimeout(startScraping, 1500);
   } catch (e) {
     document.getElementById('movie-title').textContent = 'Error al cargar serie';
-    console.error(e);
   }
 }
 
@@ -97,15 +82,13 @@ function updateUI(title, overview, backdrop) {
 function populateSeasons(seasons, selectedSeason) {
   const select = document.getElementById('season-select');
   select.innerHTML = '';
-  seasons
-    .filter(s => s.season_number > 0)
-    .forEach(s => {
-      const opt = document.createElement('option');
-      opt.value = s.season_number;
-      opt.textContent = `Temporada ${s.season_number}`;
-      opt.selected = s.season_number == selectedSeason;
-      select.appendChild(opt);
-    });
+  seasons.filter(s => s.season_number > 0).forEach(s => {
+    const opt = document.createElement('option');
+    opt.value = s.season_number;
+    opt.textContent = `Temporada ${s.season_number}`;
+    opt.selected = s.season_number == selectedSeason;
+    select.appendChild(opt);
+  });
   document.getElementById('series-controls').classList.remove('hidden-force');
 }
 
@@ -123,17 +106,15 @@ async function populateEpisodes(tvId, season, selectedEpisode) {
   });
 }
 
-// ============================
-// SCRAPING
-// ============================
+// --- Scraping ---
 async function startScraping() {
   const sources = [];
 
-  // Estrategia 1: Embed69 (requiere IMDb)
+  // Estrategia 1: Embed69
   if (movieData.imdb_id) {
     try {
-      const embed69Url = `https://embed69.com/tv/${movieData.imdb_id}`;
-      const res = await fetch(PROXY_URL + encodeURIComponent(embed69Url));
+      const url = `https://embed69.com/tv/${movieData.imdb_id}`;
+      const res = await fetch(PROXY_URL + encodeURIComponent(url));
       const text = await res.text();
       const match = text.match(/let dataLink = (\[.*?\]);/);
       if (match) {
@@ -149,21 +130,21 @@ async function startScraping() {
   // Estrategia 2: VerHD
   if (movieData.imdb_id) {
     try {
-      const verhdUrl = `https://verhdlink.cam/movie/${movieData.imdb_id}`;
-      const res = await fetch(PROXY_URL + encodeURIComponent(verhdUrl));
+      const url = `https://verhdlink.cam/movie/${movieData.imdb_id}`;
+      const res = await fetch(PROXY_URL + encodeURIComponent(url));
       const text = await res.text();
-      const dropMatch = text.match(/data-link=['"](https?:\/\/.*?dropload.*?)['"]/);
-      if (dropMatch) {
-        const url = dropMatch[1].replace('dropload.io', 'unlimplay.com');
-        sources.push({ name: 'VerHD', url });
+      const match = text.match(/data-link=['"](https?:\/\/.*?dropload.*?)['"]/);
+      if (match) {
+        const cleanUrl = match[1].replace('dropload.io', 'unlimplay.com');
+        sources.push({ name: 'VerHD', url: cleanUrl });
       }
     } catch (e) {}
   }
 
-  // Estrategia 3: Blog fallback (por título)
+  // Estrategia 3: Blog fallback
   try {
-    const blogSearch = `https://darkstatonmovies1.blogspot.com/search?q=${encodeURIComponent(movieData.title)}`;
-    const res = await fetch(PROXY_URL + blogSearch);
+    const searchUrl = `https://darkstatonmovies1.blogspot.com/search?q=${encodeURIComponent(movieData.title)}`;
+    const res = await fetch(PROXY_URL + searchUrl);
     const text = await res.text();
     const firstLink = text.match(/<a class="post-title"[^>]*href=['"]([^'"]+)['"]/)?.[1];
     if (firstLink) {
@@ -180,9 +161,7 @@ async function startScraping() {
   displaySources(sources.length ? sources : [{ name: 'No disponible', url: '#' }]);
 }
 
-// ============================
-// UTILIDADES
-// ============================
+// --- Utilidades ---
 function decodeJWT(token) {
   try {
     const payload = token.split('.')[1];
@@ -190,7 +169,7 @@ function decodeJWT(token) {
     const jsonText = atob(padded);
     const json = JSON.parse(jsonText);
     return json.url || json.source || null;
-  } catch (e) { return null; }
+  } catch { return null; }
 }
 
 function base64UrlDecode(str) {
@@ -198,21 +177,18 @@ function base64UrlDecode(str) {
     let base64 = str.replace(/-/g, '+').replace(/_/g, '/');
     while (base64.length % 4) base64 += '=';
     return atob(base64);
-  } catch (e) { return null; }
+  } catch { return null; }
 }
 
-// ============================
-// REPRODUCCIÓN
-// ============================
+// --- Reproductor ---
 function displaySources(sources) {
   const container = document.getElementById('server-list-container');
   container.innerHTML = '<h3 class="text-lg mb-2">Servidores:</h3>';
   sources.forEach((src, i) => {
     const btn = document.createElement('button');
-    btn.textContent = `${src.name} ${sources.length > 1 ? i + 1 : ''}`;
+    btn.textContent = `${src.name}${sources.length > 1 ? ` ${i + 1}` : ''}`;
     if (src.url === '#') {
       btn.disabled = true;
-      btn.style.opacity = '0.5';
     } else {
       btn.onclick = () => loadVideo(src.url);
     }
@@ -232,7 +208,7 @@ function loadVideo(url) {
       hls.loadSource(url);
       hls.attachMedia(video);
       video.style.display = 'block';
-      video.play().catch(e => console.log('Auto-play blocked'));
+      video.play().catch(() => {});
     }
   } else {
     const iframe = document.createElement('iframe');
@@ -246,9 +222,7 @@ function loadVideo(url) {
   }
 }
 
-// ============================
-// CONTROL DE SERIES
-// ============================
+// --- Navegación series ---
 async function onSeasonChange(season) {
   const urlParams = new URLSearchParams(window.location.search);
   urlParams.set('season', season);
@@ -267,7 +241,7 @@ function onEpisodeChange(episode) {
   setTimeout(startScraping, 500);
 }
 
-// Inicializar Plyr
+// --- Iniciar Plyr ---
 document.addEventListener('DOMContentLoaded', () => {
   const player = document.getElementById('player');
   if (player) new Plyr(player);
