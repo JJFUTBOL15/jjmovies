@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>JJMOVIES - Reproductor</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .hidden-force { display: none !important; }
+    #backdrop-img {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background-size: cover; background-position: center;
+      filter: blur(20px) brightness(0.5);
+      z-index: -1;
+    }
+    #player { width: 100%; max-width: 900px; margin: 20px auto; display: block; }
+    #server-list-container { margin-top: 20px; text-align: center; }
+    #server-list-container button {
+      margin: 5px; padding: 8px 12px;
+      background: #dc2626;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    #server-list-container button:hover { background: #b91c1c; }
+    #server-list-container button:disabled { opacity: 0.5; cursor: not-allowed; }
+  </style>
+  <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
+</head>
+<body class="bg-black text-white min-h-screen">
+  <div id="backdrop-img"></div>
+
+  <div class="container mx-auto px-4 py-8 text-center">
+    <h1 id="movie-title" class="text-3xl md:text-4xl font-bold mb-4">Cargando...</h1>
+    <p id="movie-overview" class="max-w-2xl mx-auto mb-6 text-gray-300"></p>
+
+    <!-- Controles de series -->
+    <div id="series-controls" class="hidden-force flex flex-col sm:flex-row justify-center gap-4 mb-6">
+      <select id="season-select" class="bg-gray-900 text-white p-2 rounded" onchange="onSeasonChange(this.value)"></select>
+      <select id="episode-select" class="bg-gray-900 text-white p-2 rounded" onchange="onEpisodeChange(this.value)"></select>
+    </div>
+
+    <!-- Servidores -->
+    <div id="server-list-container"></div>
+
+    <!-- Reproductor -->
+    <video id="player" controls crossorigin></video>
+    <div id="iframe-container" class="w-full max-w-4xl mx-auto mt-4"></div>
+
+    <!-- Contacto -->
+    <p class="mt-10 text-gray-500 text-sm">
+      Contacto: <a href="https://t.me/TumbadoStreaming" target="_blank" class="text-red-500">@TumbadoStreaming</a>
+    </p>
+  </div>
+
+  <!-- Librerías -->
+  <script src="https://cdn.plyr.io/3.7.8/plyr.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+  <script src="player.js"></script>
+</body>
+</html>
