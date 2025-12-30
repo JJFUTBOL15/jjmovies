@@ -3,7 +3,8 @@ export default function handler(req, res) {
   const { id, season, episode } = req.query;
 
   if (!id) {
-    return res.status(400).send('Error: falta el parámetro ?id=');
+    res.status(400).send('Error: falta el parámetro ?id=');
+    return;
   }
 
   // Construir la URL del player
@@ -21,7 +22,7 @@ export default function handler(req, res) {
 </iframe>
   `.trim();
 
-  // Enviar como HTML puro
+  // Enviar como HTML puro (sin renderizar, solo texto)
   res.setHeader('Content-Type', 'text/html; charset=utf-8');
   res.status(200).send(iframeCode);
 }
