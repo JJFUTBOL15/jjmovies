@@ -1,7 +1,4 @@
 {
-  "name": "jjmovies-player",
-  "version": "1.0.0",
-  "private": true,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -10,7 +7,6 @@
   "dependencies": {
     "next": "14.2.24",
     "react": "18.3.1",
-    "react-dom": "18.3.1",
-    "axios": "^1.7.7"
+    "react-dom": "18.3.1"
   }
 }
