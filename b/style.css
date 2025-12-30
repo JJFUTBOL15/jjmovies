@@ -1,0 +1,115 @@
+/* Netflix-style: negro, rojo, moderno */
+:root {
+  --primary: #e50914;
+  --dark-bg: #000000;
+  --light-text: #ffffff;
+  --gray-text: #b3b3b3;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background-color: var(--dark-bg);
+  color: var(--light-text);
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+#backdrop-img {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  filter: blur(40px) brightness(0.4);
+  z-index: -1;
+}
+
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.header {
+  padding: 20px 0;
+  display: flex;
+  justify-content: center;
+}
+
+.logo {
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: var(--primary);
+  letter-spacing: -1px;
+}
+
+.main-content {
+  padding: 20px 0 60px;
+  position: relative;
+  z-index: 10;
+}
+
+#movie-title {
+  font-size: 2.2rem;
+  margin-bottom: 12px;
+  color: white;
+}
+
+.overview {
+  color: var(--gray-text);
+  margin-bottom: 24px;
+  max-width: 800px;
+  line-height: 1.5;
+}
+
+.series-controls {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.series-controls select {
+  background: rgba(0,0,0,0.7);
+  color: white;
+  border: 1px solid var(--primary);
+  padding: 8px 12px;
+  border-radius: 4px;
+  font-size: 1rem;
+}
+
+.player-area {
+  max-width: 1000px;
+}
+
+.plyr-video {
+  width: 100%;
+  border-radius: 8px;
+  display: block;
+}
+
+.iframe-container {
+  width: 100%;
+  margin-top: 10px;
+}
+
+.hidden-force {
+  display: none !important;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .series-controls {
+    flex-direction: column;
+  }
+  #movie-title {
+    font-size: 1.8rem;
+  }
+}
