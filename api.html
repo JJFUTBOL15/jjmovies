@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>API - JJMOVIES</title>
+  <style>
+    :root {
+      --bg: #0f0c1a;
+      --text: #fff;
+      --accent: #6c5ce7;
+      --card-bg: #1a1626;
+      --hover: #2d293b;
+    }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', sans-serif;
+    }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+    .container {
+      display: flex;
+      height: 100vh;
+    }
+    .sidebar {
+      width: 250px;
+      background: #120f1c;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 24px;
+      font-weight: bold;
+      color: #6c5ce7;
+      margin-bottom: 30px;
+    }
+    .nav-item {
+      padding: 12px 15px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .nav-item:hover {
+      background: var(--hover);
+    }
+    .nav-item.active {
+      background: var(--accent);
+      color: white;
+    }
+    .main-content {
+      flex: 1;
+      padding: 20px;
+      overflow-y: auto;
+    }
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    .search-bar {
+      display: flex;
+      gap: 10px;
+      max-width: 500px;
+    }
+    .search-bar input {
+      flex: 1;
+      padding: 10px 15px;
+      border-radius: 8px;
+      border: none;
+      background: var(--card-bg);
+      color: white;
+    }
+    .search-bar button {
+      padding: 10px 20px;
+      border-radius: 8px;
+      border: none;
+      background: var(--accent);
+      color: white;
+      cursor: pointer;
+    }
+    .section-title {
+      font-size: 20px;
+      margin-bottom: 15px;
+      border-bottom: 2px solid var(--accent);
+      padding-bottom: 5px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 15px;
+      margin-bottom: 30px;
+    }
+    .card {
+      background: var(--card-bg);
+      border-radius: 10px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+    .card:hover {
+      transform: scale(1.03);
+    }
+    .card img {
+      width: 100%;
+      height: 280px;
+      object-fit: cover;
+    }
+    .card-info {
+      padding: 10px;
+    }
+    .card-title {
+      font-size: 14px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .badge {
+      display: inline-block;
+      padding: 2px 6px;
+      font-size: 10px;
+      border-radius: 4px;
+      background: #2d293b;
+      margin-left: 5px;
+    }
+    .modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.8);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      display: none;
+    }
+    .modal-content {
+      background: var(--card-bg);
+      width: 80%;
+      max-width: 1000px;
+      border-radius: 12px;
+      padding: 20px;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    .modal-close {
+      background: none;
+      border: none;
+      font-size: 24px;
+      cursor: pointer;
+    }
+    .modal-body {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+    .preview {
+      background: #000;
+      border-radius: 8px;
+      aspect-ratio: 16/9;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+    }
+    .preview img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+    }
+    .embed-code {
+      padding: 15px;
+      background: #1a1626;
+      border-radius: 8px;
+      font-family: monospace;
+      font-size: 14px;
+      color: #00ff00;
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+    .similar-section {
+      margin-top: 20px;
+    }
+    .similar-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+      gap: 10px;
+    }
+    .season-selector {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+    .season-selector input {
+      padding: 8px;
+      border-radius: 5px;
+      border: none;
+      background: var(--card-bg);
+      color: white;
+      width: 80px;
+      text-align: center;
+    }
+    .api-status {
+      padding: 10px 15px;
+      background: #6c5ce7;
+      color: white;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 20px;
+    }
+    .status-indicator {
+      width: 10px;
+      height: 10px;
+      background: #00ff00;
+      border-radius: 50%;
+      display: inline-block;
+    }
+    @media (max-width: 768px) {
+      .container {
+        flex-direction: column;
+      }
+      .sidebar {
+        width: 100%;
+        padding: 10px;
+      }
+      .modal-body {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <div class="logo">🎬 JJMOVIES</div>
+      <div class="nav-item active" data-page="dashboard">Dashboard</div>
+      <div class="nav-item" data-page="movies">Generador Películas</div>
+      <div class="nav-item" data-page="series">Generador Series</div>
+      <div class="api-status">
+        <span class="status-indicator"></span>
+        ONLINE v1.0
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content" id="main-content">
+      <!-- Header -->
+      <div class="header">
+        <h1 id="page-title">Dashboard</h1>
+        <div class="search-bar">
+          <input type="text" id="search-input" placeholder="Buscar película o serie..." />
+          <button id="search-btn">🔍</button>
+        </div>
+      </div>
+
+      <!-- Movies Grid -->
+      <div id="movies-grid" class="grid">
+        <!-- Se llenará dinámicamente -->
+      </div>
+
+      <!-- Series Grid -->
+      <div id="series-grid" class="grid" style="display:none;">
+        <!-- Se llenará dinámicamente -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal -->
+  <div class="modal" id="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="modal-title">Título</h2>
+        <button class="modal-close" id="modal-close">×</button>
+      </div>
+      <div class="modal-body">
+        <div>
+          <div class="season-selector" id="season-selector" style="display:none;">
+            <div>
+              <label>TEMPORADA</label>
+              <input type="number" id="season-input" value="1" min="1" />
+            </div>
+            <div>
+              <label>EPISODIO</label>
+              <input type="number" id="episode-input" value="1" min="1" />
+            </div>
+          </div>
+          <div class="embed-code" id="embed-code"></div>
+          <div class="similar-section">
+            <h3>✨ Similares</h3>
+            <div class="similar-grid" id="similar-grid">
+              <!-- Se llenará dinámicamente -->
+            </div>
+          </div>
+        </div>
+        <div class="preview" id="preview">
+          <img src="" alt="Preview" id="preview-img" />
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Datos simulados (reemplaza con tu base de datos o API real)
+    const mockData = {
+      movies: [
+        { id: "83533", title: "Zootopia", poster: "https://image.tmdb.org/t/p/w300/6PnHqKzN9XgQYUjWvL7BpJyVrI.jpg", type: "PELI" },
+        { id: "1084242", title: "Zootopia 2", poster: "https://image.tmdb.org/t/p/w300/hGw7DxuS9CkEzRm41314lY59Z7o.jpg", type: "PELI" },
+        { id: "83534", title: "Avatar: Fuego y ceniza", poster: "https://image.tmdb.org/t/p/w300/5YrMv73s864Q848Z7Kj3Zz71j2i.jpg", type: "PELI" },
+        { id: "83535", title: "Stranger Things", poster: "https://image.tmdb.org/t/p/w300/49WJfeN0moxb9IPfFrTwy4djT7Y.jpg", type: "SERIE" },
+        { id: "83536", title: "Demon Slayer", poster: "https://image.tmdb.org/t/p/w300/mi47Y328G3Z7A66466048934547.jpg", type: "SERIE" },
+        { id: "83537", title: "La Empleada", poster: "https://image.tmdb.org/t/p/w300/1j34Q43Y43528281499Z0a301Xs.jpg", type: "PELI" }
+      ],
+      series: [
+        { id: "66732", title: "Stranger Things", poster: "https://image.tmdb.org/t/p/w300/49WJfeN0moxb9IPfFrTwy4djT7Y.jpg", seasons: 4, episodes: 9 },
+        { id: "66733", title: "Westworld", poster: "https://image.tmdb.org/t/p/w300/7Kx53K5QjKz2Xa35XV004607845.jpg", seasons: 4, episodes: 10 },
+        { id: "66734", title: "Black Mirror", poster: "https://image.tmdb.org/t/p/w300/j4J800a25X062Q0K74016485011.jpg", seasons: 6, episodes: 25 }
+      ]
+    };
+
+    // DOM Elements
+    const mainContent = document.getElementById('main-content');
+    const moviesGrid = document.getElementById('movies-grid');
+    const seriesGrid = document.getElementById('series-grid');
+    const modal = document.getElementById('modal');
+    const modalTitle = document.getElementById('modal-title');
+    const modalClose = document.getElementById('modal-close');
+    const embedCode = document.getElementById('embed-code');
+    const previewImg = document.getElementById('preview-img');
+    const similarGrid = document.getElementById('similar-grid');
+    const seasonSelector = document.getElementById('season-selector');
+    const seasonInput = document.getElementById('season-input');
+    const episodeInput = document.getElementById('episode-input');
+    const searchInput = document.getElementById('search-input');
+    const searchBtn = document.getElementById('search-btn');
+    const pageTitle = document.getElementById('page-title');
+
+    // Estado actual
+    let currentPage = 'dashboard';
+
+    // Funciones
+    function renderMovies() {
+      moviesGrid.innerHTML = '';
+      mockData.movies.forEach(movie => {
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = `
+          <img src="${movie.poster}" alt="${movie.title}" />
+          <div class="card-info">
+            <span class="card-title">${movie.title}</span>
+            <span class="badge">${movie.type}</span>
+          </div>
+        `;
+        card.addEventListener('click', () => openModal(movie));
+        moviesGrid.appendChild(card);
+      });
+    }
+
+    function renderSeries() {
+      seriesGrid.innerHTML = '';
+      mockData.series.forEach(series => {
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = `
+          <img src="${series.poster}" alt="${series.title}" />
+          <div class="card-info">
+            <span class="card-title">${series.title}</span>
+            <span class="badge">SERIE</span>
+          </div>
+        `;
+        card.addEventListener('click', () => openModal(series, true));
+        seriesGrid.appendChild(card);
+      });
+    }
+
+    function openModal(item, isSeries = false) {
+      modalTitle.textContent = item.title;
+      previewImg.src = item.poster;
+
+      if (isSeries) {
+        seasonSelector.style.display = 'flex';
+        embedCode.textContent = `<iframe class="aspect-video w-full" src="https://jjmovies.lat/sris.html?serie=${item.id}/1/1" frameborder="0" allowfullscreen></iframe>`;
+      } else {
+        seasonSelector.style.display = 'none';
+        embedCode.textContent = `<iframe class="aspect-video w-full" src="https://jjmovies.lat/player.html?id=${item.id}" frameborder="0" allowfullscreen></iframe>`;
+      }
+
+      // Simular similares
+      similarGrid.innerHTML = '';
+      for (let i = 0; i < 3; i++) {
+        const sim = mockData.movies[Math.floor(Math.random() * mockData.movies.length)];
+        const simCard = document.createElement('div');
+        simCard.className = 'card';
+        simCard.innerHTML = `<img src="${sim.poster}" alt="${sim.title}" />`;
+        simCard.addEventListener('click', () => openModal(sim));
+        similarGrid.appendChild(simCard);
+      }
+
+      modal.style.display = 'flex';
+    }
+
+    function closeModal() {
+      modal.style.display = 'none';
+    }
+
+    function updatePage(page) {
+      currentPage = page;
+      pageTitle.textContent = page === 'dashboard' ? 'Dashboard' :
+                            page === 'movies' ? 'Películas' :
+                            'Series';
+
+      moviesGrid.style.display = page === 'movies' || page === 'dashboard' ? 'grid' : 'none';
+      seriesGrid.style.display = page === 'series' ? 'grid' : 'none';
+
+      // Actualizar botones activos
+      document.querySelectorAll('.nav-item').forEach(el => {
+        el.classList.toggle('active', el.dataset.page === page);
+      });
+
+      if (page === 'movies') renderMovies();
+      if (page === 'series') renderSeries();
+    }
+
+    // Event Listeners
+    document.querySelectorAll('.nav-item').forEach(item => {
+      item.addEventListener('click', () => updatePage(item.dataset.page));
+    });
+
+    modalClose.addEventListener('click', closeModal);
+
+    searchBtn.addEventListener('click', () => {
+      const query = searchInput.value.toLowerCase().trim();
+      if (!query) return;
+
+      const filtered = mockData.movies.filter(movie =>
+        movie.title.toLowerCase().includes(query)
+      );
+
+      moviesGrid.innerHTML = '';
+      if (filtered.length === 0) {
+        moviesGrid.innerHTML = '<p style="color:white; text-align:center; width:100%;">No se encontraron resultados.</p>';
+      } else {
+        filtered.forEach(movie => {
+          const card = document.createElement('div');
+          card.className = 'card';
+          card.innerHTML = `
+            <img src="${movie.poster}" alt="${movie.title}" />
+            <div class="card-info">
+              <span class="card-title">${movie.title}</span>
+              <span class="badge">${movie.type}</span>
+            </div>
+          `;
+          card.addEventListener('click', () => openModal(movie));
+          moviesGrid.appendChild(card);
+        });
+      }
+    });
+
+    // Inicialización
+    updatePage('dashboard');
+  </script>
+</body>
+</html>
