@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>Serie - JJMOVIES</title>
+  <style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      background: #000;
+      overflow: hidden;
+    }
+    iframe {
+      width: 100vw;
+      height: 100vh;
+      border: none;
+    }
+  </style>
+</head>
+<body>
+  <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const serieParam = urlParams.get('serie'); // Ej: 66732/1/1
+
+    if (serieParam) {
+      const [id, season, episode] = serieParam.split('/');
+      document.write(`
+        <iframe src="https://jjmovies.lat/player.html?id=${encodeURIComponent(id)}&season=${encodeURIComponent(season)}&episode=${encodeURIComponent(episode)}" frameborder="0" allowfullscreen></iframe>
+      `);
+    } else {
+      document.write('<h2 style="color:white;text-align:center;margin-top:20vh;">Parámetro serie no proporcionado</h2>');
+    }
+  </script>
+</body>
+</html>
