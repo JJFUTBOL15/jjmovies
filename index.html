@@ -220,30 +220,35 @@
     }
 
     async function scrapeEmbed69() {
-      try {
-        // Obtener IMDb ID desde TMDB
-        const tmdbType = movieData.isSeries ? 'tv' : 'movie';
-        const tmdbRes = await fetch(`https://api.themoviedb.org/3/${tmdbType}/${movieData.id}?api_key=${API_KEY}`);
-        const tmdbData = await tmdbRes.json();
-        const imdbId = tmdbData.imdb_id;
-        if (!imdbId) return null;
-
-        const url = `${PROXY_URL}https://embed69.com/imdb/${imdbId}`;
-        const res = await fetch(url);
-        const html = await res.text();
-
-        const match = html.match(/let dataLink\s*=\s*['"]([^'"]+)['"]/);
-        if (match) {
-          const token = match[1];
-          const decoded = decodeJWT(token);
-          return decoded?.url || decoded?.source || null;
-        }
-      } catch (err) {
-        console.warn('Embed69 falló:', err.message);
-      }
+  try {
+    // Paso 1: Obtener IMDb ID desde TMDB
+    const tmdbType = movieData.isSeries ? 'tv' : 'movie';
+    const tmdbRes = await fetch(`https://api.themoviedb.org/3/${tmdbType}/${movieData.id}?api_key=${API_KEY}`);
+    const tmdbData = await tmdbRes.json();
+    
+    const imdbId = tmdbData.imdb_id;
+    if (!imdbId) {
+      console.warn('IMDb ID no disponible para este título');
       return null;
     }
 
+    // Paso 2: Usar IMDb ID en Embed69
+    const url = `${PROXY_URL}https://embed69.com/imdb/${imdbId}`;
+    const res = await fetch(url);
+    const html = await res.text();
+
+    // Paso 3: Buscar dataLink
+    const match = html.match(/let dataLink\s*=\s*['"]([^'"]+)['"]/);
+    if (match) {
+      const token = match[1];
+      const decoded = decodeJWT(token);
+      return decoded?.url || decoded?.source || null;
+    }
+  } catch (err) {
+    console.warn('Embed69 falló:', err.message);
+  }
+  return null;
+}
   async function scrapeVerHDLink() {
   try {
     const url = `${PROXY_URL}https://verhdlink.cam/movie/${movieData.id}`;
