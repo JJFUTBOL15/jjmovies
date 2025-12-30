@@ -1,194 +1,158 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>JJMovies - Scrapear</title>
-  <style>
-    body {
-      background: #000;
-      color: white;
-      font-family: Arial, sans-serif;
-      padding: 20px;
-      margin: 0;
-    }
-    #content {
-      max-width: 900px;
-      margin: 0 auto;
-    }
-    #title {
-      font-size: 28px;
-      color: #ff3333;
-      margin-bottom: 10px;
-    }
-    #overview {
-      margin-bottom: 20px;
-      opacity: 0.9;
-    }
-    #sources {
-      margin: 20px 0;
-    }
-    .btn {
-      display: inline-block;
-      padding: 8px 16px;
-      background: #b00;
-      color: white;
-      border: none;
-      border-radius: 4px;
-      margin: 5px;
-      cursor: pointer;
-    }
-    .btn:hover {
-      background: #f00;
-    }
-    #player-container {
-      width: 100%;
-      height: 0;
-      padding-bottom: 56.25%;
-      position: relative;
-      background: #111;
-      border-radius: 8px;
-      overflow: hidden;
-      margin-top: 20px;
-    }
-    #player-iframe {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      border: none;
-    }
-    #status {
-      color: #ff6666;
-      margin: 10px 0;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CineApp - Modo API Externa</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { background-color: #0f172a; color: white; }
+        .poster-glow { box-shadow: 0 0 25px rgba(56, 189, 248, 0.4); }
+        .movie-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.5); }
+        
+        /* Ajuste para que el iframe ocupe todo el espacio */
+        .iframe-container {
+            position: relative;
+            width: 100%;
+            padding-bottom: 56.25%; /* Ratio 16:9 */
+            background: #000;
+            border-radius: 0.75rem;
+            overflow: hidden;
+            border: 1px solid #334155;
+        }
+        .iframe-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: 0;
+        }
+    </style>
 </head>
-<body>
-  <div id="content">
-    <h1 id="title">Cargando película...</h1>
-    <p id="overview"></p>
-    <div id="status">Buscando fuentes...</div>
-    <div id="sources"></div>
-    <div id="player-container">
-      <iframe id="player-iframe" allowfullscreen allow="autoplay; encrypted-media"></iframe>
-    </div>
-  </div>
+<body class="font-sans antialiased min-h-screen flex flex-col">
 
-  <script>
-    // === CONFIG ===
-    const API_KEY = '936410eebae74f9895643e085cc4a740';
-    const PROXY = 'https://api.codetabs.com/v1/proxy?quest=';
-    const params = new URLSearchParams(window.location.search);
-    const id = params.get('id');
+    <nav class="bg-slate-900/90 backdrop-blur-md p-4 sticky top-0 z-50 border-b border-slate-700">
+        <div class="container mx-auto flex justify-between items-center gap-4">
+            <h1 class="text-2xl font-bold text-sky-500">🎬 CineApp <span class="text-xs text-yellow-500 border border-yellow-500 px-2 rounded">API Mode</span></h1>
+            <input type="text" id="searchInput" placeholder="Buscar película..." 
+                   class="bg-slate-800 text-white px-5 py-2 rounded-full border border-slate-600 focus:border-sky-500 w-1/2">
+        </div>
+    </nav>
 
-    if (!id) {
-      document.getElementById('title').textContent = '❌ Usa ?id=550 en la URL';
-      document.getElementById('status').textContent = '';
-    } else {
-      init(id);
-    }
+    <main class="container mx-auto mt-8 p-4 flex-grow">
+        
+        <div id="movie-details" class="hidden mb-12 bg-slate-800 p-6 rounded-2xl shadow-2xl">
+            <button onclick="closeDetails()" class="text-sky-400 mb-4 hover:underline">⬅ Regresar a la lista</button>
+            
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div class="md:col-span-1 hidden md:block">
+                    <img id="detail-poster" src="" class="w-full rounded-xl poster-glow">
+                </div>
+                
+                <div class="md:col-span-3 flex flex-col gap-4">
+                    <h2 id="detail-title" class="text-3xl font-bold text-white"></h2>
+                    
+                    <div class="iframe-container shadow-2xl">
+                        <iframe id="video-frame" src="" allowfullscreen scrolling="no"></iframe>
+                    </div>
 
-    async function init(id) {
-      // Cargar TMDB (español)
-      let title = 'Película';
-      try {
-        const tmdbRes = await fetch(`https://api.themoviedb.org/3/movie/${id}?api_key=${API_KEY}&language=es-ES`);
-        const tmdb = await tmdbRes.json();
-        title = tmdb.title;
-        document.getElementById('title').textContent = title;
-        document.getElementById('overview').textContent = tmdb.overview || 'Sinopsis no disponible.';
-      } catch (e) {
-        document.getElementById('title').textContent = '⚠️ Película no encontrada';
-      }
+                    <div class="p-4 bg-slate-900 rounded-lg border border-slate-700 mt-2">
+                        <p class="text-xs text-gray-500 mb-2">SERVIDOR:</p>
+                        <div class="flex gap-2">
+                            <button class="px-4 py-2 bg-sky-600 text-white text-sm rounded hover:bg-sky-500 transition">Opción 1 (Noctiflix)</button>
+                            </div>
+                    </div>
 
-      // Intentar fuentes
-      const sources = [];
+                    <p id="detail-overview" class="text-gray-400 text-sm leading-relaxed mt-2"></p>
+                </div>
+            </div>
+        </div>
 
-      // 1. Cuevana.biz
-      const cuevanaUrl = await scrapeCuevanaBiz(id, title);
-      if (cuevanaUrl) {
-        sources.push({ name: 'Cuevana.biz', url: cuevanaUrl });
-      }
+        <div id="movies-grid" class="grid grid-cols-2 md:grid-cols-5 gap-6"></div>
+    </main>
 
-      // 2. VerHDLink
-      const verhdUrl = await scrapeVerHDLink(id);
-      if (verhdUrl) {
-        sources.push({ name: 'VerHDLink', url: verhdUrl });
-      }
+    <script>
+        // TU CONFIGURACIÓN
+        const API_KEY = '936410eebae74f9895643e085cc4a740'; 
+        const BASE_URL = 'https://api.themoviedb.org/3';
+        const IMAGE_URL = 'https://image.tmdb.org/t/p/w500';
 
-      // Mostrar resultados
-      const status = document.getElementById('status');
-      const sourcesDiv = document.getElementById('sources');
+        // URL BASE DE LA API QUE ME PASASTE
+        // Nota: Si cambian la url, solo modifícala aquí.
+        const EXTERNAL_PLAYER_URL = "https://api.noctiflix.lat/p/api.html?m=";
 
-      if (sources.length === 0) {
-        status.textContent = '❌ Ninguna fuente disponible';
-      } else {
-        status.textContent = `✅ ${sources.length} fuente(s) encontrada(s):`;
-        sources.forEach(src => {
-          const btn = document.createElement('button');
-          btn.className = 'btn';
-          btn.textContent = src.name;
-          btn.onclick = () => {
-            document.getElementById('player-iframe').src = src.url;
-          };
-          sourcesDiv.appendChild(btn);
+        const grid = document.getElementById('movies-grid');
+        const detailSection = document.getElementById('movie-details');
+        const iframe = document.getElementById('video-frame');
+
+        // 1. Obtener Películas (TMDB)
+        async function fetchMovies(query = '') {
+            let url = query 
+                ? `${BASE_URL}/search/movie?api_key=${API_KEY}&language=es-MX&query=${query}`
+                : `${BASE_URL}/movie/popular?api_key=${API_KEY}&language=es-MX`;
+
+            try {
+                const res = await fetch(url);
+                const data = await res.json();
+                renderMovies(data.results);
+            } catch (e) { console.error(e); }
+        }
+
+        // 2. Mostrar Lista
+        function renderMovies(movies) {
+            grid.innerHTML = '';
+            movies.forEach(movie => {
+                if(!movie.poster_path) return;
+                const card = document.createElement('div');
+                card.className = 'movie-card cursor-pointer bg-slate-800 rounded-xl overflow-hidden relative';
+                card.innerHTML = `
+                    <img src="${IMAGE_URL + movie.poster_path}" class="w-full aspect-[2/3] object-cover">
+                    <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black p-2 pt-8">
+                        <h4 class="text-sm font-bold truncate text-white">${movie.title}</h4>
+                    </div>
+                `;
+                card.onclick = () => loadPlayer(movie);
+                grid.appendChild(card);
+            });
+        }
+
+        // 3. CARGAR EL REPRODUCTOR (INTEGRACIÓN)
+        function loadPlayer(movie) {
+            // Llenar datos visuales
+            document.getElementById('detail-title').innerText = movie.title;
+            document.getElementById('detail-overview').innerText = movie.overview;
+            document.getElementById('detail-poster').src = IMAGE_URL + movie.poster_path;
+
+            // --- AQUÍ OCURRE LA MAGIA ---
+            // Construimos la URL: https://api.noctiflix.lat... + ID de la película
+            const movieID = movie.id; 
+            const finalUrl = `${EXTERNAL_PLAYER_URL}${movieID}`;
+            
+            console.log("Cargando video desde:", finalUrl); // Para que veas en la consola
+            iframe.src = finalUrl;
+            // ----------------------------
+
+            // Mostrar pantalla
+            detailSection.classList.remove('hidden');
+            grid.classList.add('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function closeDetails() {
+            detailSection.classList.add('hidden');
+            grid.classList.remove('hidden');
+            iframe.src = ""; // Detener video al salir
+        }
+
+        // Buscador
+        let timeout;
+        document.getElementById('searchInput').addEventListener('input', (e) => {
+            clearTimeout(timeout);
+            timeout = setTimeout(() => fetchMovies(e.target.value), 500);
         });
-      }
-    }
 
-    // === SCRAPERS ===
-
-    // Cuevana.biz: usa título en español
-    async function scrapeCuevanaBiz(id, spanishTitle) {
-      try {
-        // Crear slug en español
-        const slug = spanishTitle
-          .toLowerCase()
-          .normalize("NFD")
-          .replace(/[\u0300-\u036f]/g, "")
-          .replace(/[^a-z0-9\s-áéíóúñ]/g, "")
-          .replace(/\s+/g, "-")
-          .replace(/-+/g, "-")
-          .replace(/^-|-$/g, "");
-
-        const pageUrl = `https://cuevana.biz/pelicula/${slug}/`;
-        const proxyUrl = `${PROXY}${encodeURIComponent(pageUrl)}`;
-        
-        const res = await fetch(proxyUrl);
-        const html = await res.text();
-
-        // Buscar iframe directo
-        const iframeMatch = html.match(/<iframe[^>]*src=["']([^"']*(?:embedsito|fembed|dood|uqload)[^"']*)["']/i);
-        if (iframeMatch) return iframeMatch[1];
-
-        // Buscar data-url
-        const dataMatch = html.match(/data-url=["']([^"']+)["']/);
-        if (dataMatch) return dataMatch[1];
-
-      } catch (e) {
-        console.warn('Cuevana.biz falló:', e.message);
-      }
-      return null;
-    }
-
-    // VerHDLink: usa ID directo
-    async function scrapeVerHDLink(id) {
-      try {
-        const pageUrl = `https://verhdlink.cam/movie/${id}`;
-        const proxyUrl = `${PROXY}${encodeURIComponent(pageUrl)}`;
-        
-        const res = await fetch(proxyUrl);
-        const html = await res.text();
-
-        const match = html.match(/data-link\s*=\s*['"]([^'"]*(?:unlimplay|vidhide|filelions|streamlare)[^'"]*)['"]/i);
-        return match ? match[1] : null;
-      } catch (e) {
-        console.warn('VerHDLink falló:', e.message);
-      }
-      return null;
-    }
-  </script>
+        fetchMovies();
+    </script>
 </body>
 </html>
