@@ -15,7 +15,7 @@
 <body>
     <div class="container">
         <div class="title" id="title">Cargando película...</div>
-        <div class="loading">Conectando al servidor pro...</div>
+        <div class="loading">Conectando al servidor de FlixHQ...</div>
         <iframe id="player" allowfullscreen allow="autoplay"></iframe>
     </div>
 
@@ -31,18 +31,16 @@
             return;
         }
 
-        // Fuentes PRO confirmadas trabajando diciembre 2025 (con Avengers Infinity War)
-        const sources = [
-            // 1. vidsrc.to (el rey actual, HD rápido, subs ES/LATAM – funciona perfecto ahora)
-            `https://vidsrc.to/embed/movie/${id}`,
+        // Base principal: multiembed.mov (la que usa FlixHQ/Cuevana para streams reales)
+        let mainSource = `https://multiembed.mov/?video_id=${id}&tmdb=1`;
+        if (season && episode) {
+            mainSource += `&s=${season}&e=${episode}`;
+        }
 
-            // 2. multiembed.mov (catálogo enorme como Cuevana, fallback potente)
-            `https://multiembed.mov/?video_id=${id}&tmdb=1${season ? `&s=${season}&e=${episode}` : ''}`,
-
-            // 3. vembed.click (nuevo y estable, mucho contenido latino)
-            `https://vembed.click/embed/movie/${id}`,
-
-            // 4. autoembed.cc (rápido y con todo fresco)
+        // Fallbacks (los mismos que FlixHQ usa cuando multiembed falla)
+        const fallbacks = [
+            `https://vidsrc.to/embed/movie/${id}${season ? `/tv/${id}-${season}-${episode}` : ''}`,
+            `https://vembed.click/embed/movie/${id}${season ? `/tv/${id}-${season}-${episode}` : ''}`,
             `https://autoembed.cc/movie/tmdb/${id}${season ? `-${season}-${episode}` : ''}`
         ];
 
@@ -50,24 +48,25 @@
         let current = 0;
 
         function loadSource() {
-            if (current < sources.length) {
-                iframe.src = sources[current];
-                current++;
+            if (current === 0) {
+                iframe.src = mainSource;
+            } else if (current - 1 < fallbacks.length) {
+                iframe.src = fallbacks[current - 1];
             } else {
                 document.querySelector('.loading').textContent = 'Refresca o prueba otra película 😔';
             }
+            current++;
         }
 
-        // Título en español automático
+        // Título en español
         fetch(`https://api.themoviedb.org/3/${season ? 'tv' : 'movie'}/${id}?api_key=936410eebae74f9895643e085cc4a740&language=es-ES`)
             .then(res => res.json())
-            .then(data => document.getElementById('title').textContent = (season ? data.name : data.title) || 'JJMovies.lat')
-            .catch(() => {});
+            .then(data => document.getElementById('title').textContent = (season ? data.name : data.title) || 'JJMovies.lat');
 
         iframe.onload = () => document.querySelector('.loading').style.display = 'none';
         iframe.onerror = loadSource;
 
-        loadSource(); // Empieza con vidsrc.to (el que más carga ahora)
+        loadSource();
     </script>
 </body>
 </html>
