@@ -125,23 +125,22 @@
     }
 
     // === SCRAPING DE FUENTES ===
-    async function startScraping() {
-      const sources = [];
-
-      // VerHDLink (única fuente viable ahora)
-      try {
-        const url = `${PROXY_URL}https://verhdlink.cam/movie/${movieData.id}`;
-        const res = await fetch(url);
-        const html = await res.text();
-
-        // Buscar data-link con servidores reales
-        const match = html.match(/data-link\s*=\s*['"]([^'"]*(?:unlimplay|vidhide|filelions)[^'"]*)['"]/i);
-        if (match && match[1]) {
-          sources.push({ name: 'VerHD / UnlimPlay', url: match[1], type: 'iframe' });
-        }
-      } catch (err) {
-        console.warn('VerHDLink falló:', err);
-      }
+async function startScraping() {
+  const loading = document.getElementById('loading');
+  const container = document.getElementById('server-list-container');
+  
+  // Siempre mostrar VerHD como opción (aunque no scrapee)
+  loading.textContent = '';
+  container.innerHTML = '<strong>Fuentes:</strong><br>';
+  
+  const btn = document.createElement('button');
+  btn.className = 'server-btn';
+  btn.textContent = 'Ver en VerHDLink';
+  btn.onclick = () => {
+    window.open(`https://verhdlink.cam/movie/${movieData.id}`, '_blank');
+  };
+  container.appendChild(btn);
+}
 
       // Mostrar fuentes
       const loading = document.getElementById('loading');
