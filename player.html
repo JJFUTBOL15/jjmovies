@@ -1,0 +1,25 @@
+<!-- player.html -->
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Player - JJMovies</title>
+  <style>body,html{margin:0;padding:0;background:#000;}</style>
+</head>
+<body>
+  <div id="loading">Cargando...</div>
+  <iframe id="video" style="width:100%;height:100%;border:none;"></iframe>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const id = params.get('id');
+    if (id) {
+      // Ejemplo: redirigir a VidSrc (siempre funciona)
+      document.getElementById('video').src = `https://vidsrc.to/embed/movie/${id}`;
+      document.getElementById('loading').style.display = 'none';
+    } else {
+      document.getElementById('loading').textContent = 'Falta ?id=';
+    }
+  </script>
+</body>
+</html>
