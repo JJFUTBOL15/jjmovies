@@ -244,34 +244,33 @@
       return null;
     }
 
-    async function scrapeVerHDLink() {
-      try {
-        const url = `${PROXY_URL}https://verhdlink.cam/movie/${movieData.id}`;
-        const res = await fetch(url);
-        const html = await res.text();
+  async function scrapeVerHDLink() {
+  try {
+    const url = `${PROXY_URL}https://verhdlink.cam/movie/${movieData.id}`;
+    const res = await fetch(url);
+    const html = await res.text();
 
-        const match = html.match(/data-link\s*=\s*['"]([^'"]*dropload[^'"]*)['"]/);
-        if (match) {
-          const fullUrl = match[1];
-          const dropId = fullUrl.split('/').pop();
-          return `https://unlimplay.com/e/${dropId}`;
-        }
-      } catch (err) {
-        console.warn('VerHD falló:', err.message);
-      }
-      return null;
+    // Buscar cualquier data-link que contenga servidores conocidos
+    const match = html.match(/data-link\s*=\s*['"]([^'"]*(?:unlimplay|vidhide|filelions|streamlare|dropload)[^'"]*)['"]/i);
+    if (match) {
+      return match[1];
     }
 
-    function decodeJWT(token) {
-      try {
-        const base64 = token.replace(/-/g, '+').replace(/_/g, '/');
-        const jsonStr = atob(base64);
-        return JSON.parse(jsonStr);
-      } catch (e) {
-        return null;
+    // Buscar enlaces dentro de <a> o <li> con class o id relacionado a "server"
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(html, 'text/html');
+    const candidates = doc.querySelectorAll('a, li, div');
+    for (let el of candidates) {
+      const link = el.getAttribute('data-link') || el.getAttribute('data-url');
+      if (link && /unlimplay|vidhide|filelions|dropload/i.test(link)) {
+        return link;
       }
     }
-
+  } catch (err) {
+    console.warn('VerHDLink falló:', err.message);
+  }
+  return null;
+}
     // === REPRODUCCIÓN ===
     function renderServerList(sources) {
       const container = document.getElementById('server-list-container');
