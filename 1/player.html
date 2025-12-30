@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reproduciendo en JJMovies.lat</title>
+    <style>
+        body, html { margin:0; padding:0; height:100%; background:#000; overflow:hidden; }
+        .container { position:relative; width:100%; height:100%; }
+        iframe { width:100%; height:100%; border:none; }
+        .title { position:absolute; top:20px; left:50%; transform:translateX(-50%); color:white; font-size:32px; z-index:10; text-shadow: 2px 2px 4px black; }
+        .loading { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); color:white; font-size:28px; z-index:10; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="title" id="title">Cargando película...</div>
+        <div class="loading">Conectando al servidor pro...</div>
+        <iframe id="player" allowfullscreen allow="autoplay"></iframe>
+    </div>
+
+    <script>
+        // Lee el ID de la URL: ?id=299536 (película) o ?id=1399&season=1&episode=1 (serie)
+        const params = new URLSearchParams(window.location.search);
+        const id = params.get('id');
+        const season = params.get('season');
+        const episode = params.get('episode');
+
+        if (!id) {
+            document.getElementById('title').textContent = 'Agrega ?id=NUMERO en la URL';
+            document.querySelector('.loading').textContent = 'Ejemplo: ?id=299536';
+            return;
+        }
+
+        // Fuentes TOP diciembre 2025 (orden: las con mejor contenido y calidad)
+        const sources = [
+            // 1. MultiEmbed (el MEJOR ahora: catálogo como Cuevana/FlixHQ, HD full, subs ES/LATAM)
+            `https://multiembed.mov/?video_id=${id}&tmdb=1${season ? `&s=${season}&e=${episode}` : ''}`,
+            
+            // 2. SuperEmbed (potente fallback, mucho contenido nuevo)
+            `https://player.superembed.stream/${season ? `tv/${id}/${season}/${episode}` : `movie/${id}`}`,
+            
+            // 3. AutoEmbed (rápido y completo)
+            `https://autoembed.cc/${season ? `tv/tmdb/${id}-${season}-${episode}` : `movie/tmdb/${id}`}`,
+            
+            // 4. VidSrc (HD top, subs perfectos)
+            `https://vidsrc.stream/embed/${season ? `tv/${id}-${season}-${episode}` : `movie/${id}`}`
+        ];
+
+        const iframe = document.getElementById('player');
+        let current = 0;
+
+        function loadSource() {
+            if (current < sources.length) {
+                iframe.src = sources[current];
+                current++;
+            } else {
+                document.querySelector('.loading').textContent = 'Ningún servidor disponible hoy :(';
+            }
+        }
+
+        // Título automático en español desde TMDB (tu key)
+        fetch(`https://api.themoviedb.org/3/${season ? 'tv' : 'movie'}/${id}?api_key=936410eebae74f9895643e085cc4a740&language=es-ES`)
+            .then(res => res.json())
+            .then(data => {
+                const name = season ? data.name : data.title;
+                document.getElementById('title').textContent = name || 'JJMovies.lat';
+            });
+
+        // Quita loading cuando carga el iframe
+        iframe.onload = () => {
+            document.querySelector('.loading').style.display = 'none';
+        };
+
+        // Si falla uno, prueba el siguiente automático
+        iframe.onerror = loadSource;
+
+        loadSource(); // Empieza con el mejor (MultiEmbed)
+    </script>
+</body>
+</html>
