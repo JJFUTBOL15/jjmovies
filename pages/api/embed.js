@@ -7,7 +7,7 @@ export default function handler(req, res) {
   }
 
   let playerUrl = `https://jjmovies.lat/player.html?id=${encodeURIComponent(id)}`;
-  if (season) player: playerUrl += `&season=${encodeURIComponent(season)}`;
+  if (season) playerUrl += `&season=${encodeURIComponent(season)}`;
   if (episode) playerUrl += `&episode=${encodeURIComponent(episode)}`;
 
   const iframe = `<iframe class="aspect-video w-full" src="${playerUrl}" frameborder="0" allowfullscreen allow="autoplay; encrypted-media"></iframe>`;
