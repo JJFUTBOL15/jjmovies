@@ -15,7 +15,7 @@
 <body>
     <div class="container">
         <div class="title" id="title">Cargando película...</div>
-        <div class="loading">Conectando al servidor de FlixHQ/Cuevana...</div>
+        <div class="loading">Conectando al servidor pro...</div>
         <iframe id="player" allowfullscreen allow="autoplay"></iframe>
     </div>
 
@@ -30,13 +30,13 @@
             return;
         }
 
-        // Base real de FlixHQ/Cuevana (multiembed/superembed direct)
+        // Base principal pro 2025 (directstream para carga rápida)
         let main = `https://multiembed.mov/directstream.php?video_id=${id}&tmdb=1`;
         if (season && episode) {
             main += `&s=${season}&e=${episode}`;
         }
 
-        // Fallbacks top 2025
+        // Fallbacks
         const fallbacks = [
             `https://vidsrc.to/embed/movie/${id}${season ? `/tv/${id}-${season}-${episode}` : ''}`,
             `https://vembed.click/embed/movie/${id}${season ? `/tv/${id}-${season}-${episode}` : ''}`,
@@ -52,7 +52,7 @@
             } else if (current - 1 < fallbacks.length) {
                 iframe.src = fallbacks[current - 1];
             } else {
-                document.querySelector('.loading').textContent = 'Prueba otra película o refresca';
+                document.querySelector('.loading').textContent = 'Prueba una película nueva 😔';
             }
             current++;
         }
