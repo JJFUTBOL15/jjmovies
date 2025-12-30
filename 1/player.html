@@ -31,19 +31,19 @@
             return;
         }
 
-        // Fuentes arregladas diciembre 2025 (probadas con ID 299536, HD full, latino/subs ES)
+        // Fuentes PRO confirmadas trabajando diciembre 2025 (con Avengers Infinity War)
         const sources = [
-            // 1. VidSrc.to (el mejor ahora: catálogo enorme como FlixHQ, carga rápido)
-            `https://vidsrc.to/embed/movie/${id}${season ? `/tv/${id}-${season}-${episode}` : ''}`,
+            // 1. vidsrc.to (el rey actual, HD rápido, subs ES/LATAM – funciona perfecto ahora)
+            `https://vidsrc.to/embed/movie/${id}`,
 
-            // 2. VikingEmbed (nuevo y potente, contenido fresco como Cuevana)
-            `https://vembed.click/embed/movie/${id}${season ? `/tv/${id}-${season}-${episode}` : ''}`,
+            // 2. multiembed.mov (catálogo enorme como Cuevana, fallback potente)
+            `https://multiembed.mov/?video_id=${id}&tmdb=1${season ? `&s=${season}&e=${episode}` : ''}`,
 
-            // 3. SuperEmbed (estable, mucho latino)
-            `https://player.superembed.stream/${season ? `tv/${id}/${season}/${episode}` : `movie/${id}`}`,
+            // 3. vembed.click (nuevo y estable, mucho contenido latino)
+            `https://vembed.click/embed/movie/${id}`,
 
-            // 4. MultiEmbed (fallback pro, con todo)
-            `https://multiembed.mov/?video_id=${id}&tmdb=1${season ? `&s=${season}&e=${episode}` : ''}`
+            // 4. autoembed.cc (rápido y con todo fresco)
+            `https://autoembed.cc/movie/tmdb/${id}${season ? `-${season}-${episode}` : ''}`
         ];
 
         const iframe = document.getElementById('player');
@@ -54,20 +54,20 @@
                 iframe.src = sources[current];
                 current++;
             } else {
-                document.querySelector('.loading').textContent = 'Prueba refrescar o otra película 😔';
+                document.querySelector('.loading').textContent = 'Refresca o prueba otra película 😔';
             }
         }
 
-        // Título automático en español
+        // Título en español automático
         fetch(`https://api.themoviedb.org/3/${season ? 'tv' : 'movie'}/${id}?api_key=936410eebae74f9895643e085cc4a740&language=es-ES`)
             .then(res => res.json())
-            .then(data => document.getElementById('title').textContent = data.title || data.name || 'JJMovies.lat');
+            .then(data => document.getElementById('title').textContent = (season ? data.name : data.title) || 'JJMovies.lat')
+            .catch(() => {});
 
         iframe.onload = () => document.querySelector('.loading').style.display = 'none';
+        iframe.onerror = loadSource;
 
-        iframe.onerror = loadSource; // Auto pasa al siguiente si falla
-
-        loadSource(); // Empieza con VidSrc.to
+        loadSource(); // Empieza con vidsrc.to (el que más carga ahora)
     </script>
 </body>
 </html>
