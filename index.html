@@ -125,12 +125,39 @@
     }
 
     // === SCRAPING DE FUENTES ===
+// === OBTENER DATOS DE TMDB (con timeout) ===
+async function fetchTMDBData(id) {
+  try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 8000); // 8 segundos
+
+    const res = await fetch(
+      `https://api.themoviedb.org/3/movie/${id}?api_key=${API_KEY}&language=es-ES`,
+      { signal: controller.signal }
+    );
+    clearTimeout(timeoutId);
+
+    const data = await res.json();
+    document.getElementById('movie-title').textContent = data.title || 'Película';
+    document.getElementById('movie-overview').textContent = data.overview || 'Sinopsis no disponible.';
+    if (data.backdrop_path) {
+      document.getElementById('backdrop-img').style.backgroundImage = 
+        `url(https://image.tmdb.org/t/p/original${data.backdrop_path})`;
+    }
+  } catch (err) {
+    console.error('TMDB error:', err);
+    document.getElementById('movie-title').textContent = '⚠️ Error al cargar película';
+    document.getElementById('movie-overview').textContent = '';
+  }
+}
+
+// === SCRAPING (con timeout y fallback inmediato) ===
 async function startScraping() {
   const loading = document.getElementById('loading');
-  const container = document.getElementById('server-list-container');
   
-  // Siempre mostrar VerHD como opción (aunque no scrapee)
+  // Mostrar opción inmediata (sin esperar scraping)
   loading.textContent = '';
+  const container = document.getElementById('server-list-container');
   container.innerHTML = '<strong>Fuentes:</strong><br>';
   
   const btn = document.createElement('button');
@@ -140,6 +167,32 @@ async function startScraping() {
     window.open(`https://verhdlink.cam/movie/${movieData.id}`, '_blank');
   };
   container.appendChild(btn);
+
+  // Intentar scraping en segundo plano (opcional)
+  try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 6000);
+    
+    const url = `${PROXY_URL}https://verhdlink.cam/movie/${movieData.id}`;
+    const res = await fetch(url, { signal: controller.signal });
+    clearTimeout(timeoutId);
+    
+    const html = await res.text();
+    const match = html.match(/data-link\s*=\s*['"]([^'"]*(?:unlimplay|vidhide)[^'"]*)['"]/i);
+    
+    if (match && match[1]) {
+      // Si encontramos enlace directo, reemplazar el botón
+      btn.textContent = 'Reproducir Internamente';
+      btn.onclick = () => {
+        document.getElementById('iframe-container').innerHTML = 
+          `<iframe src="${match[1]}" width="100%" height="100%" frameborder="0" allowfullscreen></iframe>`;
+        document.getElementById('iframe-container').classList.remove('hidden');
+        document.getElementById('player').classList.add('hidden');
+      };
+    }
+  } catch (err) {
+    // Silencioso: ya tenemos el botón de redirección
+  }
 }
 
       // Mostrar fuentes
