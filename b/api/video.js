@@ -1,8 +1,6 @@
 // api/video.js
-import fetch from 'node-fetch';
 
 const CUE_BASE = 'https://cuevana3.io';
-const YOUR_PLAYER_DOMAIN = 'https://jjmovies.lat'; // Cambia esto por tu dominio real
 
 export default async function handler(req, res) {
   const { id, type = 'movie', season, episode } = req.query;
@@ -31,11 +29,11 @@ export default async function handler(req, res) {
       `);
     }
 
-    // Generar el iframe embebible (igual que noctiflix.lat)
+    // Generar iframe embebible
     const iframeHtml = `
       <iframe 
         class="aspect-video w-full" 
-        src="${YOUR_PLAYER_DOMAIN}/player.html?url=${encodeURIComponent(videoUrl)}" 
+        src="https://jjmovies.lat/player.html?url=${encodeURIComponent(videoUrl)}" 
         frameborder="0" 
         allowfullscreen
         allow="autoplay; encrypted-media"
@@ -112,4 +110,4 @@ function resolveShowEmbed(embedUrl) {
     }
   } catch (e) {}
   return embedUrl;
-} 
+}
