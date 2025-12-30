@@ -1,1 +1,33 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Streaming Tool</title>
+    <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
+    <script src="https://cdn.tailwindcss.com"></script> <!-- Para Tailwind -->
+    <style>
+        .hidden-force { display: none !important; }
+        #backdrop-img { background-size: cover; background-position: center; height: 400px; } /* Ejemplo */
+    </style>
+</head>
+<body class="bg-gray-900 text-white">
+    <div id="backdrop-img" class="w-full"></div>
+    <h1 id="movie-title" class="text-4xl text-center">Cargando...</h1>
+    <p id="movie-overview" class="text-center mt-4"></p>
+    <div id="series-controls" class="hidden-force flex justify-center mt-4">
+        <select id="season-select" class="bg-gray-800 p-2 mr-2" onchange="onSeasonChange(this.value)"></select>
+        <select id="episode-select" class="bg-gray-800 p-2" onchange="onEpisodeChange(this.value)"></select>
+    </div>
+    <div id="server-list-container" class="w-1/4 float-right p-4"></div>
+    <div id="iframe-container" class="w-3/4 float-left"></div>
+    <video id="player" controls class="w-3/4 mx-auto block"></video>
+    <button onclick="startScraping()" class="bg-blue-500 p-4 mt-4 block mx-auto">Play</button>
 
+    <script src="https://cdn.plyr.io/3.7.8/plyr.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+    <script>
+        // El script va aquí
+    </script>
+</body>
+</html>
