@@ -34,14 +34,12 @@ async function loadHomepage() {
   document.getElementById('movie-title').textContent = 'JJMOVIES';
   document.getElementById('movie-overview').textContent = 'Películas y series en tiempo real. VIP: JJ2025';
 
-  // Redirigir a un contenido de ejemplo (opcional)
-  // Puedes agregar un carrusel aquí si quieres, pero para Vercel simple, dejamos esto
-  const exampleUrl = '?id=deadpool-and-wolverine&type=movie';
+  // Redirige a un contenido de ejemplo para probar
   setTimeout(() => {
     if (window.location.search === '') {
       window.location.search = 'id=stranger-things&type=series&season=1&episode=1';
     }
-  }, 2000);
+  }, 1500);
 }
 
 // =============== CARGAR PELÍCULA O SERIE ===============
@@ -49,6 +47,7 @@ async function loadMediaPage() {
   document.getElementById('movie-title').textContent = 'Cargando...';
   document.getElementById('iframe-container').innerHTML = '';
   document.getElementById('player').style.display = 'none';
+  document.getElementById('series-controls').classList.add('hidden-force');
 
   try {
     await fetchTMDBMetadata();
@@ -57,8 +56,8 @@ async function loadMediaPage() {
       loadVideo(videoUrl);
       if (currentMedia.type === 'series') {
         document.getElementById('series-controls').classList.remove('hidden-force');
-        document.getElementById('season-select').value = currentMedia.season;
-        document.getElementById('episode-select').value = currentMedia.episode;
+        document.getElementById('season-select').value = currentMedia.season || 1;
+        document.getElementById('episode-select').value = currentMedia.episode || 1;
       }
     } else {
       document.getElementById('movie-title').textContent += ' — [No se encontró video]';
@@ -96,33 +95,93 @@ async function fetchTMDBMetadata() {
   }
 }
 
-// =============== SCRAPING ===============
+// =============== SCRAPING MEJORADO PARA PELÍCULAS Y SERIES ===============
 async function scrapeVideoFromCuevana() {
-  const path = currentMedia.type === 'movie'
-    ? `/pelicula/${currentMedia.slug}/`
-    : `/serie/${currentMedia.slug}/temporada-${currentMedia.season}/episodio-${currentMedia.episode}/`;
+  if (currentMedia.type === 'movie') {
+    const pageUrl = `${CUE_BASE}/pelicula/${currentMedia.slug}/`;
+    return await extractVideoFromPage(pageUrl);
+  } else {
+    // Para series: siempre usar la página PRINCIPAL de la serie
+    const seriesPageUrl = `${CUE_BASE}/serie/${currentMedia.slug}/`;
+    const res = await fetch(`${PROXY}${encodeURIComponent(seriesPageUrl)}`);
+    const html = await res.text();
 
-  const pageUrl = `${CUE_BASE}${path}`;
-  const res = await fetch(`${PROXY}${encodeURIComponent(pageUrl)}`);
-  const html = await res.text();
+    const seasonNum = currentMedia.season || 1;
+    const episodeNum = currentMedia.episode || 1;
 
-  // Buscar embed-page?showEmbed=...
-  const embedMatch = html.match(/<iframe[^>]*src=["']([^"']*embed-page\?showEmbed=[^"']*)["']/i);
-  if (embedMatch) {
-    return await resolveCuevanaEmbed(embedMatch[1]);
+    // Estrategia 1: buscar por atributos data-season y data-episode
+    const regex1 = new RegExp(
+      `<a[^>]*href=["']([^"']*)["'][^>]*data-season=["']\\s*${seasonNum}\\s*["'][^>]*data-episode=["']\\s*${episodeNum}\\s*["']`,
+      'i'
+    );
+    const match1 = html.match(regex1);
+    if (match1) {
+      let epUrl = match1[1];
+      if (epUrl.startsWith('/')) epUrl = CUE_BASE + epUrl;
+      return await extractVideoFromPage(epUrl);
+    }
+
+    // Estrategia 2: buscar dentro del bloque de la temporada
+    const seasonHeaderRegex = new RegExp(`<h3[^>]*>\\s*Temporada\\s+${seasonNum}\\s*<\\/h3>`, 'i');
+    const seasonIndex = html.search(seasonHeaderRegex);
+    if (seasonIndex !== -1) {
+      const rest = html.slice(seasonIndex);
+      const nextSeasonIndex = rest.search(/<h3[^>]*>Temporada\s+\d+/i);
+      const seasonBlock = nextSeasonIndex !== -1 ? rest.slice(0, nextSeasonIndex) : rest;
+
+      const epRegex = new RegExp(
+        `<a[^>]*href=["']([^"']*)["'][^>]*>\\s*Episodio\\s*${episodeNum}\\b`,
+        'i'
+      );
+      const match2 = seasonBlock.match(epRegex);
+      if (match2) {
+        let epUrl = match2[1];
+        if (epUrl.startsWith('/')) epUrl = CUE_BASE + epUrl;
+        return await extractVideoFromPage(epUrl);
+      }
+    }
+
+    // Estrategia 3: intentar URL directa como fallback
+    const fallbackUrl = `${CUE_BASE}/serie/${currentMedia.slug}/temporada-${seasonNum}/episodio-${episodeNum}/`;
+    return await extractVideoFromPage(fallbackUrl);
   }
-
-  // Buscar trembed normal
-  const trembedMatch = html.match(/<iframe[^>]*src=["']([^"']*trembed[^"']*)["']/i);
-  if (trembedMatch) {
-    let url = trembedMatch[1];
-    if (url.startsWith('/')) url = CUE_BASE + url;
-    return url;
-  }
-
-  return null;
 }
 
+// =============== Extraer video de cualquier página ===============
+async function extractVideoFromPage(pageUrl) {
+  try {
+    const res = await fetch(`${PROXY}${encodeURIComponent(pageUrl)}`);
+    if (!res.ok) return null;
+    const html = await res.text();
+
+    // 1. Buscar embed-page?showEmbed=...
+    const embedMatch = html.match(/<iframe[^>]*src=["']([^"']*embed-page\?showEmbed=[^"']*)["']/i);
+    if (embedMatch) {
+      return await resolveCuevanaEmbed(embedMatch[1]);
+    }
+
+    // 2. Buscar trembed directo
+    const trembedMatch = html.match(/<iframe[^>]*src=["']([^"']*trembed[^"']*)["']/i);
+    if (trembedMatch) {
+      let url = trembedMatch[1];
+      if (url.startsWith('/')) url = CUE_BASE + url;
+      return url;
+    }
+
+    // 3. Buscar enlaces en atributos data-link (como VerHD)
+    const dataLinkMatch = html.match(/data-link=["']([^"']+)["']/);
+    if (dataLinkMatch) {
+      return dataLinkMatch[1];
+    }
+
+    return null;
+  } catch (e) {
+    console.warn('Error al scrapear página:', pageUrl, e);
+    return null;
+  }
+}
+
+// =============== RESOLVER showEmbed (Base64 + fakeplayer) ===============
 async function resolveCuevanaEmbed(embedUrl) {
   const fullUrl = embedUrl.startsWith('http') ? embedUrl : CUE_BASE + embedUrl;
   const url = new URL(fullUrl);
@@ -146,7 +205,7 @@ async function resolveCuevanaEmbed(embedUrl) {
   }
 }
 
-// =============== REPRODUCIR ===============
+// =============== REPRODUCIR VIDEO ===============
 function loadVideo(url) {
   const iframeContainer = document.getElementById('iframe-container');
   const playerEl = document.getElementById('player');
@@ -168,6 +227,7 @@ function loadVideo(url) {
     iframe.allowFullscreen = true;
     iframe.allow = 'autoplay; encrypted-media';
     iframeContainer.appendChild(iframe);
+    playerEl.style.display = 'none';
   }
 
   if (typeof Plyr !== 'undefined') {
