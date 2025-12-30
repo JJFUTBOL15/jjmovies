@@ -3,156 +3,234 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CineApp - Modo API Externa</title>
+    <title>Mi Sistema - Generador de Links</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body { background-color: #0f172a; color: white; }
         .poster-glow { box-shadow: 0 0 25px rgba(56, 189, 248, 0.4); }
-        .movie-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.5); }
-        
-        /* Ajuste para que el iframe ocupe todo el espacio */
-        .iframe-container {
-            position: relative;
-            width: 100%;
-            padding-bottom: 56.25%; /* Ratio 16:9 */
-            background: #000;
-            border-radius: 0.75rem;
-            overflow: hidden;
-            border: 1px solid #334155;
-        }
-        .iframe-container iframe {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            border: 0;
-        }
+        select { background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e"); background-position: right 0.5rem center; background-repeat: no-repeat; background-size: 1.5em 1.5em; padding-right: 2.5rem; -webkit-print-color-adjust: exact; }
     </style>
 </head>
 <body class="font-sans antialiased min-h-screen flex flex-col">
 
     <nav class="bg-slate-900/90 backdrop-blur-md p-4 sticky top-0 z-50 border-b border-slate-700">
-        <div class="container mx-auto flex justify-between items-center gap-4">
-            <h1 class="text-2xl font-bold text-sky-500">🎬 CineApp <span class="text-xs text-yellow-500 border border-yellow-500 px-2 rounded">API Mode</span></h1>
-            <input type="text" id="searchInput" placeholder="Buscar película..." 
-                   class="bg-slate-800 text-white px-5 py-2 rounded-full border border-slate-600 focus:border-sky-500 w-1/2">
+        <div class="container mx-auto flex gap-4 items-center">
+            <h1 class="text-xl font-bold text-sky-500">SYSTEM <span class="text-white">V2</span></h1>
+            <input type="text" id="searchInput" placeholder="Buscar Película o Serie..." 
+                   class="bg-slate-800 text-white px-5 py-2 rounded-full border border-slate-600 focus:border-sky-500 w-full">
         </div>
     </nav>
 
     <main class="container mx-auto mt-8 p-4 flex-grow">
         
-        <div id="movie-details" class="hidden mb-12 bg-slate-800 p-6 rounded-2xl shadow-2xl">
-            <button onclick="closeDetails()" class="text-sky-400 mb-4 hover:underline">⬅ Regresar a la lista</button>
+        <div id="media-viewer" class="hidden mb-12 bg-slate-800 p-6 rounded-2xl shadow-2xl border border-slate-700">
+            <button onclick="closeViewer()" class="text-gray-400 hover:text-white mb-4 flex items-center gap-2">⬅ Volver</button>
             
             <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
-                <div class="md:col-span-1 hidden md:block">
-                    <img id="detail-poster" src="" class="w-full rounded-xl poster-glow">
+                <div class="md:col-span-1">
+                    <img id="view-poster" src="" class="w-full rounded-xl poster-glow">
+                    <div id="view-info" class="mt-4 text-center">
+                        <h2 id="view-title" class="text-xl font-bold"></h2>
+                        <p id="view-id" class="text-xs text-gray-500 font-mono mt-1"></p>
+                    </div>
                 </div>
                 
                 <div class="md:col-span-3 flex flex-col gap-4">
-                    <h2 id="detail-title" class="text-3xl font-bold text-white"></h2>
                     
-                    <div class="iframe-container shadow-2xl">
-                        <iframe id="video-frame" src="" allowfullscreen scrolling="no"></iframe>
+                    <div id="series-controls" class="hidden flex flex-wrap gap-4 bg-slate-900 p-4 rounded-lg border border-slate-600">
+                        <div class="flex flex-col w-full sm:w-auto">
+                            <label class="text-xs text-sky-400 font-bold mb-1">TEMPORADA</label>
+                            <select id="season-select" class="bg-slate-800 text-white p-2 rounded border border-slate-600 cursor-pointer appearance-none min-w-[150px]">
+                                </select>
+                        </div>
+                        <div class="flex flex-col w-full sm:w-auto">
+                            <label class="text-xs text-sky-400 font-bold mb-1">EPISODIO</label>
+                            <select id="episode-select" class="bg-slate-800 text-white p-2 rounded border border-slate-600 cursor-pointer appearance-none min-w-[150px]">
+                                </select>
+                        </div>
+                        <button onclick="updateSource()" class="bg-sky-600 hover:bg-sky-500 text-white px-6 py-2 rounded font-bold self-end">
+                            CARGAR EPISODIO
+                        </button>
                     </div>
 
-                    <div class="p-4 bg-slate-900 rounded-lg border border-slate-700 mt-2">
-                        <p class="text-xs text-gray-500 mb-2">SERVIDOR:</p>
-                        <div class="flex gap-2">
-                            <button class="px-4 py-2 bg-sky-600 text-white text-sm rounded hover:bg-sky-500 transition">Opción 1 (Noctiflix)</button>
-                            </div>
-                    </div>
+                    <div id="iframe-wrapper" class="w-full aspect-video bg-black rounded-lg overflow-hidden border border-slate-600 shadow-lg relative">
+                        <p class="absolute inset-0 flex items-center justify-center text-gray-600">Selecciona contenido...</p>
+                        </div>
 
-                    <p id="detail-overview" class="text-gray-400 text-sm leading-relaxed mt-2"></p>
+                    <div class="mt-2">
+                        <p class="text-xs text-gray-500 mb-1">Código Generado por tu sistema:</p>
+                        <code id="code-output" class="block bg-black text-green-400 p-3 rounded text-xs font-mono break-all border border-slate-700">
+                            Esperando datos...
+                        </code>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <div id="movies-grid" class="grid grid-cols-2 md:grid-cols-5 gap-6"></div>
+        <div id="results-grid" class="grid grid-cols-2 md:grid-cols-5 gap-6"></div>
     </main>
 
     <script>
-        // TU CONFIGURACIÓN
         const API_KEY = '936410eebae74f9895643e085cc4a740'; 
         const BASE_URL = 'https://api.themoviedb.org/3';
         const IMAGE_URL = 'https://image.tmdb.org/t/p/w500';
 
-        // URL BASE DE LA API QUE ME PASASTE
-        // Nota: Si cambian la url, solo modifícala aquí.
-        const EXTERNAL_PLAYER_URL = "https://api.noctiflix.lat/p/api.html?m=";
+        // --- 1. TU FÓRMULA MAESTRA (EDITA ESTO) ---
+        // Aquí es donde construyes el link como tú quieras
+        
+        function generarIframePropio(id, tipo, season = 1, episode = 1) {
+            let urlFinal = "";
 
-        const grid = document.getElementById('movies-grid');
-        const detailSection = document.getElementById('movie-details');
-        const iframe = document.getElementById('video-frame');
+            if (tipo === 'tv') {
+                // FORMATO SERIES: Segun tu ejemplo: noctiflix.lat/p/sris.html?serie=ID/S/E
+                urlFinal = `https://www.noctiflix.lat/p/sris.html?serie=${id}/${season}/${episode}`;
+            } else {
+                // FORMATO PELICULAS: (Asumo que es similar, cámbialo si es diferente)
+                // Ejemplo: noctiflix.lat/p/eli.html?id=ID
+                urlFinal = `https://www.noctiflix.lat/p/eli.html?id=${id}`; 
+            }
 
-        // 1. Obtener Películas (TMDB)
-        async function fetchMovies(query = '') {
-            let url = query 
-                ? `${BASE_URL}/search/movie?api_key=${API_KEY}&language=es-MX&query=${query}`
-                : `${BASE_URL}/movie/popular?api_key=${API_KEY}&language=es-MX`;
-
-            try {
-                const res = await fetch(url);
-                const data = await res.json();
-                renderMovies(data.results);
-            } catch (e) { console.error(e); }
+            // Retornamos EXACTAMENTE el HTML que pediste
+            return `<iframe class="aspect-video w-full" src="${urlFinal}" frameborder="0" allowfullscreen></iframe>`;
         }
 
-        // 2. Mostrar Lista
-        function renderMovies(movies) {
+        // -------------------------------------------
+
+        let currentId = 0;
+        let currentType = 'movie';
+
+        // Buscar (Busca Pelis Y Series a la vez "multi")
+        async function searchMedia(query) {
+            const url = query 
+                ? `${BASE_URL}/search/multi?api_key=${API_KEY}&language=es-MX&query=${query}`
+                : `${BASE_URL}/movie/popular?api_key=${API_KEY}&language=es-MX`;
+            
+            const res = await fetch(url);
+            const data = await res.json();
+            renderGrid(data.results);
+        }
+
+        function renderGrid(items) {
+            const grid = document.getElementById('results-grid');
             grid.innerHTML = '';
-            movies.forEach(movie => {
-                if(!movie.poster_path) return;
+            items.forEach(item => {
+                if(!item.poster_path) return;
+                // Filtrar solo movie o tv (ignorar personas)
+                if(item.media_type === 'person') return;
+
                 const card = document.createElement('div');
-                card.className = 'movie-card cursor-pointer bg-slate-800 rounded-xl overflow-hidden relative';
+                card.className = 'cursor-pointer bg-slate-800 rounded-xl overflow-hidden hover:scale-105 transition';
                 card.innerHTML = `
-                    <img src="${IMAGE_URL + movie.poster_path}" class="w-full aspect-[2/3] object-cover">
-                    <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black p-2 pt-8">
-                        <h4 class="text-sm font-bold truncate text-white">${movie.title}</h4>
+                    <div class="relative">
+                        <img src="${IMAGE_URL + item.poster_path}" class="w-full">
+                        <span class="absolute top-2 right-2 bg-black/80 text-white text-xs px-2 py-1 rounded">
+                            ${item.media_type === 'tv' || item.first_air_date ? '📺 SERIE' : '🎬 PELI'}
+                        </span>
                     </div>
+                    <div class="p-2"><h4 class="text-sm font-bold truncate">${item.title || item.name}</h4></div>
                 `;
-                card.onclick = () => loadPlayer(movie);
+                // Detectar tipo manualmente si la API no lo dice explícitamente (popular movies)
+                const type = item.media_type || (item.title ? 'movie' : 'tv');
+                card.onclick = () => loadMedia(item.id, type, item);
                 grid.appendChild(card);
             });
         }
 
-        // 3. CARGAR EL REPRODUCTOR (INTEGRACIÓN)
-        function loadPlayer(movie) {
-            // Llenar datos visuales
-            document.getElementById('detail-title').innerText = movie.title;
-            document.getElementById('detail-overview').innerText = movie.overview;
-            document.getElementById('detail-poster').src = IMAGE_URL + movie.poster_path;
+        async function loadMedia(id, type, item) {
+            currentId = id;
+            currentType = type;
 
-            // --- AQUÍ OCURRE LA MAGIA ---
-            // Construimos la URL: https://api.noctiflix.lat... + ID de la película
-            const movieID = movie.id; 
-            const finalUrl = `${EXTERNAL_PLAYER_URL}${movieID}`;
+            // UI Básica
+            document.getElementById('view-title').innerText = item.title || item.name;
+            document.getElementById('view-poster').src = IMAGE_URL + item.poster_path;
+            document.getElementById('view-id').innerText = `TMDB ID: ${id}`;
+            document.getElementById('media-viewer').classList.remove('hidden');
+            document.getElementById('results-grid').classList.add('hidden');
+
+            const seriesControls = document.getElementById('series-controls');
+
+            if (type === 'tv') {
+                // ES SERIE: Obtener detalles de temporadas
+                seriesControls.classList.remove('hidden');
+                await loadSeasons(id);
+                updateSource(); // Cargar S1 E1 por defecto
+            } else {
+                // ES PELI: Ocultar controles de serie
+                seriesControls.classList.add('hidden');
+                updateSource(); // Cargar Peli Directa
+            }
+        }
+
+        async function loadSeasons(tvId) {
+            // Consultar a TMDB cuantas temporadas tiene
+            const res = await fetch(`${BASE_URL}/tv/${tvId}?api_key=${API_KEY}&language=es-MX`);
+            const data = await res.json();
             
-            console.log("Cargando video desde:", finalUrl); // Para que veas en la consola
-            iframe.src = finalUrl;
-            // ----------------------------
+            const seasonSelect = document.getElementById('season-select');
+            seasonSelect.innerHTML = '';
+            
+            data.seasons.forEach(s => {
+                if(s.season_number > 0) { // Ignorar temporada 0 (especiales)
+                    const opt = document.createElement('option');
+                    opt.value = s.season_number;
+                    opt.text = `Temporada ${s.season_number} (${s.episode_count} caps)`;
+                    // Guardamos el conteo de episodios en el dato del option
+                    opt.dataset.episodes = s.episode_count; 
+                    seasonSelect.appendChild(opt);
+                }
+            });
 
-            // Mostrar pantalla
-            detailSection.classList.remove('hidden');
-            grid.classList.add('hidden');
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+            // Al cambiar temporada, recalcular episodios
+            seasonSelect.onchange = () => loadEpisodes(seasonSelect.options[seasonSelect.selectedIndex].dataset.episodes);
+            
+            // Cargar episodios de la primera temporada
+            if(data.seasons.length > 0) {
+                loadEpisodes(data.seasons.find(s=>s.season_number===1)?.episode_count || 10);
+            }
         }
 
-        function closeDetails() {
-            detailSection.classList.add('hidden');
-            grid.classList.remove('hidden');
-            iframe.src = ""; // Detener video al salir
+        function loadEpisodes(count) {
+            const epSelect = document.getElementById('episode-select');
+            epSelect.innerHTML = '';
+            for(let i=1; i<=count; i++) {
+                const opt = document.createElement('option');
+                opt.value = i;
+                opt.text = `Episodio ${i}`;
+                epSelect.appendChild(opt);
+            }
+            // Actualizar iframe automáticamente si quieres
+            // updateSource(); 
         }
 
-        // Buscador
+        // --- LA FUNCIÓN QUE EJECUTA TU GENERADOR ---
+        function updateSource() {
+            const season = document.getElementById('season-select').value;
+            const episode = document.getElementById('episode-select').value;
+            
+            // Llamamos a tu fórmula maestra
+            const iframeHTML = generarIframePropio(currentId, currentType, season, episode);
+            
+            // 1. Inyectamos el HTML visualmente
+            document.getElementById('iframe-wrapper').innerHTML = iframeHTML;
+            
+            // 2. Te muestro el código en texto verde para que verifiques
+            document.getElementById('code-output').innerText = iframeHTML;
+        }
+
+        function closeViewer() {
+            document.getElementById('media-viewer').classList.add('hidden');
+            document.getElementById('results-grid').classList.remove('hidden');
+            document.getElementById('iframe-wrapper').innerHTML = ''; // Limpiar
+        }
+
         let timeout;
         document.getElementById('searchInput').addEventListener('input', (e) => {
             clearTimeout(timeout);
-            timeout = setTimeout(() => fetchMovies(e.target.value), 500);
+            timeout = setTimeout(() => searchMedia(e.target.value), 500);
         });
 
-        fetchMovies();
+        searchMedia();
+
     </script>
 </body>
 </html>
