@@ -15,7 +15,7 @@
 <body>
     <div class="container">
         <div class="title" id="title">Cargando película...</div>
-        <div class="loading">Conectando al servidor de FlixHQ...</div>
+        <div class="loading">Conectando al servidor de FlixHQ/Cuevana...</div>
         <iframe id="player" allowfullscreen allow="autoplay"></iframe>
     </div>
 
@@ -26,18 +26,17 @@
         const episode = params.get('episode');
 
         if (!id) {
-            document.getElementById('title').textContent = 'Agrega ?id=NUMERO en la URL';
-            document.querySelector('.loading').textContent = 'Ejemplo: ?id=299536';
+            document.getElementById('title').textContent = 'Agrega ?id=NUMERO';
             return;
         }
 
-        // Base principal: multiembed.mov (la que usa FlixHQ/Cuevana para streams reales)
-        let mainSource = `https://multiembed.mov/?video_id=${id}&tmdb=1`;
+        // Base real de FlixHQ/Cuevana (multiembed/superembed direct)
+        let main = `https://multiembed.mov/directstream.php?video_id=${id}&tmdb=1`;
         if (season && episode) {
-            mainSource += `&s=${season}&e=${episode}`;
+            main += `&s=${season}&e=${episode}`;
         }
 
-        // Fallbacks (los mismos que FlixHQ usa cuando multiembed falla)
+        // Fallbacks top 2025
         const fallbacks = [
             `https://vidsrc.to/embed/movie/${id}${season ? `/tv/${id}-${season}-${episode}` : ''}`,
             `https://vembed.click/embed/movie/${id}${season ? `/tv/${id}-${season}-${episode}` : ''}`,
@@ -49,16 +48,15 @@
 
         function loadSource() {
             if (current === 0) {
-                iframe.src = mainSource;
+                iframe.src = main;
             } else if (current - 1 < fallbacks.length) {
                 iframe.src = fallbacks[current - 1];
             } else {
-                document.querySelector('.loading').textContent = 'Refresca o prueba otra película 😔';
+                document.querySelector('.loading').textContent = 'Prueba otra película o refresca';
             }
             current++;
         }
 
-        // Título en español
         fetch(`https://api.themoviedb.org/3/${season ? 'tv' : 'movie'}/${id}?api_key=936410eebae74f9895643e085cc4a740&language=es-ES`)
             .then(res => res.json())
             .then(data => document.getElementById('title').textContent = (season ? data.name : data.title) || 'JJMovies.lat');
