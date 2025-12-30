@@ -5,6 +5,7 @@ export default function PlayerPage() {
   const [sources, setSources] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [movieData, setMovieData] = useState({ title: 'Cargando...', overview: '' });
   const playerRef = useRef(null);
   const iframeRef = useRef(null);
 
@@ -20,6 +21,20 @@ export default function PlayerPage() {
       return;
     }
 
+    // 🔹 Obtener título en español desde TMDB
+    fetch(`https://api.themoviedb.org/3/${season ? 'tv' : 'movie'}/${id}?api_key=936410eebae74f9895643e085cc4a740&language=es-ES`)
+      .then(res => res.json())
+      .then(data => {
+        setMovieData({
+          title: season ? data.name : data.title,
+          overview: data.overview || 'Sinopsis no disponible.'
+        });
+      })
+      .catch(() => {
+        setMovieData({ title: 'Sin título', overview: 'Sinopsis no disponible.' });
+      });
+
+    // 🔹 Obtener fuentes
     fetch(`/api/sources?id=${id}${season ? `&season=${season}&episode=${episode}` : ''}`)
       .then(res => res.json())
       .then(data => {
@@ -81,9 +96,18 @@ export default function PlayerPage() {
         </div>
       )}
 
+      {/* Título en español */}
+      <div style={{ position: 'absolute', top: '10px', left: '20px', zIndex: 10, maxWidth: '60%', textShadow: '0 0 8px black' }}>
+        <h1 style={{ fontSize: '28px', margin: 0, color: '#ff4d4d' }}>{movieData.title}</h1>
+        <p style={{ fontSize: '14px', opacity: 0.8, marginTop: '5px', maxHeight: '60px', overflow: 'hidden' }}>
+          {movieData.overview}
+        </p>
+      </div>
+
       <video ref={playerRef} controls style={{ display: 'none', width: '100%', height: '100%' }} />
       <div ref={iframeRef} style={{ display: 'none', width: '100%', height: '100%' }} />
 
+      {/* Panel de fuentes */}
       {sources.length > 0 && (
         <div style={{ position: 'absolute', top: '15px', right: '15px', background: 'rgba(0,0,0,0.7)', borderRadius: '8px', padding: '12px', zIndex: 10, width: '160px' }}>
           <div style={{ fontWeight: 'bold', marginBottom: '8px', color: '#ff3333' }}>Fuentes:</div>
@@ -109,6 +133,11 @@ export default function PlayerPage() {
           ))}
         </div>
       )}
+
+      {/* Botón de Telegram (opcional) */}
+      <div style={{ position: 'absolute', bottom: '15px', left: '20px', color: '#ff6666', fontSize: '14px', zIndex: 10 }}>
+        📩 ¿Problemas? Contáctanos en Telegram: <a href="https://t.me/TumbadoStreaming" style={{ color: '#ff3333', textDecoration: 'underline' }}>@TumbadoStreaming</a>
+      </div>
 
       <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
     </div>
