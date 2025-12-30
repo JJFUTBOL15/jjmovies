@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Reproductor - JJMOVIES</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body, html {
+      background: #000;
+      color: white;
+      overflow: hidden;
+      height: 100vh;
+      font-family: 'Segoe UI', Arial, sans-serif;
+    }
+    .player-container {
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    .video-wrapper {
+      flex: 1;
+      background: #000;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+    }
+    .video-iframe, .video-element {
+      width: 100%;
+      height: 100%;
+      border: none;
+      outline: none;
+    }
+    .info-bar {
+      padding: 12px 20px;
+      background: rgba(0, 0, 0, 0.8);
+      border-top: 1px solid #333;
+      font-size: 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    @media (max-width: 600px) {
+      .info-bar {
+        flex-direction: column;
+        gap: 8px;
+        text-align: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="player-container">
+    <div class="video-wrapper" id="video-container">
+      <!-- Aquí se carga el video (iframe interno o video directo) -->
+      <p id="loading" style="color: #aaa;">Cargando reproductor...</p>
+    </div>
+    <div class="info-bar">
+      <div id="movie-title">Cargando...</div>
+      <div>
+        <a href="https://jjmovies.lat" target="_blank" style="color: #6c5ce7; text-decoration: none;">🎬 JJMOVIES</a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // === CONFIGURACIÓN ===
+    const API_KEY_TMDB = 'TU_API_KEY_DE_TMDB'; // ⚠️ Reemplaza esto con tu clave real
+
+    // Obtener ID de la URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const movieId = urlParams.get('id');
+
+    if (!movieId || isNaN(movieId)) {
+      document.getElementById('loading').textContent = '❌ ID de película no válido';
+    } else {
+      loadMovieInfo(movieId);
+      loadVideoSource(movieId);
+    }
+
+    // === Cargar info de TMDB ===
+    async function loadMovieInfo(id) {
+      try {
+        const res = await fetch(`https://api.themoviedb.org/3/movie/${id}?api_key=${API_KEY_TMDB}&language=es`);
+        const data = await res.json();
+        if (data.title) {
+          document.getElementById('movie-title').textContent = `${data.title} (${data.release_date?.substring(0, 4) || '?'})`;
+        } else {
+          document.getElementById('movie-title').textContent = 'Película desconocida';
+        }
+      } catch (err) {
+        console.warn('No se pudo cargar info de TMDB');
+        document.getElementById('movie-title').textContent = 'ID: ' + id;
+      }
+    }
+
+    // === Cargar video desde tu sistema (scraping interno) ===
+    function loadVideoSource(id) {
+      // ✅ AQUÍ ES DONDE INTEGRAS TU SCRAPER INTERNO
+      // Por ejemplo, si tu sistema devuelve un enlace de streaming en:
+      // https://jjmovies.lat/api/stream?id=12345 → devuelve JSON con "url"
+
+      // Opción 1: Si ya tienes un iframe embebido interno (recomendado)
+      const iframe = document.createElement('iframe');
+      iframe.src = `https://tu-sistema-interno.com/embed/${id}`; // ⚠️ Reemplaza con tu URL real de streaming
+      iframe.className = 'video-iframe';
+      iframe.allowFullscreen = true;
+      iframe.allow = 'autoplay; encrypted-media';
+      document.getElementById('video-container').innerHTML = '';
+      document.getElementById('video-container').appendChild(iframe);
+
+      // Opción 2: Si usas video directo (MP4, HLS, etc.)
+      /*
+      const video = document.createElement('video');
+      video.src = `https://tu-sistema-interno.com/stream/${id}`;
+      video.className = 'video-element';
+      video.controls = true;
+      video.autoplay = true;
+      document.getElementById('video-container').innerHTML = '';
+      document.getElementById('video-container').appendChild(video);
+      */
+    }
+  </script>
+</body>
+</html>
