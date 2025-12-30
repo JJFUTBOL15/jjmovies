@@ -1,36 +1,46 @@
 // api/video.js
 
-const CUE_BASE = 'https://cuevana3.io';
-
 export default async function handler(req, res) {
   const { id, type = 'movie', season, episode } = req.query;
 
   if (!id) {
-    return res.status(400).json({ error: 'Falta el parámetro "id"' });
+    return res.status(400).send('Error: falta el parámetro "id"');
   }
 
   try {
-    let videoUrl = null;
+    // Paso 1: Obtener IMDB ID desde TMDB
+    const query = id.replace(/-/g, ' ');
+    const mediaType = type === 'movie' ? 'movie' : 'tv';
+    const tmdbRes = await fetch(
+      `https://api.themoviedb.org/3/search/${mediaType}?api_key=936410eebae74f9895643e085cc4a740&query=${encodeURIComponent(query)}&include_adult=false`
+    );
+    const tmdbData = await tmdbRes.json();
 
-    if (type === 'movie') {
-      videoUrl = await scrapeMovie(id);
-    } else if (type === 'series' && season && episode) {
-      videoUrl = await scrapeEpisode(id, season, episode);
-    } else {
-      return res.status(400).json({ error: 'Para series, incluye season y episode' });
+    if (!tmdbData.results?.[0]?.external_ids?.imdb_id) {
+      throw new Error('IMDB ID no encontrado');
     }
 
-    if (!videoUrl) {
-      return res.status(404).send(`
-        <div style="background:#111; color:white; padding:20px; text-align:center;">
-          <h2>Video no encontrado</h2>
-          <p>El contenido solicitado no está disponible.</p>
-        </div>
-      `);
-    }
+    const imdbId = tmdbData.results[0].external_ids.imdb_id;
 
-    // Generar iframe embebible
-    const iframeHtml = `
+    // Paso 2: Scrapear embed69.com
+    const embedUrl = `https://embed69.com/v/${imdbId}`;
+    const embedRes = await fetch(embedUrl, {
+      headers: { 'User-Agent': 'Mozilla/5.0' }
+    });
+    const html = await embedRes.text();
+
+    // Paso 3: Extraer dataLink (Base64 JWT)
+    const match = html.match(/let dataLink = '([^']+)'/);
+    if (!match) throw new Error('dataLink no encontrado');
+
+    const token = match[1];
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    const videoUrl = payload.url;
+
+    if (!videoUrl) throw new Error('URL de video no extraída');
+
+    // Paso 4: Devolver iframe listo
+    const iframe = `
       <iframe 
         class="aspect-video w-full" 
         src="https://jjmovies.lat/player.html?url=${encodeURIComponent(videoUrl)}" 
@@ -41,73 +51,16 @@ export default async function handler(req, res) {
     `;
 
     res.setHeader('Content-Type', 'text/html');
-    res.status(200).send(iframeHtml);
+    res.status(200).send(iframe);
 
   } catch (e) {
-    console.error(e);
-    res.status(500).send(`
-      <div style="background:#111; color:white; padding:20px; text-align:center;">
-        <h2>Error interno</h2>
-        <p>Hubo un problema al cargar el video.</p>
+    console.error('Error:', e.message);
+    res.status(404).send(`
+      <div style="background:#000; color:#fff; padding:20px; text-align:center; font-family:sans-serif;">
+        <h2>⛔ Video no disponible</h2>
+        <p>Lo sentimos, este contenido no está accesible en este momento.</p>
+        <p style="font-size:0.8em; margin-top:10px;">ID: ${id}</p>
       </div>
     `);
   }
-}
-
-// === SCRAPING FUNCTIONS ===
-async function scrapeMovie(slug) {
-  const url = `${CUE_BASE}/pelicula/${slug}/`;
-  const html = await fetchHtml(url);
-  return extractVideoLink(html);
-}
-
-async function scrapeEpisode(slug, season, episode) {
-  const seriesUrl = `${CUE_BASE}/serie/${slug}/`;
-  const html = await fetchHtml(seriesUrl);
-
-  const regex = new RegExp(
-    `<a[^>]*href=["']([^"']*)["'][^>]*data-season=["']\\s*${season}\\s*["'][^>]*data-episode=["']\\s*${episode}\\s*["']`,
-    'i'
-  );
-  const match = html.match(regex);
-  if (match) {
-    const epUrl = match[1].startsWith('http') ? match[1] : CUE_BASE + match[1];
-    const epHtml = await fetchHtml(epUrl);
-    return extractVideoLink(epHtml);
-  }
-  return null;
-}
-
-async function fetchHtml(url) {
-  const response = await fetch(url, {
-    headers: { 'User-Agent': 'Mozilla/5.0 (compatible; JJMOVIES/1.0)' }
-  });
-  return await response.text();
-}
-
-function extractVideoLink(html) {
-  // Buscar showEmbed
-  const embedMatch = html.match(/<iframe[^>]*src=["']([^"']*embed-page\?showEmbed=[^"']*)["']/i);
-  if (embedMatch) {
-    return resolveShowEmbed(embedMatch[1]);
-  }
-
-  // Buscar trembed
-  const trembedMatch = html.match(/<iframe[^>]*src=["']([^"']*trembed[^"']*)["']/i);
-  if (trembedMatch) {
-    return trembedMatch[1].startsWith('http') ? trembedMatch[1] : CUE_BASE + trembedMatch[1];
-  }
-
-  return null;
-}
-
-function resolveShowEmbed(embedUrl) {
-  try {
-    const url = new URL(embedUrl.startsWith('http') ? embedUrl : CUE_BASE + embedUrl);
-    const encoded = url.searchParams.get('showEmbed');
-    if (encoded) {
-      return atob(encoded); // Decodificar Base64
-    }
-  } catch (e) {}
-  return embedUrl;
 }
