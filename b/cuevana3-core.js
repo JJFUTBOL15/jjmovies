@@ -1,7 +1,7 @@
 // =============== CONFIGURACIÓN ===============
 const TMDB_API_KEY = '936410eebae74f9895643e085cc4a740';
 const PROXY = 'https://api.codetabs.com/v1/proxy?quest=';
-const CUE_BASE = 'https://cue.cuevana3.nu';
+const CUE_BASE = 'https://cuevana3.io'; // ¡Cambiado!
 
 let currentMedia = {
   type: null,
@@ -100,15 +100,14 @@ async function fetchTMDBMetadata() {
   }
 }
 
-// =============== SCRAPING PRINCIPAL ===============
+// =============== SCRAPING PRINCIPAL (PARA cuevana3.io) ===============
 async function scrapeVideoFromCuevana() {
   let pageUrl;
   if (currentMedia.type === 'movie') {
     pageUrl = `${CUE_BASE}/pelicula/${currentMedia.slug}/`;
   } else {
-    const s = currentMedia.season || 1;
-    const e = currentMedia.episode || 1;
-    pageUrl = `${CUE_BASE}/serie/${currentMedia.slug}/temporada-${s}/episodio/${e}/`;
+    // Para series, ir a la página principal de la serie
+    pageUrl = `${CUE_BASE}/serie/${currentMedia.slug}/`;
   }
 
   try {
@@ -116,11 +115,59 @@ async function scrapeVideoFromCuevana() {
     if (!res.ok) return null;
     const html = await res.text();
 
-    // Buscar showEmbed
-    const embedMatch = html.match(/<iframe[^>]*src=["']([^"']*embed-page\?showEmbed=[^"']*)["']/i);
-    if (embedMatch) return await resolveCuevanaEmbed(embedMatch[1]);
+    // Buscar el enlace del episodio específico
+    const seasonNum = currentMedia.season || 1;
+    const episodeNum = currentMedia.episode || 1;
 
-    // Buscar trembed
+    // En cuevana3.io, los episodios están en bloques con data-season y data-episode
+    const regex = new RegExp(
+      `<a[^>]*href=["']([^"']*)["'][^>]*data-season=["']\\s*${seasonNum}\\s*["'][^>]*data-episode=["']\\s*${episodeNum}\\s*["']`,
+      'i'
+    );
+    const match = html.match(regex);
+
+    if (match) {
+      let epUrl = match[1];
+      if (epUrl.startsWith('/')) epUrl = CUE_BASE + epUrl;
+      return await extractVideoFromPage(epUrl);
+    }
+
+    // Alternativa: buscar por texto "Episodio X"
+    const epRegex = new RegExp(
+      `<a[^>]*href=["']([^"']*)["'][^>]*>\\s*Episodio\\s+${episodeNum}\\b`,
+      'i'
+    );
+    const textMatch = html.match(epRegex);
+    if (textMatch) {
+      let epUrl = textMatch[1];
+      if (epUrl.startsWith('/')) epUrl = CUE_BASE + epUrl;
+      return await extractVideoFromPage(epUrl);
+    }
+
+    // Último recurso: intentar URL directa
+    const fallbackUrl = `${CUE_BASE}/serie/${currentMedia.slug}/temporada-${seasonNum}/episodio-${episodeNum}/`;
+    return await extractVideoFromPage(fallbackUrl);
+
+  } catch (e) {
+    console.warn('Fallo scraping:', e);
+    return null;
+  }
+}
+
+// =============== Extraer video de cualquier página ===============
+async function extractVideoFromPage(pageUrl) {
+  try {
+    const res = await fetch(`${PROXY}${encodeURIComponent(pageUrl)}`);
+    if (!res.ok) return null;
+    const html = await res.text();
+
+    // 1. Buscar embed-page?showEmbed=...
+    const embedMatch = html.match(/<iframe[^>]*src=["']([^"']*embed-page\?showEmbed=[^"']*)["']/i);
+    if (embedMatch) {
+      return await resolveCuevanaEmbed(embedMatch[1]);
+    }
+
+    // 2. Buscar trembed directo
     const trembedMatch = html.match(/<iframe[^>]*src=["']([^"']*trembed[^"']*)["']/i);
     if (trembedMatch) {
       let url = trembedMatch[1];
@@ -128,14 +175,43 @@ async function scrapeVideoFromCuevana() {
       return url;
     }
 
-    // Buscar data-link
-    const dataLink = html.match(/data-link=["']([^"']+)["']/);
-    if (dataLink) return dataLink[1];
+    // 3. Buscar enlaces en botones con class="btlink"
+    const buttonMatch = html.match(/<a[^>]*class=["'][^"']*btlink[^"']*["'][^>]*href=["']([^"']+)["']/i);
+    if (buttonMatch) {
+      let url = buttonMatch[1];
+      if (url.startsWith('/')) url = CUE_BASE + url;
+      return url;
+    }
 
+    return null;
   } catch (e) {
-    console.warn('Fallo scraping principal:', e);
+    console.warn('Error al scrapear página:', pageUrl, e);
+    return null;
   }
-  return null;
+}
+
+// =============== RESOLVER showEmbed ===============
+async function resolveCuevanaEmbed(embedUrl) {
+  const fullUrl = embedUrl.startsWith('http') ? embedUrl : CUE_BASE + embedUrl;
+  const url = new URL(fullUrl);
+  const encoded = url.searchParams.get('showEmbed');
+  if (!encoded) return fullUrl;
+
+  try {
+    const fakePlayerUrl = atob(encoded);
+    const res = await fetch(`${PROXY}${encodeURIComponent(fakePlayerUrl)}`);
+    const html = await res.text();
+
+    const redirectMatch = html.match(/window\.(top\.)?location\.href\s*=\s*["']([^"']+)["']/);
+    if (redirectMatch) return redirectMatch[2];
+
+    const iframeMatch = html.match(/<iframe[^>]*src=["']([^"']+)["']/i);
+    if (iframeMatch) return iframeMatch[1];
+
+    return fakePlayerUrl;
+  } catch (e) {
+    return fullUrl;
+  }
 }
 
 // =============== FALLBACK: SERVIDORES DIRECTOS ===============
@@ -165,45 +241,17 @@ async function tryFallbackServers() {
     );
   }
 
-  // Probar cada servidor (solo verifica si responde, no el contenido)
+  // Probar cada servidor (solo devuelve el primero)
   for (const url of servers) {
     try {
-      const testRes = await fetch(url, { method: 'HEAD', mode: 'no-cors' });
-      // Como no-cors no da status, usamos timeout + suposición
-      // En la práctica, si el iframe carga, sirve
-      return url; // devolvemos el primero
+      // No necesitamos verificar el status, solo devolver el primero
+      return url;
     } catch (e) {
       continue;
     }
   }
 
-  // Último recurso: Google Search fallback (simulado)
-  // No lo implementamos por complejidad, pero en sandbox se asume que uno funciona
   return null;
-}
-
-// =============== RESOLVER showEmbed ===============
-async function resolveCuevanaEmbed(embedUrl) {
-  const fullUrl = embedUrl.startsWith('http') ? embedUrl : CUE_BASE + embedUrl;
-  const url = new URL(fullUrl);
-  const encoded = url.searchParams.get('showEmbed');
-  if (!encoded) return fullUrl;
-
-  try {
-    const fakePlayerUrl = atob(encoded);
-    const res = await fetch(`${PROXY}${encodeURIComponent(fakePlayerUrl)}`);
-    const html = await res.text();
-
-    const redirectMatch = html.match(/window\.(top\.)?location\.href\s*=\s*["']([^"']+)["']/);
-    if (redirectMatch) return redirectMatch[2];
-
-    const iframeMatch = html.match(/<iframe[^>]*src=["']([^"']+)["']/i);
-    if (iframeMatch) return iframeMatch[1];
-
-    return fakePlayerUrl;
-  } catch (e) {
-    return fullUrl;
-  }
 }
 
 // =============== REPRODUCIR ===============
