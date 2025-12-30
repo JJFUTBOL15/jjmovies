@@ -3,137 +3,191 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>JJMovies - Reproductor</title>
+  <title>JJMovies - Scrapear</title>
   <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
     body {
       background: #000;
       color: white;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-family: Arial, sans-serif;
       padding: 20px;
-      line-height: 1.5;
+      margin: 0;
     }
     #content {
       max-width: 900px;
       margin: 0 auto;
     }
-    #movie-title {
-      font-size: 32px;
+    #title {
+      font-size: 28px;
       color: #ff3333;
-      margin-bottom: 12px;
-      text-shadow: 0 0 8px rgba(0,0,0,0.8);
+      margin-bottom: 10px;
     }
-    #movie-overview {
+    #overview {
       margin-bottom: 20px;
       opacity: 0.9;
-      font-size: 16px;
     }
-    #server-section {
-      margin: 25px 0;
+    #sources {
+      margin: 20px 0;
     }
-    .section-title {
-      font-size: 20px;
-      margin-bottom: 12px;
-      color: #ff6666;
-    }
-    .server-btn {
-      background: #c00;
+    .btn {
+      display: inline-block;
+      padding: 8px 16px;
+      background: #b00;
       color: white;
       border: none;
-      padding: 10px 20px;
-      border-radius: 6px;
-      font-size: 16px;
+      border-radius: 4px;
+      margin: 5px;
       cursor: pointer;
-      transition: background 0.2s;
     }
-    .server-btn:hover {
-      background: #ff0000;
+    .btn:hover {
+      background: #f00;
     }
     #player-container {
       width: 100%;
       height: 0;
-      padding-bottom: 56.25%; /* 16:9 */
+      padding-bottom: 56.25%;
       position: relative;
       background: #111;
       border-radius: 8px;
       overflow: hidden;
       margin-top: 20px;
     }
-    #iframe-container {
+    #player-iframe {
       position: absolute;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
+      border: none;
     }
-    #error {
+    #status {
       color: #ff6666;
-      font-weight: bold;
+      margin: 10px 0;
     }
   </style>
 </head>
 <body>
   <div id="content">
-    <h1 id="movie-title">Cargando película...</h1>
-    <p id="movie-overview">Obteniendo información...</p>
-
-    <div id="server-section">
-      <div class="section-title">▶ Fuentes disponibles</div>
-      <button id="verhd-btn" class="server-btn" disabled>
-        Cargando fuentes...
-      </button>
+    <h1 id="title">Cargando película...</h1>
+    <p id="overview"></p>
+    <div id="status">Buscando fuentes...</div>
+    <div id="sources"></div>
+    <div id="player-container">
+      <iframe id="player-iframe" allowfullscreen allow="autoplay; encrypted-media"></iframe>
     </div>
-
-    <div id="player-container" style="display:none;">
-      <div id="iframe-container"></div>
-    </div>
-
-    <div id="error"></div>
   </div>
 
   <script>
-    // === CONFIGURACIÓN ===
+    // === CONFIG ===
     const API_KEY = '936410eebae74f9895643e085cc4a740';
+    const PROXY = 'https://api.codetabs.com/v1/proxy?quest=';
     const params = new URLSearchParams(window.location.search);
     const id = params.get('id');
-    const verhdBtn = document.getElementById('verhd-btn');
-    const errorDiv = document.getElementById('error');
 
-    // === SI NO HAY ID ===
     if (!id) {
-      document.getElementById('movie-title').textContent = '❌ Error: Falta ?id= en la URL';
-      document.getElementById('movie-overview').textContent = 'Ejemplo: ?id=550';
-      verhdBtn.textContent = 'No disponible';
-      verhdBtn.disabled = true;
+      document.getElementById('title').textContent = '❌ Usa ?id=550 en la URL';
+      document.getElementById('status').textContent = '';
     } else {
-      // === CARGAR DATOS DE TMDB ===
-      fetch(`https://api.themoviedb.org/3/movie/${id}?api_key=${API_KEY}&language=es-ES`)
-        .then(res => {
-          if (!res.ok) throw new Error('Película no encontrada en TMDB');
-          return res.json();
-        })
-        .then(data => {
-          document.getElementById('movie-title').textContent = data.title || 'Película';
-          document.getElementById('movie-overview').textContent = data.overview || 'Sinopsis no disponible.';
-        })
-        .catch(err => {
-          console.error('TMDB Error:', err);
-          document.getElementById('movie-title').textContent = '⚠️ Película no encontrada';
-          document.getElementById('movie-overview').textContent = '';
-          errorDiv.textContent = 'No se pudo cargar la información de la película.';
-        })
-        .finally(() => {
-          // === SIEMPRE ACTIVAR BOTÓN DE VERHDLINK ===
-          verhdBtn.textContent = 'Ver en VerHDLink';
-          verhdBtn.disabled = false;
-          verhdBtn.onclick = () => {
-            window.open(`https://verhdlink.cam/movie/${id}`, '_blank', 'noopener,noreferrer');
+      init(id);
+    }
+
+    async function init(id) {
+      // Cargar TMDB (español)
+      let title = 'Película';
+      try {
+        const tmdbRes = await fetch(`https://api.themoviedb.org/3/movie/${id}?api_key=${API_KEY}&language=es-ES`);
+        const tmdb = await tmdbRes.json();
+        title = tmdb.title;
+        document.getElementById('title').textContent = title;
+        document.getElementById('overview').textContent = tmdb.overview || 'Sinopsis no disponible.';
+      } catch (e) {
+        document.getElementById('title').textContent = '⚠️ Película no encontrada';
+      }
+
+      // Intentar fuentes
+      const sources = [];
+
+      // 1. Cuevana.biz
+      const cuevanaUrl = await scrapeCuevanaBiz(id, title);
+      if (cuevanaUrl) {
+        sources.push({ name: 'Cuevana.biz', url: cuevanaUrl });
+      }
+
+      // 2. VerHDLink
+      const verhdUrl = await scrapeVerHDLink(id);
+      if (verhdUrl) {
+        sources.push({ name: 'VerHDLink', url: verhdUrl });
+      }
+
+      // Mostrar resultados
+      const status = document.getElementById('status');
+      const sourcesDiv = document.getElementById('sources');
+
+      if (sources.length === 0) {
+        status.textContent = '❌ Ninguna fuente disponible';
+      } else {
+        status.textContent = `✅ ${sources.length} fuente(s) encontrada(s):`;
+        sources.forEach(src => {
+          const btn = document.createElement('button');
+          btn.className = 'btn';
+          btn.textContent = src.name;
+          btn.onclick = () => {
+            document.getElementById('player-iframe').src = src.url;
           };
+          sourcesDiv.appendChild(btn);
         });
+      }
+    }
+
+    // === SCRAPERS ===
+
+    // Cuevana.biz: usa título en español
+    async function scrapeCuevanaBiz(id, spanishTitle) {
+      try {
+        // Crear slug en español
+        const slug = spanishTitle
+          .toLowerCase()
+          .normalize("NFD")
+          .replace(/[\u0300-\u036f]/g, "")
+          .replace(/[^a-z0-9\s-áéíóúñ]/g, "")
+          .replace(/\s+/g, "-")
+          .replace(/-+/g, "-")
+          .replace(/^-|-$/g, "");
+
+        const pageUrl = `https://cuevana.biz/pelicula/${slug}/`;
+        const proxyUrl = `${PROXY}${encodeURIComponent(pageUrl)}`;
+        
+        const res = await fetch(proxyUrl);
+        const html = await res.text();
+
+        // Buscar iframe directo
+        const iframeMatch = html.match(/<iframe[^>]*src=["']([^"']*(?:embedsito|fembed|dood|uqload)[^"']*)["']/i);
+        if (iframeMatch) return iframeMatch[1];
+
+        // Buscar data-url
+        const dataMatch = html.match(/data-url=["']([^"']+)["']/);
+        if (dataMatch) return dataMatch[1];
+
+      } catch (e) {
+        console.warn('Cuevana.biz falló:', e.message);
+      }
+      return null;
+    }
+
+    // VerHDLink: usa ID directo
+    async function scrapeVerHDLink(id) {
+      try {
+        const pageUrl = `https://verhdlink.cam/movie/${id}`;
+        const proxyUrl = `${PROXY}${encodeURIComponent(pageUrl)}`;
+        
+        const res = await fetch(proxyUrl);
+        const html = await res.text();
+
+        const match = html.match(/data-link\s*=\s*['"]([^'"]*(?:unlimplay|vidhide|filelions|streamlare)[^'"]*)['"]/i);
+        return match ? match[1] : null;
+      } catch (e) {
+        console.warn('VerHDLink falló:', e.message);
+      }
+      return null;
     }
   </script>
 </body>
