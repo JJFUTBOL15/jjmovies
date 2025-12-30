@@ -1,12 +1,9 @@
-// api/embed.js
-export default async function handler(req) {
-  const url = new URL(req.url, `https://${req.headers.host}`);
-  const id = url.searchParams.get('id');
-  const season = url.searchParams.get('season');
-  const episode = url.searchParams.get('episode');
+// pages/api/embed.js
+export default function handler(req, res) {
+  const { id, season, episode } = req.query;
 
   if (!id) {
-    return new Response('Error: falta ?id=', { status: 400 });
+    return res.status(400).send('Error: falta ?id=');
   }
 
   let playerUrl = `https://jjmovies.lat/player.html?id=${encodeURIComponent(id)}`;
@@ -14,15 +11,14 @@ export default async function handler(req) {
   if (episode) playerUrl += `&episode=${encodeURIComponent(episode)}`;
 
   const iframe = `
-<iframe class="aspect-video w-full" 
-        src="${playerUrl}" 
-        frameborder="0" 
-        allowfullscreen
-        allow="autoplay; encrypted-media">
+<iframe class="aspect-video w-full"
+        src="${playerUrl}"
+        frameborder="0"
+        allow="autoplay; fullscreen; encrypted-media"
+        allowfullscreen>
 </iframe>
   `.trim();
 
-  return new Response(iframe, {
-    headers: { 'Content-Type': 'text/html; charset=utf-8' }
-  });
+  res.setHeader('Content-Type', 'text/html; charset=utf-8');
+  res.status(200).send(iframe);
 }
