@@ -27,7 +27,261 @@
     <script src="https://cdn.plyr.io/3.7.8/plyr.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
     <script>
-        // El script va aquí
+        // 1. Configuración y Estado (El Cerebro)
+const API_KEY = 'YOUR_TMDB_API_KEY'; // Reemplaza con tu key de TMDB
+const PROXY_URL = 'https://api.codetabs.com/v1/proxy?quest='; // Proxy para bypass CORS
+let movieData = {
+    id: null,
+    type: 'movie', // 'movie' o 'tv'
+    season: null,
+    episode: null,
+    title: '',
+    overview: '',
+    poster: '',
+    backdrop: '',
+    imdb_id: '',
+    seasons: [],
+    episodes: []
+};
+let sourcesList = [];
+let player;
+
+// Función para actualizar UI
+function updateUI() {
+    document.getElementById('movie-title').textContent = movieData.title;
+    document.getElementById('movie-overview').textContent = movieData.overview;
+    document.getElementById('backdrop-img').style.backgroundImage = `ur[](https://image.tmdb.org/t/p/original${movieData.backdrop})`;
+    if (movieData.type === 'tv') {
+        document.getElementById('series-controls').classList.remove('hidden-force');
+        populateSeasons();
+        populateEpisodes(movieData.season);
+    }
+}
+
+// 2. Obtención de Datos (TMDB API)
+document.addEventListener('DOMContentLoaded', () => {
+    const params = new URLSearchParams(window.location.search);
+    movieData.id = params.get('id');
+    movieData.season = params.get('season') || 1;
+    movieData.episode = params.get('episode') || 1;
+    movieData.type = params.has('season') ? 'tv' : 'movie';
+
+    if (movieData.type === 'movie') {
+        fetchTMDBData(movieData.id);
+    } else {
+        fetchTMDBTVData(movieData.id, movieData.season, movieData.episode);
+    }
+});
+
+async function fetchTMDBData(id) {
+    const url = `https://api.themoviedb.org/3/movie/${id}?api_key=${API_KEY}&append_to_response=external_ids`;
+    const res = await fetch(url);
+    const data = await res.json();
+    movieData.title = data.title;
+    movieData.overview = data.overview;
+    movieData.poster = data.poster_path;
+    movieData.backdrop = data.backdrop_path;
+    movieData.imdb_id = data.external_ids.imdb_id;
+    updateUI();
+}
+
+async function fetchTMDBTVData(id, season, episode) {
+    const seriesUrl = `https://api.themoviedb.org/3/tv/${id}?api_key=${API_KEY}&append_to_response=external_ids`;
+    const resSeries = await fetch(seriesUrl);
+    const dataSeries = await resSeries.json();
+    movieData.title = dataSeries.name;
+    movieData.overview = dataSeries.overview;
+    movieData.poster = dataSeries.poster_path;
+    movieData.backdrop = dataSeries.backdrop_path;
+    movieData.imdb_id = dataSeries.external_ids.imdb_id;
+    movieData.seasons = dataSeries.seasons;
+
+    const seasonUrl = `https://api.themoviedb.org/3/tv/${id}/season/${season}?api_key=${API_KEY}`;
+    const resSeason = await fetch(seasonUrl);
+    const dataSeason = await resSeason.json();
+    movieData.episodes = dataSeason.episodes;
+    updateUI();
+}
+
+// Poblar selects para series
+function populateSeasons() {
+    const select = document.getElementById('season-select');
+    select.innerHTML = '';
+    movieData.seasons.forEach(s => {
+        const option = document.createElement('option');
+        option.value = s.season_number;
+        option.textContent = `Temporada ${s.season_number}`;
+        if (s.season_number == movieData.season) option.selected = true;
+        select.appendChild(option);
+    });
+}
+
+function populateEpisodes(season) {
+    const select = document.getElementById('episode-select');
+    select.innerHTML = '';
+    movieData.episodes.forEach(e => {
+        if (e.season_number == season) {
+            const option = document.createElement('option');
+            option.value = e.episode_number;
+            option.textContent = `Episodio ${e.episode_number}`;
+            if (e.episode_number == movieData.episode) option.selected = true;
+            select.appendChild(option);
+        }
+    });
+}
+
+// 3. El Motor de Scraping (Buscador de Videos)
+async function startScraping() {
+    sourcesList = [];
+    const serverList = document.getElementById('server-list-container');
+    serverList.innerHTML = '';
+
+    // Intentar las estrategias
+    await scrapeEmbed69();
+    await scrapeVerHDLink();
+    if (!movieData.imdb_id) await scrapeBlogFallback();
+
+    // Mostrar lista de servidores
+    sourcesList.forEach((src, index) => {
+        const btn = document.createElement('button');
+        btn.textContent = `Servidor ${index + 1}`;
+        btn.classList.add('bg-gray-700', 'p-2', 'mb-2', 'w-full');
+        btn.onclick = () => loadSource(src);
+        serverList.appendChild(btn);
+    });
+}
+
+async function scrapeEmbed69() {
+    if (!movieData.imdb_id) return;
+    const url = `${PROXY_URL}https://embed69.com/title/${movieData.imdb_id}`;
+    const res = await fetch(url);
+    const text = await res.text();
+    const regex = /let dataLink = "(.*?)";/;
+    const match = text.match(regex);
+    if (match) {
+        const encoded = match[1];
+        const decoded = decodeJWT(encoded); // Asume que tienes esta función
+        sourcesList.push(decoded);
+    }
+}
+
+async function scrapeVerHDLink() {
+    const url = `${PROXY_URL}https://verhdlink.cam/movie/${movieData.id}`;
+    const res = await fetch(url);
+    const text = await res.text();
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(text, 'text/html');
+    const lis = doc.querySelectorAll('li[data-link]');
+    lis.forEach(li => {
+        if (li.getAttribute('data-link').includes('dropload')) {
+            const id = li.getAttribute('data-link').split('id=')[1];
+            const link = `https://unlimplay.com/embed/${id}`;
+            sourcesList.push(link);
+        }
+    });
+}
+
+async function scrapeBlogFallback() {
+    const query = encodeURIComponent(movieData.title);
+    const url = `${PROXY_URL}https://darkstatonmovies1.blogspot.com/search?q=${query}`;
+    const res = await fetch(url);
+    const text = await res.text();
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(text, 'text/html');
+    const firstLink = doc.querySelector('a[href*="blog-post"]'); // Ajusta selector
+    if (firstLink) {
+        const postUrl = `${PROXY_URL}${firstLink.href}`;
+        const postRes = await fetch(postUrl);
+        const postText = await postRes.text();
+        const regex = /videoUrl=(.*?)(&|$)/;
+        const match = postText.match(regex);
+        if (match) {
+            const encoded = match[1];
+            const decoded = base64UrlDecode(encoded);
+            sourcesList.push(decoded);
+        }
+    }
+}
+
+// Funciones de decodificación (ejemplos, ajusta según necesidad)
+function decodeJWT(token) {
+    // Simple base64 decode para partes del JWT
+    const parts = token.split('.');
+    return atob(parts[1]); // Retorna payload decodificado (ajusta)
+}
+
+function base64UrlDecode(str) {
+    str = str.replace(/-/g, '+').replace(/_/g, '/');
+    return atob(str);
+}
+
+// 4. El Reproductor (Player & UI)
+function loadSource(src) {
+    const container = document.getElementById('iframe-container');
+    const video = document.getElementById('player');
+    container.innerHTML = '';
+    video.classList.add('hidden-force');
+
+    if (src.endsWith('.m3u8')) {
+        video.classList.remove('hidden-force');
+        if (Hls.isSupported()) {
+            const hls = new Hls();
+            hls.loadSource(src);
+            hls.attachMedia(video);
+        } else {
+            video.src = src;
+        }
+        player = new Plyr(video);
+    } else {
+        const iframe = document.createElement('iframe');
+        iframe.src = src;
+        iframe.classList.add('w-full', 'h-96');
+        iframe.allowFullscreen = true;
+        container.appendChild(iframe);
+    }
+}
+
+// 5. Lógica de Series (Navegación)
+async function onSeasonChange(value) {
+    movieData.season = value;
+    await fetchTMDBTVData(movieData.id, movieData.season, movieData.episode);
+    populateEpisodes(value);
+    startScraping();
+}
+
+function onEpisodeChange(value) {
+    movieData.episode = value;
+    updateURL();
+    startScraping();
+}
+
+function nextEpisode() {
+    let nextEp = parseInt(movieData.episode) + 1;
+    const currentEpisodes = movieData.episodes.filter(e => e.season_number == movieData.season);
+    if (nextEp <= currentEpisodes.length) {
+        movieData.episode = nextEp;
+    } else {
+        // Ir a siguiente temporada si existe
+        const nextSeason = parseInt(movieData.season) + 1;
+        if (movieData.seasons.find(s => s.season_number == nextSeason)) {
+            movieData.season = nextSeason;
+            movieData.episode = 1;
+            fetchTMDBTVData(movieData.id, movieData.season, movieData.episode);
+        }
+    }
+    updateURL();
+    startScraping();
+}
+
+// Actualizar URL sin recargar
+function updateURL() {
+    const url = new URL(window.location);
+    url.searchParams.set('season', movieData.season);
+    url.searchParams.set('episode', movieData.episode);
+    history.pushState({}, '', url);
+}
+
+// Añade un botón para next si quieres: <button onclick="nextEpisode()">Siguiente Episodio</button>
     </script>
 </body>
 </html>
