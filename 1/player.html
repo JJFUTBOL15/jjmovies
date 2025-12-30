@@ -1,21 +1,58 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Reproduciendo en JJMovies.lat</title>
     <style>
-        body, html { margin:0; padding:0; height:100%; background:#000; color:white; font-family:Arial; overflow:hidden; }
-        .container { position:relative; width:100%; height:100%; }
-        iframe { width:100%; height:100%; border:none; }
-        .title { position:absolute; top:20px; left:50%; transform:translateX(-50%); font-size:32px; z-index:10; text-shadow: 2px 2px 4px black; }
-        .loading { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); font-size:28px; z-index:10; }
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            background: #000;
+            color: white;
+            font-family: Arial, sans-serif;
+            overflow: hidden;
+        }
+        .container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        .title {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 32px;
+            z-index: 10;
+            text-shadow: 2px 2px 4px #000;
+            background: rgba(0,0,0,0.6);
+            padding: 8px 16px;
+            border-radius: 8px;
+        }
+        .loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 24px;
+            z-index: 10;
+            background: rgba(0,0,0,0.7);
+            padding: 16px;
+            border-radius: 8px;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="title" id="title">Cargando película...</div>
-        <div class="loading">Conectando al servidor pro...</div>
+        <div class="loading" id="loading">Conectando al servidor...</div>
         <iframe id="player" allowfullscreen allow="autoplay"></iframe>
     </div>
 
@@ -25,46 +62,49 @@
         const season = params.get('season');
         const episode = params.get('episode');
 
-        if (!id) {
-            document.getElementById('title').textContent = 'Agrega ?id=NUMERO';
-            return;
-        }
-
-        // Base principal pro 2025 (directstream para carga rápida)
-        let main = `https://multiembed.mov/directstream.php?video_id=${id}&tmdb=1`;
-        if (season && episode) {
-            main += `&s=${season}&e=${episode}`;
-        }
-
-        // Fallbacks
-        const fallbacks = [
-            `https://vidsrc.to/embed/movie/${id}${season ? `/tv/${id}-${season}-${episode}` : ''}`,
-            `https://vembed.click/embed/movie/${id}${season ? `/tv/${id}-${season}-${episode}` : ''}`,
-            `https://autoembed.cc/movie/tmdb/${id}${season ? `-${season}-${episode}` : ''}`
-        ];
-
+        const titleEl = document.getElementById('title');
+        const loadingEl = document.getElementById('loading');
         const iframe = document.getElementById('player');
-        let current = 0;
 
-        function loadSource() {
-            if (current === 0) {
-                iframe.src = main;
-            } else if (current - 1 < fallbacks.length) {
-                iframe.src = fallbacks[current - 1];
-            } else {
-                document.querySelector('.loading').textContent = 'Prueba una película nueva 😔';
-            }
-            current++;
+        if (!id) {
+            titleEl.textContent = 'Error: Falta el parámetro ?id=';
+            loadingEl.textContent = '';
+            iframe.style.display = 'none';
+            throw new Error('ID requerido');
         }
 
+        // Construir URL de vidsrc.to correctamente
+        let embedUrl;
+        if (season && episode) {
+            // Serie: /tv/tmdb_id-S-E
+            embedUrl = `https://vidsrc.to/embed/tv/${id}-${season}-${episode}`;
+            // También puedes usar: `https://vidsrc.to/embed/tv?tmdb=${id}&season=${season}&episode=${episode}`
+        } else {
+            // Película
+            embedUrl = `https://vidsrc.to/embed/movie/${id}`;
+        }
+
+        // Cargar título desde TMDB
         fetch(`https://api.themoviedb.org/3/${season ? 'tv' : 'movie'}/${id}?api_key=936410eebae74f9895643e085cc4a740&language=es-ES`)
             .then(res => res.json())
-            .then(data => document.getElementById('title').textContent = (season ? data.name : data.title) || 'JJMovies.lat');
+            .then(data => {
+                const name = season ? data.name : data.title;
+                titleEl.textContent = name || 'JJMovies.lat';
+            })
+            .catch(err => {
+                console.warn('No se pudo cargar el título:', err);
+            });
 
-        iframe.onload = () => document.querySelector('.loading').style.display = 'none';
-        iframe.onerror = loadSource;
+        // Cargar el reproductor
+        iframe.src = embedUrl;
 
-        loadSource();
+        // Ocultar loading cuando el iframe empieza a cargar (no espera a terminar)
+        iframe.onload = () => {
+            loadingEl.style.display = 'none';
+        };
+
+        // ⚠️ Nota: iframe.onerror NO es confiable en navegadores modernos
+        // Así que no dependemos de él para fallbacks
     </script>
 </body>
 </html>
