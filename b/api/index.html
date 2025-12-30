@@ -1,0 +1,53 @@
+// Reemplaza la parte donde buscas video por esto:
+async function loadMediaPage() {
+  document.getElementById('movie-title').textContent = 'Cargando...';
+  document.getElementById('iframe-container').innerHTML = '';
+  document.getElementById('player').style.display = 'none';
+
+  try {
+    await fetchTMDBMetadata();
+
+    const apiUrl = `/api/video?id=${currentMedia.slug}&type=${currentMedia.type}&season=${currentMedia.season}&episode=${currentMedia.episode}`;
+    const response = await fetch(apiUrl);
+    
+    // La API devuelve HTML (el iframe), no JSON
+    const iframeHtml = await response.text();
+    document.getElementById('iframe-container').innerHTML = iframeHtml;
+
+    if (currentMedia.type === 'series') {
+      document.getElementById('series-controls').classList.remove('hidden-force');
+      document.getElementById('season-select').value = currentMedia.season || 1;
+      document.getElementById('episode-select').value = currentMedia.episode || 1;
+    }
+
+  } catch (e) {
+    console.error(e);
+    document.getElementById('movie-title').textContent = 'Error al cargar el video';
+  }
+}// Reemplaza la parte donde buscas video por esto:
+async function loadMediaPage() {
+  document.getElementById('movie-title').textContent = 'Cargando...';
+  document.getElementById('iframe-container').innerHTML = '';
+  document.getElementById('player').style.display = 'none';
+
+  try {
+    await fetchTMDBMetadata();
+
+    const apiUrl = `/api/video?id=${currentMedia.slug}&type=${currentMedia.type}&season=${currentMedia.season}&episode=${currentMedia.episode}`;
+    const response = await fetch(apiUrl);
+    
+    // La API devuelve HTML (el iframe), no JSON
+    const iframeHtml = await response.text();
+    document.getElementById('iframe-container').innerHTML = iframeHtml;
+
+    if (currentMedia.type === 'series') {
+      document.getElementById('series-controls').classList.remove('hidden-force');
+      document.getElementById('season-select').value = currentMedia.season || 1;
+      document.getElementById('episode-select').value = currentMedia.episode || 1;
+    }
+
+  } catch (e) {
+    console.error(e);
+    document.getElementById('movie-title').textContent = 'Error al cargar el video';
+  }
+}
