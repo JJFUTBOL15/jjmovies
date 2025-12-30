@@ -3,7 +3,7 @@ export default function handler(req, res) {
   const { id, season, episode } = req.query;
 
   if (!id) {
-    return res.status(400).send('Error: falta el parámetro ?id=');
+    return res.status(400).send('Error: falta ?id=');
   }
 
   let playerUrl = `https://jjmovies.lat/player.html?id=${encodeURIComponent(id)}`;
