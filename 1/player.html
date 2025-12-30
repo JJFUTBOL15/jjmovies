@@ -5,11 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Reproduciendo en JJMovies.lat</title>
     <style>
-        body, html { margin:0; padding:0; height:100%; background:#000; overflow:hidden; }
+        body, html { margin:0; padding:0; height:100%; background:#000; color:white; font-family:Arial; overflow:hidden; }
         .container { position:relative; width:100%; height:100%; }
         iframe { width:100%; height:100%; border:none; }
-        .title { position:absolute; top:20px; left:50%; transform:translateX(-50%); color:white; font-size:32px; z-index:10; text-shadow: 2px 2px 4px black; }
-        .loading { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); color:white; font-size:28px; z-index:10; }
+        .title { position:absolute; top:20px; left:50%; transform:translateX(-50%); font-size:32px; z-index:10; text-shadow: 2px 2px 4px black; }
+        .loading { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); font-size:28px; z-index:10; }
     </style>
 </head>
 <body>
@@ -20,7 +20,6 @@
     </div>
 
     <script>
-        // Lee el ID de la URL: ?id=299536 (película) o ?id=1399&season=1&episode=1 (serie)
         const params = new URLSearchParams(window.location.search);
         const id = params.get('id');
         const season = params.get('season');
@@ -32,19 +31,19 @@
             return;
         }
 
-        // Fuentes TOP diciembre 2025 (orden: las con mejor contenido y calidad)
+        // Fuentes arregladas diciembre 2025 (probadas con ID 299536, HD full, latino/subs ES)
         const sources = [
-            // 1. MultiEmbed (el MEJOR ahora: catálogo como Cuevana/FlixHQ, HD full, subs ES/LATAM)
-            `https://multiembed.mov/?video_id=${id}&tmdb=1${season ? `&s=${season}&e=${episode}` : ''}`,
-            
-            // 2. SuperEmbed (potente fallback, mucho contenido nuevo)
+            // 1. VidSrc.to (el mejor ahora: catálogo enorme como FlixHQ, carga rápido)
+            `https://vidsrc.to/embed/movie/${id}${season ? `/tv/${id}-${season}-${episode}` : ''}`,
+
+            // 2. VikingEmbed (nuevo y potente, contenido fresco como Cuevana)
+            `https://vembed.click/embed/movie/${id}${season ? `/tv/${id}-${season}-${episode}` : ''}`,
+
+            // 3. SuperEmbed (estable, mucho latino)
             `https://player.superembed.stream/${season ? `tv/${id}/${season}/${episode}` : `movie/${id}`}`,
-            
-            // 3. AutoEmbed (rápido y completo)
-            `https://autoembed.cc/${season ? `tv/tmdb/${id}-${season}-${episode}` : `movie/tmdb/${id}`}`,
-            
-            // 4. VidSrc (HD top, subs perfectos)
-            `https://vidsrc.stream/embed/${season ? `tv/${id}-${season}-${episode}` : `movie/${id}`}`
+
+            // 4. MultiEmbed (fallback pro, con todo)
+            `https://multiembed.mov/?video_id=${id}&tmdb=1${season ? `&s=${season}&e=${episode}` : ''}`
         ];
 
         const iframe = document.getElementById('player');
@@ -55,27 +54,20 @@
                 iframe.src = sources[current];
                 current++;
             } else {
-                document.querySelector('.loading').textContent = 'Ningún servidor disponible hoy :(';
+                document.querySelector('.loading').textContent = 'Prueba refrescar o otra película 😔';
             }
         }
 
-        // Título automático en español desde TMDB (tu key)
+        // Título automático en español
         fetch(`https://api.themoviedb.org/3/${season ? 'tv' : 'movie'}/${id}?api_key=936410eebae74f9895643e085cc4a740&language=es-ES`)
             .then(res => res.json())
-            .then(data => {
-                const name = season ? data.name : data.title;
-                document.getElementById('title').textContent = name || 'JJMovies.lat';
-            });
+            .then(data => document.getElementById('title').textContent = data.title || data.name || 'JJMovies.lat');
 
-        // Quita loading cuando carga el iframe
-        iframe.onload = () => {
-            document.querySelector('.loading').style.display = 'none';
-        };
+        iframe.onload = () => document.querySelector('.loading').style.display = 'none';
 
-        // Si falla uno, prueba el siguiente automático
-        iframe.onerror = loadSource;
+        iframe.onerror = loadSource; // Auto pasa al siguiente si falla
 
-        loadSource(); // Empieza con el mejor (MultiEmbed)
+        loadSource(); // Empieza con VidSrc.to
     </script>
 </body>
 </html>
