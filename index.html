@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>JJMovies - Reproductor</title>
+  <script src="https://cdn.plyr.io/3.7.8/plyr.js"></script>
+  <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
+  <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: #000;
+      color: white;
+      font-family: Arial, sans-serif;
+    }
+    #backdrop-img {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-size: cover;
+      background-position: center;
+      filter: brightness(0.3);
+      z-index: -1;
+    }
+    #content {
+      padding: 20px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    #movie-title {
+      font-size: 32px;
+      margin: 0 0 10px 0;
+      text-shadow: 0 0 10px black;
+    }
+    #series-controls {
+      margin: 15px 0;
+    }
+    #server-list-container {
+      margin: 20px 0;
+    }
+    .server-btn {
+      display: inline-block;
+      margin: 5px;
+      padding: 8px 12px;
+      background: #b00;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .server-btn:hover {
+      background: #f00;
+    }
+    #player-container {
+      width: 100%;
+      aspect-ratio: 16/9;
+      background: #000;
+      position: relative;
+    }
+    #loading {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: #ff4d4d;
+      font-size: 20px;
+    }
+    .hidden-force {
+      display: none !important;
+    }
+  </style>
+</head>
+<body>
+  <div id="backdrop-img"></div>
+  <div id="content">
+    <h1 id="movie-title">Cargando película...</h1>
+    <p id="movie-overview"></p>
+
+    <div id="series-controls" class="hidden-force">
+      <select id="season-select" onchange="onSeasonChange(this.value)"></select>
+      <select id="episode-select" onchange="onEpisodeChange(this.value)"></select>
+    </div>
+
+    <div id="server-list-container"></div>
+
+    <div id="player-container">
+      <div id="loading">Obteniendo fuentes...</div>
+      <video id="player" controls playsinline></video>
+      <div id="iframe-container" style="display:none;"></div>
+    </div>
+  </div>
+
+  <script>
+    // === CONFIGURACIÓN ===
+    const API_KEY = '936410eebae74f9895643e085cc4a740';
+    const PROXY_URL = 'https://api.codetabs.com/v1/proxy?quest=';
+    let movieData = {
+      id: null,
+      isSeries: false,
+      title: '',
+      backdrop: '',
+      seasons: [],
+      currentSeason: null,
+      currentEpisode: null
+    };
+
+    // === OBTENCIÓN DE DATOS ===
+    document.addEventListener('DOMContentLoaded', async () => {
+      const params = new URLSearchParams(window.location.search);
+      const id = params.get('id');
+      const season = params.get('season');
+      const episode = params.get('episode');
+
+      if (!id) {
+        alert('URL inválida. Usa ?id=123');
+        return;
+      }
+
+      movieData.id = id;
+      movieData.isSeries = !!(season && episode);
+      movieData.currentSeason = season;
+      movieData.currentEpisode = episode;
+
+      if (movieData.isSeries) {
+        await fetchTMDBTVData(id, season, episode);
+      } else {
+        await fetchTMDBData(id);
+      }
+
+      startScraping();
+    });
+
+    async function fetchTMDBData(id) {
+      try {
+        const res = await fetch(`https://api.themoviedb.org/3/movie/${id}?api_key=${API_KEY}&language=es-ES`);
+        const data = await res.json();
+        updateUI(data.title, data.overview, `https://image.tmdb.org/t/p/original${data.backdrop_path}`);
+        movieData.title = data.title;
+      } catch (err) {
+        console.error('Error TMDB:', err);
+      }
+    }
+
+    async function fetchTMDBTVData(id, season, episode) {
+      try {
+        // Info de la serie
+        const seriesRes = await fetch(`https://api.themoviedb.org/3/tv/${id}?api_key=${API_KEY}&language=es-ES`);
+        const seriesData = await seriesRes.json();
+
+        // Info de la temporada
+        const seasonRes = await fetch(`https://api.themoviedb.org/3/tv/${id}/season/${season}?api_key=${API_KEY}&language=es-ES`);
+        const seasonData = await seasonRes.json();
+
+        updateUI(
+          `${seriesData.name} - Temporada ${season} Episodio ${episode}`,
+          seasonData.episodes.find(e => e.episode_number == episode)?.overview || seriesData.overview,
+          `https://image.tmdb.org/t/p/original${seriesData.backdrop_path}`
+        );
+
+        movieData.title = seriesData.name;
+        movieData.seasons = seriesData.seasons;
+        movieData.currentSeason = season;
+
+        // Llenar dropdowns
+        const seasonSelect = document.getElementById('season-select');
+        seriesData.seasons.forEach(s => {
+          if (s.season_number !== 0) {
+            const opt = document.createElement('option');
+            opt.value = s.season_number;
+            opt.textContent = `Temporada ${s.season_number}`;
+            if (s.season_number == season) opt.selected = true;
+            seasonSelect.appendChild(opt);
+          }
+        });
+
+        const episodeSelect = document.getElementById('episode-select');
+        seasonData.episodes.forEach(e => {
+          const opt = document.createElement('option');
+          opt.value = e.episode_number;
+          opt.textContent = `Episodio ${e.episode_number}: ${e.name}`;
+          if (e.episode_number == episode) opt.selected = true;
+          episodeSelect.appendChild(opt);
+        });
+
+        document.getElementById('series-controls').classList.remove('hidden-force');
+      } catch (err) {
+        console.error('Error TMDB Serie:', err);
+      }
+    }
+
+    function updateUI(title, overview, backdrop) {
+      document.getElementById('movie-title').textContent = title;
+      document.getElementById('movie-overview').textContent = overview;
+      document.getElementById('backdrop-img').style.backgroundImage = `url(${backdrop})`;
+    }
+
+    // === SCRAPING ===
+    async function startScraping() {
+      const sources = [];
+
+      // Estrategia 1: Embed69
+      const embed69 = await scrapeEmbed69();
+      if (embed69) sources.push({ name: 'Embed69', url: embed69, type: 'hls' });
+
+      // Estrategia 2: VerHD
+      const verhd = await scrapeVerHDLink();
+      if (verhd) sources.push({ name: 'VerHD', url: verhd, type: 'iframe' });
+
+      // Mostrar fuentes
+      renderServerList(sources);
+      if (sources.length > 0) {
+        playSource(sources[0]);
+      } else {
+        document.getElementById('loading').textContent = '❌ Ninguna fuente disponible';
+      }
+    }
+
+    async function scrapeEmbed69() {
+      try {
+        // Obtener IMDb ID desde TMDB
+        const tmdbType = movieData.isSeries ? 'tv' : 'movie';
+        const tmdbRes = await fetch(`https://api.themoviedb.org/3/${tmdbType}/${movieData.id}?api_key=${API_KEY}`);
+        const tmdbData = await tmdbRes.json();
+        const imdbId = tmdbData.imdb_id;
+        if (!imdbId) return null;
+
+        const url = `${PROXY_URL}https://embed69.com/imdb/${imdbId}`;
+        const res = await fetch(url);
+        const html = await res.text();
+
+        const match = html.match(/let dataLink\s*=\s*['"]([^'"]+)['"]/);
+        if (match) {
+          const token = match[1];
+          const decoded = decodeJWT(token);
+          return decoded?.url || decoded?.source || null;
+        }
+      } catch (err) {
+        console.warn('Embed69 falló:', err.message);
+      }
+      return null;
+    }
+
+    async function scrapeVerHDLink() {
+      try {
+        const url = `${PROXY_URL}https://verhdlink.cam/movie/${movieData.id}`;
+        const res = await fetch(url);
+        const html = await res.text();
+
+        const match = html.match(/data-link\s*=\s*['"]([^'"]*dropload[^'"]*)['"]/);
+        if (match) {
+          const fullUrl = match[1];
+          const dropId = fullUrl.split('/').pop();
+          return `https://unlimplay.com/e/${dropId}`;
+        }
+      } catch (err) {
+        console.warn('VerHD falló:', err.message);
+      }
+      return null;
+    }
+
+    function decodeJWT(token) {
+      try {
+        const base64 = token.replace(/-/g, '+').replace(/_/g, '/');
+        const jsonStr = atob(base64);
+        return JSON.parse(jsonStr);
+      } catch (e) {
+        return null;
+      }
+    }
+
+    // === REPRODUCCIÓN ===
+    function renderServerList(sources) {
+      const container = document.getElementById('server-list-container');
+      container.innerHTML = '<strong>Fuentes:</strong><br>';
+      sources.forEach(src => {
+        const btn = document.createElement('button');
+        btn.className = 'server-btn';
+        btn.textContent = src.name;
+        btn.onclick = () => playSource(src);
+        container.appendChild(btn);
+      });
+    }
+
+    function playSource(source) {
+      const player = document.getElementById('player');
+      const iframeContainer = document.getElementById('iframe-container');
+      const loading = document.getElementById('loading');
+
+      player.style.display = 'none';
+      iframeContainer.style.display = 'none';
+      iframeContainer.innerHTML = '';
+      loading.style.display = 'block';
+
+      if (source.type === 'hls') {
+        if (Hls.isSupported()) {
+          const hls = new Hls();
+          hls.loadSource(source.url);
+          hls.attachMedia(player);
+          hls.on(Hls.Events.MANIFEST_PARSED, () => {
+            player.style.display = 'block';
+            loading.style.display = 'none';
+            player.play();
+          });
+        } else if (player.canPlayType('application/vnd.apple.mpegurl')) {
+          player.src = source.url;
+          player.style.display = 'block';
+          loading.style.display = 'none';
+          player.play();
+        }
+      } else if (source.type === 'iframe') {
+        iframeContainer.innerHTML = `<iframe src="${source.url}" width="100%" height="100%" frameborder="0" allowfullscreen></iframe>`;
+        iframeContainer.style.display = 'block';
+        loading.style.display = 'none';
+      }
+    }
+
+    // === SERIES ===
+    async function onSeasonChange(season) {
+      movieData.currentSeason = season;
+      // Aquí deberías recargar episodios, pero por simplicidad lo omitimos
+    }
+
+    async function onEpisodeChange(episode) {
+      movieData.currentEpisode = episode;
+      // Recargar scraping para nuevo episodio
+      startScraping();
+    }
+  </script>
+</body>
+</html>
