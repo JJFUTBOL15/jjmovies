@@ -1,0 +1,52 @@
+<!-- player.html -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Reproductor</title>
+  <style>
+    body, html { margin:0; padding:0; background:#000; overflow:hidden; }
+    #container { width:100vw; height:100vh; }
+  </style>
+</head>
+<body>
+  <div id="container"></div>
+
+  <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const videoUrl = urlParams.get('url');
+
+    if (!videoUrl) {
+      document.getElementById('container').innerHTML = '<h1 style="color:white; text-align:center; margin-top:20vh;">URL no proporcionada</h1>';
+      exit;
+    }
+
+    // Si es un enlace directo a .m3u8 o .mp4, usar Plyr
+    if (videoUrl.includes('.m3u8')) {
+      const container = document.getElementById('container');
+      container.innerHTML = `<video id="player" controls></video>`;
+      
+      if (Hls.isSupported()) {
+        const hls = new Hls();
+        hls.loadSource(videoUrl);
+        hls.attachMedia(document.getElementById('player'));
+      }
+    } else {
+      // Para iframes de Doo, Fembed, etc.
+      const iframe = document.createElement('iframe');
+      iframe.src = videoUrl;
+      iframe.width = '100%';
+      iframe.height = '100%';
+      iframe.frameBorder = '0';
+      iframe.allowFullscreen = true;
+      iframe.allow = 'autoplay; encrypted-media';
+      document.getElementById('container').appendChild(iframe);
+    }
+  </script>
+
+  <!-- Librerías -->
+  <script src="https://cdn.plyr.io/3.7.8/plyr.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+</body>
+</html>
