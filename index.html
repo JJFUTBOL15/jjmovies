@@ -1,74 +1,181 @@
-<script>
-  // === CONFIGURACIÓN ===
-  const API_KEY = '936410eebae74f9895643e085cc4a740';
-  const PROXY_URL = 'https://api.codetabs.com/v1/proxy?quest=';
-  let movieData = { id: null, isSeries: false, title: '', backdrop: '' };
-
-  // === INICIO ===
-  document.addEventListener('DOMContentLoaded', async () => {
-    const params = new URLSearchParams(window.location.search);
-    const id = params.get('id');
-    if (!id) return alert('Usa ?id=123');
-
-    movieData.id = id;
-    await fetchTMDBData(id);
-    await startScraping();
-  });
-
-  // === TMDB ===
-  async function fetchTMDBData(id) {
-    try {
-      const res = await fetch(`https://api.themoviedb.org/3/movie/${id}?api_key=${API_KEY}&language=es-ES`);
-      const data = await res.json();
-      document.getElementById('movie-title').textContent = data.title;
-      document.getElementById('movie-overview').textContent = data.overview;
-      document.getElementById('backdrop-img').style.backgroundImage = 
-        `url(https://image.tmdb.org/t/p/original${data.backdrop_path})`;
-      movieData.title = data.title;
-    } catch (err) {
-      console.error('TMDB error:', err);
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>JJMovies - Reproductor</title>
+  <!-- Plyr (reproductor) -->
+  <script src="https://cdn.plyr.io/3.7.8/plyr.js"></script>
+  <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
+  <!-- HLS.js (para streams .m3u8) -->
+  <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: #000;
+      color: white;
+      font-family: Arial, sans-serif;
     }
-  }
+    #backdrop-img {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-size: cover;
+      background-position: center;
+      filter: brightness(0.3);
+      z-index: -1;
+    }
+    #content {
+      padding: 20px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    #movie-title {
+      font-size: 32px;
+      margin: 0 0 10px 0;
+      text-shadow: 0 0 10px black;
+    }
+    #loading {
+      color: #ff4d4d;
+      font-size: 18px;
+    }
+    .server-btn {
+      display: inline-block;
+      margin: 5px;
+      padding: 8px 12px;
+      background: #b00;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .server-btn:hover {
+      background: #f00;
+    }
+    #player-container {
+      width: 100%;
+      aspect-ratio: 16/9;
+      background: #000;
+      position: relative;
+      margin: 20px 0;
+    }
+    #iframe-container {
+      width: 100%;
+      height: 100%;
+    }
+    .hidden {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div id="backdrop-img"></div>
+  <div id="content">
+    <h1 id="movie-title">Cargando película...</h1>
+    <p id="movie-overview"></p>
 
-  // === SCRAPING (SOLO VERHD) ===
-  async function startScraping() {
-    document.getElementById('loading').textContent = 'Buscando en VerHDLink...';
-    
-    const url = `${PROXY_URL}https://verhdlink.cam/movie/${movieData.id}`;
-    try {
-      const res = await fetch(url);
-      const html = await res.text();
+    <div id="loading">Obteniendo fuentes...</div>
 
-      // Buscar data-link con servidores reales
-      const match = html.match(/data-link\s*=\s*['"]([^'"]*(?:unlimplay|vidhide|filelions|streamlare)[^'"]*)['"]/i);
-      
-      if (match && match[1]) {
-        const videoUrl = match[1];
-        document.getElementById('loading').style.display = 'none';
-        
-        // Mostrar botón
-        const btn = document.createElement('button');
-        btn.className = 'server-btn';
-        btn.textContent = 'Ver en VerHD';
-        btn.onclick = () => playIframe(videoUrl);
-        document.getElementById('server-list-container').innerHTML = '<strong>Fuentes:</strong><br>';
-        document.getElementById('server-list-container').appendChild(btn);
-        
-      } else {
-        document.getElementById('loading').textContent = '❌ No se encontró enlace de reproducción';
+    <div id="server-list-container"></div>
+
+    <div id="player-container">
+      <video id="player" controls playsinline class="hidden"></video>
+      <div id="iframe-container" class="hidden"></div>
+    </div>
+  </div>
+
+  <script>
+    // === CONFIGURACIÓN ===
+    const API_KEY = '936410eebae74f9895643e085cc4a740';
+    const PROXY_URL = 'https://api.codetabs.com/v1/proxy?quest=';
+    let movieData = { id: null, title: '', isSeries: false };
+
+    // === AL CARGAR LA PÁGINA ===
+    document.addEventListener('DOMContentLoaded', async () => {
+      const params = new URLSearchParams(window.location.search);
+      const id = params.get('id');
+      if (!id) {
+        document.getElementById('movie-title').textContent = '❌ Falta ?id= en la URL';
+        document.getElementById('loading').textContent = '';
+        return;
       }
-    } catch (err) {
-      console.error('Scraping error:', err);
-      document.getElementById('loading').textContent = '❌ Error al conectar con VerHDLink';
-    }
-  }
 
-  // === REPRODUCIR IFRAME ===
-  function playIframe(url) {
-    const iframe = document.getElementById('iframe-container');
-    iframe.innerHTML = `<iframe src="${url}" width="100%" height="100%" frameborder="0" allowfullscreen allow="autoplay; encrypted-media"></iframe>`;
-    iframe.style.display = 'block';
-    document.getElementById('player').style.display = 'none';
-    document.getElementById('loading').style.display = 'none';
-  }
-</script>
+      movieData.id = id;
+      await fetchTMDBData(id);
+      await startScraping();
+    });
+
+    // === OBTENER DATOS DE TMDB ===
+    async function fetchTMDBData(id) {
+      try {
+        const res = await fetch(`https://api.themoviedb.org/3/movie/${id}?api_key=${API_KEY}&language=es-ES`);
+        const data = await res.json();
+        document.getElementById('movie-title').textContent = data.title || 'Película';
+        document.getElementById('movie-overview').textContent = data.overview || 'Sinopsis no disponible.';
+        if (data.backdrop_path) {
+          document.getElementById('backdrop-img').style.backgroundImage = 
+            `url(https://image.tmdb.org/t/p/original${data.backdrop_path})`;
+        }
+      } catch (err) {
+        console.error('Error TMDB:', err);
+      }
+    }
+
+    // === SCRAPING DE FUENTES ===
+    async function startScraping() {
+      const sources = [];
+
+      // VerHDLink (única fuente viable ahora)
+      try {
+        const url = `${PROXY_URL}https://verhdlink.cam/movie/${movieData.id}`;
+        const res = await fetch(url);
+        const html = await res.text();
+
+        // Buscar data-link con servidores reales
+        const match = html.match(/data-link\s*=\s*['"]([^'"]*(?:unlimplay|vidhide|filelions)[^'"]*)['"]/i);
+        if (match && match[1]) {
+          sources.push({ name: 'VerHD / UnlimPlay', url: match[1], type: 'iframe' });
+        }
+      } catch (err) {
+        console.warn('VerHDLink falló:', err);
+      }
+
+      // Mostrar fuentes
+      const loading = document.getElementById('loading');
+      const container = document.getElementById('server-list-container');
+
+      if (sources.length > 0) {
+        loading.textContent = '';
+        container.innerHTML = '<strong>Fuentes:</strong><br>';
+        sources.forEach(src => {
+          const btn = document.createElement('button');
+          btn.className = 'server-btn';
+          btn.textContent = src.name;
+          btn.onclick = () => playSource(src);
+          container.appendChild(btn);
+        });
+      } else {
+        loading.textContent = '❌ No se encontraron fuentes disponibles';
+      }
+    }
+
+    // === REPRODUCIR ===
+    function playSource(source) {
+      const player = document.getElementById('player');
+      const iframeContainer = document.getElementById('iframe-container');
+
+      player.classList.add('hidden');
+      iframeContainer.classList.add('hidden');
+      iframeContainer.innerHTML = '';
+
+      if (source.type === 'iframe') {
+        iframeContainer.innerHTML = `<iframe src="${source.url}" width="100%" height="100%" frameborder="0" allowfullscreen allow="autoplay; encrypted-media"></iframe>`;
+        iframeContainer.classList.remove('hidden');
+      }
+    }
+  </script>
+</body>
+</html>
