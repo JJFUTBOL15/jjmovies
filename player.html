@@ -3,7 +3,7 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title>Player - JJMovies</title>
+  <title>Player</title>
   <style>
     body, html { margin:0; padding:0; background:#000; height:100%; }
     #loading { 
@@ -17,8 +17,15 @@
   </style>
 </head>
 <body>
-  <div id="loading">Cargando...</div>
-  <iframe id="player" width="100%" height="100%" frameborder="0" allowfullscreen></iframe>
+  <div id="loading">Cargando película...</div>
+  <iframe 
+    id="player" 
+    width="100%" 
+    height="100%" 
+    frameborder="0" 
+    allowfullscreen
+    src=""
+  ></iframe>
 
   <script>
     const params = new URLSearchParams(window.location.search);
@@ -29,22 +36,15 @@
     if (!id) {
       document.getElementById('loading').textContent = '❌ Falta ?id=';
     } else {
-      // ✅ Usa un mirror más estable
-      let src;
-      if (season && episode) {
-        src = `https://v2.vidsrc.to/embed/tv/${id}-${season}-${episode}`;
-      } else {
-        src = `https://v2.vidsrc.to/embed/movie/${id}`;
-      }
+      // Llamar a TU PROPIO proxy
+      let src = `/api/vidsrc?id=${id}`;
+      if (season) src += `&season=${season}`;
+      if (episode) src += `&episode=${episode}`;
 
-      const iframe = document.getElementById('player');
-      iframe.onload = () => {
+      document.getElementById('player').src = src;
+      document.getElementById('player').onload = () => {
         document.getElementById('loading').style.display = 'none';
       };
-      iframe.onerror = () => {
-        document.getElementById('loading').textContent = '⚠️ Fuente no disponible. Intenta más tarde.';
-      };
-      iframe.src = src;
     }
   </script>
 </body>
