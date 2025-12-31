@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generador de Iframe - Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #0B1120; color: #cbd5e1; }
+        .code-font { font-family: 'JetBrains Mono', monospace; }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #0f172a; }
+        ::-webkit-scrollbar-thumb { background: #4f46e5; border-radius: 4px; }
+        .card-hover { transition: transform 0.2s ease, box-shadow 0.2s ease; }
+        .card-hover:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.5); border-color: #6366f1; }
+        .hidden-modal { opacity: 0; pointer-events: none; }
+        .modal-bg { transition: opacity 0.3s ease; }
+        .modal-panel { transition: transform 0.3s ease, opacity 0.3s ease; }
+        .hidden-force { display: none !important; }
+    </style>
+</head>
+<body class="flex items-center justify-center min-h-screen p-4">
+
+<div id="noctiflix-app" class="relative w-full max-w-7xl h-[90vh] bg-[#0B1120] rounded-xl overflow-hidden flex flex-col md:flex-row border border-slate-700 shadow-2xl">
+
+    <aside class="w-full md:w-64 bg-slate-900 border-r border-slate-800 flex flex-col flex-shrink-0">
+        <div class="p-5 flex items-center gap-3 border-b border-slate-800">
+            <div class="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center shadow-[0_0_15px_rgba(99,102,241,0.5)]">
+                <i data-lucide="play" class="text-white w-5 h-5 fill-current"></i>
+            </div>
+            <h1 class="text-lg font-bold text-white tracking-wider">Cine<span class="text-indigo-500">Max</span> API</h1>
+        </div>
+
+        <nav class="flex-1 overflow-y-auto py-4 px-3 space-y-2">
+            <button onclick="switchTab('dashboard')" id="btn-dashboard" class="nav-item w-full flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-lg transition-colors bg-indigo-600/10 text-indigo-400 border border-indigo-500/20">
+                <i data-lucide="layout-dashboard" class="w-5 h-5"></i> Dashboard
+            </button>
+            <button onclick="switchTab('movies')" id="btn-movies" class="nav-item w-full flex items-center gap-3 px-4 py-3 text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-white rounded-lg transition-colors">
+                <i data-lucide="film" class="w-5 h-5"></i> Películas
+            </button>
+            <button onclick="switchTab('series')" id="btn-series" class="nav-item w-full flex items-center gap-3 px-4 py-3 text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-white rounded-lg transition-colors">
+                <i data-lucide="tv" class="w-5 h-5"></i> Series
+            </button>
+            
+            <div class="mt-8 px-4">
+                <div class="bg-gradient-to-br from-indigo-900/50 to-purple-900/50 rounded-xl p-4 border border-indigo-500/30 shadow-lg">
+                    <h3 class="text-white font-bold text-xs mb-1 flex items-center gap-2">
+                        <i data-lucide="wifi" class="w-3 h-3"></i> Sistema Listo
+                    </h3>
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="relative flex h-2 w-2">
+                          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                          <span class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+                        </span>
+                        <span class="text-[10px] text-green-400 font-mono">Conectado a TMDB</span>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </aside>
+
+    <main class="flex-1 flex flex-col h-full overflow-hidden relative min-w-0 bg-[#0B1120]">
+        <header class="h-14 border-b border-slate-800 flex items-center justify-between px-4 bg-slate-900/80 backdrop-blur-md sticky top-0 z-30 shrink-0">
+            <h2 class="text-sm md:text-base font-semibold text-white" id="page-title">Dashboard</h2>
+            <div class="flex items-center gap-3">
+                <div class="hidden md:flex items-center gap-2 px-3 py-1 bg-slate-800 rounded-full border border-slate-700">
+                    <i data-lucide="shield-check" class="w-3 h-3 text-green-500"></i>
+                    <span class="text-[10px] text-slate-300 font-mono">Admin</span>
+                </div>
+            </div>
+        </header>
+
+        <div class="flex-1 overflow-y-auto p-4 md:p-6 scroll-smooth w-full" id="main-container">
+            
+            <div id="view-dashboard" class="space-y-6">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                        <i data-lucide="flame" class="text-orange-500 w-5 h-5"></i> Tendencias Hoy
+                    </h3>
+                </div>
+                <div id="dashboard-trending" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-3 md:gap-4">
+                    <div class="col-span-full flex justify-center py-10"><div class="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-500"></div></div>
+                </div>
+            </div>
+
+            <div id="view-movies" class="hidden space-y-4">
+                <div class="flex gap-2 sticky top-0 z-20 bg-[#0B1120] pb-2 pt-1">
+                    <div class="relative flex-1 rounded-lg group border border-slate-700 focus-within:border-indigo-500 transition-colors">
+                        <i data-lucide="search" class="absolute left-3 top-2.5 text-slate-500 w-4 h-4"></i>
+                        <input type="text" id="movie-search" placeholder="Buscar película..." class="w-full bg-slate-800 text-white pl-9 pr-4 py-2 text-sm rounded-lg focus:outline-none h-full" onkeypress="handleEnter(event, 'movie')">
+                    </div>
+                    <button onclick="searchContent('movie')" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg"><i data-lucide="search" class="w-4 h-4"></i></button>
+                </div>
+                <div id="movie-results" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-3 pb-10">
+                    <div class="col-span-full text-center py-20 text-slate-600"><p class="text-sm">Usa el buscador para encontrar películas.</p></div>
+                </div>
+            </div>
+
+            <div id="view-series" class="hidden space-y-4">
+                <div class="flex gap-2 sticky top-0 z-20 bg-[#0B1120] pb-2 pt-1">
+                    <div class="relative flex-1 rounded-lg group border border-slate-700 focus-within:border-purple-500 transition-colors">
+                        <i data-lucide="search" class="absolute left-3 top-2.5 text-slate-500 w-4 h-4"></i>
+                        <input type="text" id="series-search" placeholder="Buscar serie..." class="w-full bg-slate-800 text-white pl-9 pr-4 py-2 text-sm rounded-lg focus:outline-none h-full" onkeypress="handleEnter(event, 'tv')">
+                    </div>
+                    <button onclick="searchContent('tv')" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg"><i data-lucide="search" class="w-4 h-4"></i></button>
+                </div>
+                <div id="series-results" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-3 pb-10">
+                    <div class="col-span-full text-center py-20 text-slate-600"><p class="text-sm">Usa el buscador para encontrar series.</p></div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+</div>
+
+<div id="universal-modal" class="fixed inset-0 z-[60] hidden-modal modal-bg flex items-center justify-center bg-black/90 backdrop-blur-sm p-4">
+    <div class="bg-slate-900 border border-slate-700 w-full max-w-4xl max-h-[90%] rounded-2xl shadow-2xl modal-panel flex flex-col overflow-hidden">
+        
+        <div class="flex justify-between items-center p-4 border-b border-slate-800 bg-slate-900">
+            <div class="flex items-center gap-3 overflow-hidden">
+                <img id="modal-poster-thumb" src="" class="w-10 h-14 object-cover rounded shadow-sm bg-slate-800">
+                <div class="min-w-0">
+                    <h3 class="text-lg font-bold text-white truncate" id="modal-title">Título</h3>
+                    <div class="flex items-center gap-2 text-xs text-slate-400">
+                        <span id="modal-type-badge" class="bg-indigo-600 text-white px-2 py-0.5 rounded font-bold">MOVIE</span>
+                        <span class="font-mono text-indigo-400" id="modal-id">ID: 000</span>
+                    </div>
+                </div>
+            </div>
+            <button onclick="closeModal()" class="text-slate-400 hover:text-white bg-slate-800 p-2 rounded-full"><i data-lucide="x" class="w-5 h-5"></i></button>
+        </div>
+
+        <div class="overflow-y-auto flex-1 p-6">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                
+                <div class="space-y-4">
+                    <div id="series-controls" class="hidden grid grid-cols-2 gap-3 p-3 bg-slate-800/50 rounded-xl border border-slate-700">
+                        <div>
+                            <label class="block text-[10px] uppercase text-slate-500 font-bold mb-1">Temporada</label>
+                            <input type="number" id="modal-season" value="1" min="1" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-white text-center" oninput="updateModalCode()">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] uppercase text-slate-500 font-bold mb-1">Episodio</label>
+                            <input type="number" id="modal-episode" value="1" min="1" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-white text-center" oninput="updateModalCode()">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-[10px] uppercase text-slate-400 font-bold mb-1">Código Iframe (Copiar y Pegar)</label>
+                        <div class="relative group cursor-pointer" onclick="copyCode()">
+                            <code id="modal-code" class="code-font block text-green-400 text-xs break-all bg-[#050911] p-4 rounded-lg border border-slate-800 hover:border-indigo-500 transition-colors">
+                                ...
+                            </code>
+                            <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 bg-black/60 transition-opacity rounded-lg">
+                                <span class="bg-indigo-600 text-white text-xs px-2 py-1 rounded font-bold">Clic para Copiar</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="p-3 bg-yellow-500/10 border border-yellow-500/20 rounded-lg">
+                        <p class="text-[10px] text-yellow-500">Este código funcionará en cualquier sitio web donde lo pegues, siempre que el reproductor original esté online.</p>
+                    </div>
+                </div>
+
+                <div class="flex flex-col gap-2">
+                    <label class="block text-[10px] uppercase text-slate-400 font-bold">Vista Previa</label>
+                    <div class="w-full aspect-video bg-black rounded-xl overflow-hidden border border-slate-700 shadow-lg relative">
+                         <div id="modal-preview-container" class="w-full h-full"></div>
+                    </div>
+                    <a id="modal-external-link" href="#" target="_blank" class="text-xs text-center text-indigo-400 hover:underline mt-2 block">Abrir en pestaña nueva</a>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="toast" class="fixed bottom-5 right-5 bg-slate-800 border border-green-500/30 text-white px-4 py-2 rounded-lg shadow-xl flex items-center gap-2 z-[70] transition-all duration-300 opacity-0 pointer-events-none translate-y-10">
+    <i data-lucide="check" class="w-4 h-4 text-green-400"></i> <span class="text-sm font-bold">Código Copiado</span>
+</div>
+
+<script>
+    // --- CONFIGURACIÓN PRINCIPAL ---
+    const TMDB_KEY = 'da8b836389708e0558de674492931977'; // Tu API Key
+    
+    // IMPORTANTE: REEMPLAZA ESTO CON LA URL REAL DONDE SUBISTE EL ARCHIVO online_viewer_net (81).html
+    // Ejemplo: 'https://tu-web.com/reproductor.html' o 'https://tu-blog.blogspot.com/p/player.html'
+    const URL_TU_REPRODUCTOR = 'https://TU-SITIO-WEB.com/ruta-a-tu-archivo-player.html'; 
+
+    const BASE_URL = 'https://api.themoviedb.org/3';
+    const IMAGE_BASE = 'https://image.tmdb.org/t/p/w200';
+    let currentModalData = { type: 'movie', id: null, title: '' };
+
+    // Inicializar Iconos
+    lucide.createIcons();
+    loadTrending();
+
+    // --- FUNCIONES DE NAVEGACIÓN ---
+    function switchTab(tabId) {
+        ['dashboard', 'movies', 'series'].forEach(id => {
+            document.getElementById('view-' + id).classList.add('hidden');
+            const btn = document.getElementById('btn-' + id);
+            btn.classList.remove('bg-indigo-600/10', 'text-indigo-400', 'border-indigo-500/20');
+            btn.classList.add('text-slate-400');
+        });
+
+        document.getElementById('view-' + tabId).classList.remove('hidden');
+        const activeBtn = document.getElementById('btn-' + tabId);
+        activeBtn.classList.add('bg-indigo-600/10', 'text-indigo-400', 'border', 'border-indigo-500/20');
+        activeBtn.classList.remove('text-slate-400');
+        
+        const titles = {'dashboard': 'Dashboard', 'movies': 'Generador Películas', 'series': 'Generador Series'};
+        document.getElementById('page-title').innerText = titles[tabId];
+    }
+
+    // --- LÓGICA TMDB ---
+    async function loadTrending() {
+        const container = document.getElementById('dashboard-trending');
+        try {
+            const res = await fetch(`${BASE_URL}/trending/all/day?api_key=${TMDB_KEY}&language=es-MX`);
+            const data = await res.json();
+            container.innerHTML = data.results.slice(0, 10).map(item => cardTemplate(item)).join('');
+            lucide.createIcons();
+        } catch (e) { container.innerHTML = '<p class="text-red-500 text-xs">Error cargando tendencias.</p>'; }
+    }
+
+    async function searchContent(type) {
+        const inputId = type === 'movie' ? 'movie-search' : 'series-search';
+        const containerId = type === 'movie' ? 'movie-results' : 'series-results';
+        const query = document.getElementById(inputId).value;
+        if (!query) return;
+
+        const container = document.getElementById(containerId);
+        container.innerHTML = '<div class="col-span-full flex justify-center py-10"><div class="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-500"></div></div>';
+
+        try {
+            const res = await fetch(`${BASE_URL}/search/${type}?api_key=${TMDB_KEY}&language=es-MX&query=${encodeURIComponent(query)}`);
+            const data = await res.json();
+            if (data.results.length === 0) {
+                container.innerHTML = '<div class="col-span-full text-center py-10 text-slate-500 text-sm">Sin resultados.</div>';
+                return;
+            }
+            container.innerHTML = data.results.map(item => cardTemplate(item, type)).join('');
+            lucide.createIcons();
+        } catch (e) { container.innerHTML = '<p class="text-red-500 text-xs">Error en búsqueda.</p>'; }
+    }
+
+    function handleEnter(e, type) {
+        if (e.key === 'Enter') searchContent(type);
+    }
+
+    function cardTemplate(item, forceType) {
+        const type = forceType || (item.media_type === 'movie' ? 'movie' : 'tv');
+        const title = type === 'movie' ? item.title : item.name;
+        const poster = item.poster_path ? `${IMAGE_BASE}${item.poster_path}` : 'https://via.placeholder.com/200x300/1e293b/475569?text=No+Img';
+        // Escapar comillas simples para el onclick
+        const safeTitle = title.replace(/'/g, "\\'");
+        
+        return `
+            <div onclick="openModal('${type}', '${item.id}', '${safeTitle}', '${poster}')" 
+                 class="bg-slate-800 rounded-lg overflow-hidden cursor-pointer card-hover group relative shadow-md border border-slate-700">
+                <div class="aspect-[2/3] overflow-hidden">
+                    <img src="${poster}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy">
+                    <div class="absolute top-1 right-1 bg-black/60 backdrop-blur-sm text-white text-[9px] font-bold px-1.5 py-0.5 rounded border border-white/10">
+                        ${type === 'movie' ? 'PELI' : 'SERIE'}
+                    </div>
+                </div>
+                <div class="p-2">
+                    <h4 class="font-bold text-slate-200 text-xs truncate">${title}</h4>
+                    <p class="text-[10px] text-slate-500">${item.release_date || item.first_air_date || 'N/A'}</p>
+                </div>
+            </div>
+        `;
+    }
+
+    // --- LÓGICA DEL MODAL Y GENERADOR ---
+    function openModal(type, id, title, poster) {
+        currentModalData = { type, id, title };
+        document.getElementById('modal-title').innerText = title;
+        document.getElementById('modal-id').innerText = id;
+        document.getElementById('modal-poster-thumb').src = poster;
+        
+        const badge = document.getElementById('modal-type-badge');
+        badge.innerText = type === 'movie' ? 'PELÍCULA' : 'SERIE';
+        badge.className = type === 'movie' ? 'bg-indigo-600 text-white px-2 py-0.5 rounded font-bold text-xs' : 'bg-purple-600 text-white px-2 py-0.5 rounded font-bold text-xs';
+
+        const seriesCtrl = document.getElementById('series-controls');
+        if (type === 'tv') {
+            seriesCtrl.classList.remove('hidden');
+            seriesCtrl.classList.add('grid');
+            document.getElementById('modal-season').value = 1;
+            document.getElementById('modal-episode').value = 1;
+        } else {
+            seriesCtrl.classList.add('hidden');
+            seriesCtrl.classList.remove('grid');
+        }
+        
+        updateModalCode();
+        
+        const modal = document.getElementById('universal-modal');
+        modal.classList.remove('hidden-modal');
+        modal.querySelector('.modal-panel').classList.remove('scale-95', 'opacity-0');
+    }
+
+    function closeModal() {
+        const modal = document.getElementById('universal-modal');
+        modal.classList.add('hidden-modal');
+        // Limpiar iframe para detener video
+        document.getElementById('modal-preview-container').innerHTML = '';
+    }
+
+    // --- AQUÍ ESTÁ LA MAGIA DE LA GENERACIÓN ---
+    function updateModalCode() {
+        const { type, id } = currentModalData;
+        let finalUrl = '';
+
+        // Construcción de la URL basada en tu archivo online_viewer_net (81).html
+        if (type === 'movie') {
+            // Para películas, tu archivo espera: ?id=123
+            finalUrl = `${URL_TU_REPRODUCTOR}?id=${id}`;
+        } else {
+            // Para series, tu archivo espera: ?id=123&season=1&episode=1
+            const s = document.getElementById('modal-season').value;
+            const e = document.getElementById('modal-episode').value;
+            finalUrl = `${URL_TU_REPRODUCTOR}?id=${id}&season=${s}&episode=${e}`;
+        }
+
+        // Generar etiqueta iframe
+        const iframeCode = `<iframe class="aspect-video w-full" src="${finalUrl}" frameborder="0" allowfullscreen></iframe>`;
+        
+        document.getElementById('modal-code').innerText = iframeCode;
+        document.getElementById('modal-external-link').href = finalUrl;
+        
+        // Actualizar vista previa
+        document.getElementById('modal-preview-container').innerHTML = `<iframe src="${finalUrl}" class="w-full h-full border-0" allowfullscreen></iframe>`;
+    }
+
+    function copyCode() {
+        const code = document.getElementById('modal-code').innerText;
+        navigator.clipboard.writeText(code).then(() => {
+            const toast = document.getElementById('toast');
+            toast.classList.remove('opacity-0', 'pointer-events-none', 'translate-y-10');
+            setTimeout(() => toast.classList.add('opacity-0', 'pointer-events-none', 'translate-y-10'), 2000);
+        });
+    }
+
+</script>
+</body>
+</html>
