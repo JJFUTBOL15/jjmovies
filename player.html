@@ -3,198 +3,619 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JJMovies Player</title>
+    <title>CineMax Premium Ultra</title>
+    
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Plyr CSS & JS -->
     <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
     <script src="https://cdn.plyr.io/3.7.8/plyr.js"></script>
+    
+    <!-- HLS.js -->
     <script src="https://cdn.jsdelivr.net/npm/hls.js@1"></script>
+
+    <!-- FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+
     <script>
         tailwind.config = {
-            theme: { extend: { colors: { brand: { DEFAULT: '#3b82f6', light: '#60a5fa', dark: '#2563eb', glow: 'rgba(59, 130, 246, 0.5)' } }, fontFamily: { sans: ['Outfit', 'sans-serif'] }, animation: { 'fade-in-up': 'fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards' } } }
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            DEFAULT: '#3b82f6',
+                            light: '#60a5fa',
+                            dark: '#2563eb',
+                            glow: 'rgba(59, 130, 246, 0.5)'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Outfit', 'sans-serif'],
+                    },
+                    animation: {
+                        'fade-in-up': 'fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+                        'scale-in': 'scaleIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+                        'slide-in-right': 'slideInRight 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+                        'pulse-glow': 'pulseGlow 3s infinite',
+                        'slow-zoom': 'slowZoom 20s infinite alternate',
+                        'shimmer': 'shimmer 2s infinite linear',
+                    },
+                    keyframes: {
+                        fadeInUp: {
+                            '0%': { opacity: 0, transform: 'translateY(40px)' },
+                            '100%': { opacity: 1, transform: 'translateY(0)' },
+                        },
+                        scaleIn: {
+                            '0%': { opacity: 0, transform: 'scale(0.95)' },
+                            '100%': { opacity: 1, transform: 'scale(1)' },
+                        },
+                        slideInRight: {
+                            '0%': { opacity: 0, transform: 'translateX(20px)' },
+                            '100%': { opacity: 1, transform: 'translateX(0)' },
+                        },
+                        pulseGlow: {
+                            '0%, 100%': { boxShadow: '0 0 20px rgba(59, 130, 246, 0.2)' },
+                            '50%': { boxShadow: '0 0 40px rgba(59, 130, 246, 0.6)' },
+                        },
+                        slowZoom: {
+                            '0%': { transform: 'scale(1)' },
+                            '100%': { transform: 'scale(1.1)' },
+                        },
+                        shimmer: {
+                            '0%': { transform: 'translateX(-100%)' },
+                            '100%': { transform: 'translateX(100%)' },
+                        }
+                    }
+                }
+            }
         }
     </script>
+
     <style>
-        body { background-color: #050505; color: white; overflow-x: hidden; }
-        .glass-panel { background: rgba(20, 20, 20, 0.6); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.08); box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5); }
+        body {
+            background-color: #050505;
+            color: white;
+            overflow-x: hidden;
+        }
+
+        /* Glassmorphism Utilities */
+        .glass-panel {
+            background: rgba(20, 20, 20, 0.6);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+        }
+
+        .glass-strong {
+            background: rgba(5, 5, 5, 0.9);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        /* Staggered Animation Delays */
+        .delay-100 { animation-delay: 100ms; }
+        .delay-200 { animation-delay: 200ms; }
+        .delay-300 { animation-delay: 300ms; }
+        .delay-400 { animation-delay: 400ms; }
+        .delay-500 { animation-delay: 500ms; }
+        .delay-700 { animation-delay: 700ms; }
+
         .hidden-force { display: none !important; }
-        :root { --plyr-color-main: #3b82f6; }
-        .plyr--video .plyr__controls { background: linear-gradient(rgba(0,0,0,0), rgba(0,0,0,0.8)); }
+
+        /* Smooth Transition Classes */
+        .transition-width { transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
+        .transition-transform-smooth { transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
+
+        /* Plyr Customization */
+        :root {
+            --plyr-color-main: #3b82f6;
+            --plyr-video-background: #000;
+            --plyr-menu-background: rgba(20, 20, 20, 0.95);
+            --plyr-menu-color: #fff;
+        }
+        .plyr--full-ui input[type=range] { color: var(--plyr-color-main); }
+        .plyr__control--overlaid { background: rgba(59, 130, 246, 0.9); }
+        .plyr--video .plyr__controls { background: linear-gradient(rgba(0,0,0,0), rgba(0,0,0,0.8)); padding-bottom: 30px; }
+        
+        /* Language Flags Active State */
+        .lang-flag {
+            transition: all 0.3s ease;
+            filter: grayscale(100%) opacity(0.6);
+            transform: scale(0.9);
+            border: 2px solid transparent;
+            border-radius: 6px;
+        }
+        .lang-flag:hover {
+            filter: grayscale(0%) opacity(1);
+            transform: scale(1.05);
+        }
+        .lang-flag.active {
+            filter: grayscale(0%) opacity(1);
+            transform: scale(1.1);
+            border-color: #3b82f6;
+            box-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
+        }
+
+        /* Select Options Dark Mode */
+        select option {
+            background-color: #1a1a1a;
+            color: white;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #050505; }
+        ::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #3b82f6; }
     </style>
 </head>
-<body class="relative min-h-screen font-sans">
-    <nav id="navbar" class="fixed top-0 w-full z-40 px-8 py-6 flex justify-between items-center">
-        <div class="text-3xl font-extrabold">JJ<span class="text-brand">Movies</span></div>
-        <div id="status-msg" class="text-sm text-brand animate-pulse"></div>
+<body class="relative min-h-screen font-sans selection:bg-brand selection:text-white">
+
+    <!-- Navbar -->
+    <nav id="navbar" class="fixed top-0 w-full z-40 transition-all duration-500 px-8 py-6 flex justify-between items-center opacity-0 animate-fade-in-up">
+        <div class="text-3xl font-extrabold tracking-tighter cursor-default group">
+            Cine<span class="text-brand group-hover:text-white transition-colors duration-300">Max</span>
+            <div class="h-1 w-0 bg-brand group-hover:w-full transition-all duration-300 rounded-full"></div>
+        </div>
+        <div id="status-msg" class="text-sm font-semibold text-brand animate-pulse tracking-wide"></div>
     </nav>
 
+    <!-- Main Background -->
     <div class="fixed inset-0 overflow-hidden z-0 pointer-events-none">
-        <div id="backdrop-img" class="absolute inset-0 bg-cover bg-center opacity-0 animate-slow-zoom"></div>
+        <div id="backdrop-img" class="absolute inset-0 bg-cover bg-center bg-no-repeat transition-opacity duration-1000 opacity-0 animate-slow-zoom"></div>
         <div class="absolute inset-0 bg-gradient-to-t from-[#050505] via-[#050505]/80 to-transparent"></div>
+        <div class="absolute inset-0 bg-gradient-to-r from-[#050505] via-[#050505]/50 to-transparent"></div>
+        <div class="absolute inset-0 opacity-[0.03]" style="background-image: url('data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noise%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.65%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noise)%22 opacity=%221%22/%3E%3C/svg%3E');"></div>
     </div>
 
+    <!-- Content Container -->
     <div class="relative z-10 container mx-auto px-6 h-screen flex items-center">
-        <div id="movie-info" class="max-w-3xl flex flex-col gap-8">
-            <h1 id="movie-title" class="text-8xl font-black text-transparent bg-clip-text bg-gradient-to-br from-white to-gray-500 opacity-0 animate-fade-in-up">Cargando...</h1>
-            <h2 id="episode-title" class="text-2xl text-gray-400 hidden-force"></h2>
-            <p id="movie-overview" class="text-gray-300 text-xl opacity-0 animate-fade-in-up">Esperando...</p>
-            <button onclick="startScraping()" class="px-10 py-5 bg-brand rounded-full font-bold text-white shadow-[0_0_30px_rgba(59,130,246,0.4)] flex items-center gap-4">
-                <i class="fas fa-play"></i> Reproducir
-            </button>
+        <div id="movie-info" class="max-w-3xl flex flex-col items-start gap-6 md:gap-8">
+            
+            <div class="flex items-center gap-4 text-xs font-bold tracking-[0.2em] text-gray-400 uppercase opacity-0 animate-fade-in-up delay-100">
+                <span id="movie-year" class="bg-white/5 border border-white/10 px-3 py-1 rounded-md backdrop-blur-sm">----</span>
+                <span id="movie-runtime" class="flex items-center gap-1"><i class="far fa-clock"></i> -- min</span>
+                <span id="movie-rating" class="text-yellow-400 flex items-center gap-1 drop-shadow-lg"></span>
+            </div>
+
+            <div class="w-full">
+                <h1 id="movie-title" class="text-5xl md:text-8xl font-black leading-none tracking-tighter text-transparent bg-clip-text bg-gradient-to-br from-white via-gray-200 to-gray-500 drop-shadow-2xl opacity-0 animate-fade-in-up delay-200">
+                    Cargando...
+                </h1>
+                <h2 id="episode-title" class="text-xl md:text-2xl text-gray-400 font-light mt-2 opacity-0 animate-fade-in-up delay-300 hidden-force"></h2>
+            </div>
+
+            <div id="movie-genres" class="text-brand-light opacity-0 animate-fade-in-up delay-300 flex gap-2"></div>
+
+            <p id="movie-overview" class="text-gray-300 text-lg md:text-xl leading-relaxed max-w-2xl opacity-0 animate-fade-in-up delay-400"></p>
+
+            <div class="opacity-0 animate-fade-in-up delay-500">
+                <button onclick="startScraping()" class="px-10 py-5 bg-brand hover:bg-white rounded-full font-bold text-white hover:text-brand transition-all duration-500 shadow-[0_0_30px_rgba(59,130,246,0.4)] hover:shadow-[0_0_60px_rgba(59,130,246,0.8)] hover:scale-105 flex items-center gap-4">
+                    <i class="fas fa-play text-xl"></i> 
+                    <span class="tracking-wider">REPRODUCIR AHORA</span>
+                </button>
+            </div>
         </div>
     </div>
 
-    <div id="player-modal" class="fixed inset-0 z-50 bg-[#050505] hidden flex">
-        <div id="video-wrapper" class="w-3/4 h-full bg-black flex items-center justify-center">
-            <button onclick="closePlayer()" class="absolute top-4 left-4 z-20 bg-white/10 rounded-full p-2"><i class="fas fa-arrow-left"></i></button>
-            <video id="player" class="w-full h-full" playsinline controls></video>
+    <!-- Player Modal -->
+    <div id="player-modal" class="fixed inset-0 z-50 bg-[#050505] hidden flex flex-row overflow-hidden">
+        <div class="relative w-full md:w-3/4 h-full bg-black flex items-center justify-center">
+            <button onclick="closePlayer()" class="absolute top-4 left-4 z-20 w-10 h-10 rounded-full bg-white/10 hover:bg-red-500/20 flex items-center justify-center">
+                <i class="fas fa-arrow-left"></i>
+            </button>
+            <video id="player" class="w-full h-full" playsinline controls crossorigin></video>
             <div id="iframe-container" class="absolute inset-0 hidden-force"></div>
         </div>
-        <div id="server-panel" class="w-1/4 h-full glass-panel flex flex-col">
-            <div class="p-6 border-b border-white/5"><h3 class="text-xl font-bold"><i class="fas fa-server text-brand"></i> Fuentes (<span id="server-count">0</span>)</h3></div>
-            <div id="server-list-container" class="flex-1 overflow-y-auto p-4 space-y-3"></div>
+
+        <div class="w-full md:w-1/4 h-full glass-panel flex flex-col">
+            <div class="p-6 border-b border-white/5 flex justify-between items-center">
+                <h3 class="text-xl font-bold"><i class="fas fa-server text-brand"></i> Fuentes</h3>
+                <div class="text-xs bg-white/5 px-2 py-1 rounded"><span id="server-count">0</span> Disp.</div>
+            </div>
+            <div class="flex justify-center gap-3 p-4">
+                <button onclick="setLanguageFilter('latino')" class="lang-flag" id="btn-latino"><img src="https://flagcdn.com/h24/mx.png" alt="Latino" title="Latino"></button>
+                <button onclick="setLanguageFilter('castellano')" class="lang-flag" id="btn-castellano"><img src="https://flagcdn.com/h24/es.png" alt="Castellano" title="Castellano"></button>
+                <button onclick="setLanguageFilter('subtitulado')" class="lang-flag" id="btn-subtitulado"><img src="https://flagcdn.com/h24/us.png" alt="Sub" title="Subtitulado"></button>
+            </div>
+            <div id="server-list-container" class="flex-1 overflow-y-auto p-4 space-y-3">Esperando selección...</div>
         </div>
     </div>
 
-    <div id="loader-overlay" class="fixed inset-0 z-60 bg-black/95 hidden flex items-center justify-center">
+    <!-- Loader -->
+    <div id="loader-overlay" class="fixed inset-0 z-60 bg-black/95 hidden flex flex-col items-center justify-center">
         <div class="w-24 h-24 border-4 border-t-brand rounded-full animate-spin"></div>
-        <p id="loader-text" class="mt-8 font-bold">Buscando enlaces...</p>
+        <p id="loader-text" class="mt-8 text-white font-bold text-sm uppercase">Buscando opciones</p>
     </div>
 
     <script>
-        const API_KEY = 'da8b836389708e0558de674492931977';
-        const PROXY_URL = 'https://api.codetabs.com/v1/proxy/?quest=';
+        const API_KEY = "da8b836389708e0558de674492931977";
+        const PROXY_URL = "https://api.codetabs.com/v1/proxy/?quest=";
+        const TARGET_BLOG = "https://darkstatonmovies1.blogspot.com";
+
         let movieData = { tmdbId: null, imdbId: null, title: '', backdrop: '', type: 'movie', season: 1, episode: 1 };
         let sourcesList = [];
         let playerInstance = null;
+        let currentLanguage = 'all';
+        const statusMsg = document.getElementById('status-msg');
+        const iframeContainer = document.getElementById('iframe-container');
+        const video = document.getElementById('player');
 
         document.addEventListener('DOMContentLoaded', () => {
-            const params = new URLSearchParams(window.location.search);
-            movieData.tmdbId = params.get('id');
-            movieData.type = params.get('type') || 'movie';
-            movieData.season = parseInt(params.get('season') || 1);
-            movieData.episode = parseInt(params.get('episode') || 1);
+            const urlParams = new URLSearchParams(window.location.search);
+            movieData.tmdbId = urlParams.get('id');
+            movieData.type = urlParams.get('type') || 'movie';
+            movieData.season = parseInt(urlParams.get('season') || 1);
+            movieData.episode = parseInt(urlParams.get('episode') || 1);
             if (movieData.tmdbId) fetchTMDBData();
         });
 
         async function fetchTMDBData() {
-            const url = movieData.type === 'tv' ? `https://api.themoviedb.org/3/tv/${movieData.tmdbId}?api_key=${API_KEY}&language=es-MX&append_to_response=external_ids` : `https://api.themoviedb.org/3/movie/${movieData.tmdbId}?api_key=${API_KEY}&language=es-MX&append_to_response=external_ids`;
-            const data = await fetch(url).then(r => r.json());
+            let url = `https://api.themoviedb.org/3/${movieData.type}/${movieData.tmdbId}?api_key=${API_KEY}&language=es-MX&append_to_response=external_ids`;
+            if (movieData.type === 'tv') {
+                const seasonUrl = `https://api.themoviedb.org/3/tv/${movieData.tmdbId}/season/${movieData.season}?api_key=${API_KEY}&language=es-MX`;
+                const seasonRes = await fetch(seasonUrl);
+                const seasonData = await seasonRes.json();
+                const ep = seasonData.episodes.find(e => e.episode_number === movieData.episode) || {};
+                document.getElementById('episode-title').innerText = `S${movieData.season} E${movieData.episode}: ${ep.name || 'Capítulo ' + movieData.episode}`;
+                document.getElementById('episode-title').classList.remove('hidden-force');
+            }
+            const res = await fetch(url);
+            const data = await res.json();
             movieData.imdbId = data.external_ids?.imdb_id;
-            movieData.title = data.name || data.title;
-            movieData.backdrop = `https://image.tmdb.org/t/p/original${data.backdrop_path}`;
+            movieData.title = data.title || data.name;
+            movieData.backdrop = data.backdrop_path ? `https://image.tmdb.org/t/p/original${data.backdrop_path}` : '';
             document.getElementById('movie-title').textContent = movieData.title;
-            document.getElementById('movie-overview').textContent = data.overview;
-            document.getElementById('backdrop-img').style.backgroundImage = `url('${movieData.backdrop}')`;
-            document.getElementById('backdrop-img').classList.remove('opacity-0');
-            if (movieData.type === 'tv') document.getElementById('episode-title').innerText = `S${movieData.season} E${movieData.episode}`;
+            document.getElementById('movie-overview').textContent = data.overview || 'Sin descripción';
+            document.getElementById('movie-year').textContent = data.release_date?.split('-')[0] || data.first_air_date?.split('-')[0] || '????';
+            document.getElementById('movie-runtime').innerHTML = `<i class="far fa-clock mr-2"></i> ${data.runtime || data.episode_run_time?.[0] || '--'} min`;
+            document.getElementById('movie-rating').innerHTML = `<i class="fas fa-star mr-2"></i> ${data.vote_average?.toFixed(1) || 'N/A'}`;
+            if (data.genres?.length) {
+                document.getElementById('movie-genres').innerHTML = data.genres.slice(0,3).map(g => `<span class="bg-white/5 border border-white/10 px-3 py-1 rounded-full text-xs">${g.name}</span>`).join(' ');
+            }
+            if (movieData.backdrop) {
+                document.getElementById('backdrop-img').style.backgroundImage = `url('${movieData.backdrop}')`;
+                document.getElementById('backdrop-img').classList.remove('opacity-0');
+            }
+            document.querySelectorAll('.animate-fade-in-up').forEach(el => el.classList.remove('opacity-0'));
+        }
+
+        function setLanguageFilter(lang) {
+            currentLanguage = lang;
+            updateServerList();
+            Array.from(document.querySelectorAll('.lang-flag')).forEach(btn => btn.classList.remove('active'));
+            document.getElementById('btn-' + lang).classList.add('active');
         }
 
         async function startScraping() {
-            setLoading(true, "Buscando enlaces HD...");
-            sourcesList = [];
-            const titleNorm = encodeURIComponent(movieData.title.replace(/[^a-zA-Z0-9 ]/g, ''));
-            const promises = [scrapeCinecalidad(titleNorm), scrapeCuevana(titleNorm), scrapePelisplus(titleNorm), scrapeGnula(titleNorm), scrapeEmbed69()];
-            await Promise.allSettled(promises);
-            setLoading(false);
             openPlayerUI();
+            setLoading(true, "Buscando opciones");
+            sourcesList = [];
+            if (movieData.type === 'tv') {
+                if (movieData.imdbId) await scrapeEmbed69Series();
+            } else {
+                await scrapeBlogFallback();
+                if (movieData.imdbId) {
+                    await scrapeEmbed69Movie();
+                    await scrapeVerHD();
+                }
+            }
+            setLoading(false);
             updateServerList();
-            if (sourcesList.length) playSource(sourcesList[0]);
-            else alert('No enlaces encontrados hoy. Prueba mañana.');
         }
 
-        async function scrapeCinecalidad(title) {
-            const res = await fetch(PROXY_URL + `https://cinecalidad.ec/?s=${title}`);
-            const html = await res.text();
-            const link = html.match(/href="(https:\/\/cinecalidad\.ec\/[^"]*?)"/);
-            if (link) {
-                const page = await fetch(PROXY_URL + link[1]);
-                const pageHtml = await page.text();
-                pageHtml.match(/src="(https:\/\/[^"]+?(streamtape|filemoon|voe)[^"]*)"/g)?.forEach(i => addSource({name: 'CineCalidad HD', lang: 'Latino', url: i.match(/src="([^"]*)"/)[1], provider: 'cinecalidad'}));
-            }
-        }
-
-        async function scrapeCuevana(title) {
-            const res = await fetch(PROXY_URL + `https://cuevana.pro/buscar?q=${title}`);
-            const html = await res.text();
-            const links = html.match(/href="(https:\/\/cuevana\.pro\/[^"]*?)"/g) || [];
-            for (let l of links.slice(0,3)) { // Limit to avoid overload
-                const page = await fetch(PROXY_URL + l.match(/href="([^"]*)"/)[1]);
-                const pageHtml = await page.text();
-                pageHtml.match(/src="(https:\/\/[^"]+?(streamtape|voe|filemoon)[^"]*)"/g)?.forEach(p => addSource({name: 'Cuevana Pro', lang: 'Latino', url: p.match(/src="([^"]*)"/)[1], provider: 'cuevana'}));
-            }
-        }
-
-        async function scrapePelisplus(title) {
-            const res = await fetch(PROXY_URL + `https://pelisplus.soy/buscar/${title}`);
-            const html = await res.text();
-            html.match(/data-src="(https:\/\/[^"]+?(streamtape|voe|filemoon)[^"]*)"/g)?.forEach(i => addSource({name: 'PelisPlus', lang: 'Latino', url: i.match(/data-src="([^"]*)"/)[1], provider: 'pelisplus'}));
-        }
-
-        async function scrapeGnula(title) {
-            const res = await fetch(PROXY_URL + `https://gnula.nu/?s=${title}`);
-            const html = await res.text();
-            const iframe = html.match(/src="(https:\/\/gnula\.nu\/wp-content[^"]*player[^"]*)"/);
-            if (iframe) addSource({name: 'Gnula Player', lang: 'Latino', url: iframe[1], provider: 'gnula'});
-        }
-
-        async function scrapeEmbed69() {
-            if (!movieData.imdbId) return;
-            const slug = movieData.type === 'tv' ? `${movieData.imdbId}-${movieData.season}x${String(movieData.episode).padStart(2, '0')}` : movieData.imdbId;
-            const res = await fetch(PROXY_URL + `https://embed69.org/f/${slug}/`);
-            const html = await res.text();
+        async function scrapeEmbed69Movie() {
+            const url = `https://embed69.org/f/${movieData.imdbId}/`;
+            const resp = await fetch(PROXY_URL + encodeURIComponent(url));
+            const html = await resp.text();
             const match = html.match(/let dataLink\s*=\s*(\[[\s\S]*?\]);/);
             if (match) {
-                JSON.parse(match[1]).forEach(item => {
-                    const lang = /LAT/i.test(item.video_language) ? "Latino" : /ESP|CAS/i.test(item.video_language) ? "Castellano" : "Subtitulado";
+                const dataLink = JSON.parse(match[1]);
+                dataLink.forEach(item => {
+                    const rawLang = item.video_language || 'Desconocido';
+                    let lang = rawLang;
+                    if (/LAT/i.test(rawLang)) lang = 'Latino';
+                    else if (/ESP|CAS/i.test(rawLang)) lang = 'Castellano';
+                    else lang = 'Subtitulado';
                     item.sortedEmbeds.forEach(embed => {
                         const decoded = decodeJWT(embed.link);
-                        if (decoded?.link) addSource({name: embed.servername, lang, url: decoded.link, provider: "embed69"});
+                        if (decoded && decoded.link) {
+                            const host = mapHostName(embed.servername);
+                            const id = extractIdFromLink(decoded.link);
+                            let url = decoded.link;
+                            if (host && id) url = `https://unlimplay.com/embed2/?host=${host}&id=${id}&poster=${encodeURIComponent(movieData.backdrop)}`;
+                            sourcesList.push({ name: embed.servername, lang, url, provider: 'embed69', icon: 'fa-globe', type: 'iframe' });
+                        }
                     });
                 });
             }
         }
 
-        function decodeJWT(t) {
-            try { const p = t.split('.')[1]; return JSON.parse(atob(p.replace(/-/g, '+').replace(/_/g, '/'))); } catch { return null; }
+        async function scrapeEmbed69Series() {
+            const slug = `${movieData.imdbId}-${movieData.season}x${String(movieData.episode).padStart(2, '0')}`;
+            const url = `https://embed69.org/f/${slug}/`;
+            const resp = await fetch(PROXY_URL + encodeURIComponent(url));
+            const html = await resp.text();
+            const match = html.match(/let dataLink\s*=\s*(\[[\s\S]*?\]);/);
+            if (match) {
+                const dataLink = JSON.parse(match[1]);
+                dataLink.forEach(item => {
+                    const rawLang = item.video_language || 'Desconocido';
+                    let lang = rawLang;
+                    if (/LAT/i.test(rawLang)) lang = 'Latino';
+                    else if (/ESP|CAS/i.test(rawLang)) lang = 'Castellano';
+                    else lang = 'Subtitulado';
+                    item.sortedEmbeds.forEach(embed => {
+                        const decoded = decodeJWT(embed.link);
+                        if (decoded && decoded.link) {
+                            const host = mapHostName(embed.servername);
+                            const id = extractIdFromLink(decoded.link);
+                            let url = decoded.link;
+                            if (host && id) url = `https://unlimplay.com/embed2/?host=${host}&id=${id}&poster=${encodeURIComponent(movieData.backdrop)}`;
+                            sourcesList.push({ name: embed.servername, lang, url, provider: 'embed69', icon: 'fa-globe', type: 'iframe' });
+                        }
+                    });
+                });
+            }
         }
 
-        function addSource(source) {
-            if (!sourcesList.some(s => s.url === source.url)) sourcesList.push(source);
+        async function scrapeVerHD() {
+            const url = `https://verhdlink.cam/movie/${movieData.imdbId}`;
+            const resp = await fetch(PROXY_URL + encodeURIComponent(url));
+            const html = await resp.text();
+            const mirrors = html.match(/<ul class="_player-mirrors[\\s\\S]*?</ul>/g) || [];
+            mirrors.forEach(ul => {
+                let lang = "Latino";
+                if (/subtitulado/i.test(ul)) lang = "Subtitulado";
+                else if (/castellano/i.test(ul)) lang = "Castellano";
+                const lis = ul.match(/<li data-link="([^"]*)"/g) || [];
+                lis.forEach(li => {
+                    const dataLink = li.match(/data-link="([^"]*)"/)[1];
+                    if (/dropload/i.test(dataLink)) {
+                        const match = dataLink.match(/embed-([a-zA-Z0-9_-]+)/) || dataLink.match(/dropload\.tv\/e\/([a-zA-Z0-9_-]+)/);
+                        if (match) {
+                            const droploadId = match[1];
+                            const url = `https://unlimplay.com/embed2/?host=dropload&id=${droploadId}&poster=${encodeURIComponent(movieData.backdrop)}`;
+                            sourcesList.push({ name: "⚡ THUNDERBOLT [Ultra]", lang, url, provider: 'verhd', icon: 'fa-bolt', type: 'iframe' });
+                        }
+                    }
+                });
+            });
+        }
+
+        async function scrapeBlogFallback() {
+            const keyword = normalizeStr(movieData.title.split(":")[0]);
+            const searchUrl = `${TARGET_BLOG}/search?q=${encodeURIComponent(keyword)}`;
+            const resp = await fetch(PROXY_URL + encodeURIComponent(searchUrl));
+            const html = await resp.text();
+            const cards = html.match(/<div class="cards-movie">[\\s\\S]*?</div>/g) || [];
+            let bestUrl = null;
+            for (let card of cards) {
+                const h2 = card.match(/<h2>(.*?)</h2>/);
+                if (h2 && keyword in normalizeStr(h2[1])) {
+                    const a = card.match(/<a href="([^"]*)"/);
+                    if (a) {
+                        bestUrl = a[1];
+                        break;
+                    }
+                }
+            }
+            if (bestUrl) {
+                const mResp = await fetch(PROXY_URL + encodeURIComponent(bestUrl));
+                const mHtml = await mResp.text();
+                const iframes = mHtml.match(/<iframe src="([^"]*)"/g) || [];
+                iframes.forEach((src, i) => {
+                    if (/videoUrl=/.test(src)) {
+                        const params = new URLSearchParams(new URL(src.match(/src="([^"]*)"/)[1]).query);
+                        const encoded = params.get('videoUrl');
+                        if (encoded) {
+                            const url = atob(encoded);
+                            const suffix = iframes.length > 1 ? ` ${toRoman(i+1)}` : '';
+                            sourcesList.push({ name: `💎 DIAMOND [VIP]${suffix}`, lang: "Latino", url, provider: 'blog', icon: 'fa-crown', type: 'iframe' });
+                        }
+                    }
+                });
+            }
         }
 
         function updateServerList() {
-            sourcesList.sort((a, b) => ['cinecalidad', 'cuevana', 'pelisplus', 'gnula', 'embed69'].indexOf(a.provider) - ['cinecalidad', 'cuevana', 'pelisplus', 'gnula', 'embed69'].indexOf(b.provider));
-            document.getElementById('server-count').textContent = sourcesList.length;
+            const displayList = sourcesList.filter(s => currentLanguage === 'all' || s.lang.toLowerCase().includes(currentLanguage));
+            displayList.sort((a, b) => {
+                const getSourcePriority = (p) => {
+                    if (p === 'blog') return 0;
+                    if (p === 'embed69') return 1;
+                    if (p === 'verhd') return 2;
+                    return 3;
+                };
+                const getLangPriority = (lang) => {
+                    const l = lang.toLowerCase();
+                    if (l.includes('lat')) return 0;
+                    if (l.includes('cas') || l.includes('esp')) return 1;
+                    return 2;
+                };
+                const prioA = getSourcePriority(a.provider);
+                const prioB = getSourcePriority(b.provider);
+                if (prioA !== prioB) return prioA - prioB;
+                return getLangPriority(a.lang) - getLangPriority(b.lang);
+            });
+
+            document.getElementById('server-count').innerText = displayList.length;
             const container = document.getElementById('server-list-container');
             container.innerHTML = '';
-            sourcesList.forEach(s => {
+            
+            if (displayList.length === 0) {
+                container.innerHTML = `<div class="text-center text-gray-500 mt-10">No hay opciones</div>`;
+                return;
+            }
+
+            displayList.forEach((src, idx) => {
                 const div = document.createElement('div');
-                div.className = 'p-3 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 cursor-pointer';
-                div.innerHTML = `<h4 class="font-bold">${s.name}</h4><span class="text-xs text-gray-400">${s.lang}</span>`;
-                div.onclick = () => playSource(s);
+                let borderColor = 'border-white/5 bg-white/5';
+                let iconColor = 'text-brand';
+                let badge = '';
+
+                if (src.provider === 'blog') { 
+                    borderColor = 'border-yellow-500/20 bg-yellow-500/5';
+                    iconColor = 'text-yellow-400';
+                    badge = '<span class="text-[9px] text-yellow-500 font-extrabold tracking-widest flex items-center gap-1"><i class="fas fa-crown"></i> VIP</span>';
+                } else if (src.provider === 'verhd') {
+                    borderColor = 'border-cyan-500/20 bg-cyan-500/5';
+                    iconColor = 'text-cyan-400';
+                    badge = '<span class="text-[9px] text-cyan-500 font-extrabold tracking-widest flex items-center gap-1"><i class="fas fa-bolt"></i> ULTRA</span>';
+                }
+
+                const animationDelay = idx * 50; 
+                div.className = `group relative overflow-hidden flex items-center p-3 rounded-xl cursor-pointer transition-all duration-300 border hover:border-brand/50 hover:bg-white/10 opacity-0 animate-slide-in-right ${borderColor}`;
+                div.style.animationDelay = `${animationDelay}ms`;
+                
+                div.innerHTML = `
+                    <div class="absolute inset-0 bg-gradient-to-r from-brand/0 via-brand/10 to-brand/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></div>
+                    <div class="w-10 h-10 rounded-full bg-black/40 flex items-center justify-center ${iconColor} font-bold mr-3 group-hover:bg-brand group-hover:text-white transition-all duration-300 shadow-lg group-hover:scale-110">
+                        <i class="fas ${src.icon} text-sm"></i>
+                    </div>
+                    <div class="flex-1 z-10">
+                        <h4 class="text-xs font-bold text-gray-100 group-hover:text-white transition-colors truncate max-w-[150px]">${src.name}</h4>
+                        <div class="flex items-center gap-2 mt-0.5">
+                            <span class="text-[9px] bg-black/30 px-1.5 py-0.5 rounded text-gray-400 uppercase tracking-wider font-semibold group-hover:text-brand-light transition-colors">${src.lang}</span>
+                            ${badge}
+                        </div>
+                    </div>
+                `;
+                div.onclick = () => {
+                    playSource(src);
+                    Array.from(container.children).forEach(c => c.classList.remove('border-brand', 'bg-white/10', 'shadow-[0_0_15px_rgba(59,130,246,0.2)]'));
+                    div.classList.add('border-brand', 'bg-white/10', 'shadow-[0_0_15px_rgba(59,130,246,0.2)]');
+                };
                 container.appendChild(div);
             });
         }
 
         function playSource(source) {
             const video = document.getElementById('player');
-            const ifrCont = document.getElementById('iframe-container');
-            if (playerInstance) playerInstance.destroy();
-            video.style.display = 'none';
-            ifrCont.classList.remove('hidden-force');
-            ifrCont.innerHTML = `<iframe src="${source.url}" class="w-full h-full border-0" allowfullscreen></iframe>`;
+            const iframeCont = document.getElementById('iframe-container');
+
+            if (playerInstance) playerInstance.stop();
+            video.pause();
+            video.removeAttribute('src'); 
+            video.load(); 
+            iframeContainer.innerHTML = ''; 
+
+            if (source.type === 'direct' && (source.url.includes('.mp4') || source.url.includes('.m3u8'))) {
+                iframeCont.classList.add('hidden-force');
+                video.style.display = 'block';
+                
+                if (source.url.includes('.m3u8') && Hls.isSupported()) {
+                    const hls = new Hls();
+                    hls.loadSource(source.url);
+                    hls.attachMedia(video);
+                    hls.on(Hls.Events.MANIFEST_PARSED, () => {
+                        initPlyr();
+                        playerInstance.play();
+                    });
+                    hls.on(Hls.Events.ERROR, (event, data) => {
+                        if (data.fatal) playSource({...source, type: 'iframe'});
+                    });
+                } else {
+                    video.src = source.url;
+                    initPlyr();
+                    playerInstance.play();
+                }
+            } else {
+                video.style.display = 'none';
+                iframeCont.classList.remove('hidden-force');
+                setTimeout(() => {
+                    iframeCont.innerHTML = `<iframe src="${source.url}" class="w-full h-full border-0 animate-fade-in-up" allow="autoplay; encrypted-media"></iframe>`;
+                }, 50);
+            }
         }
 
-        function openPlayerUI() { document.getElementById('player-modal').classList.remove('hidden'); }
-        function closePlayer() { document.getElementById('player-modal').classList.add('hidden'); iframeContainer.innerHTML = ''; }
+        function initPlyr() {
+            if (playerInstance) playerInstance.destroy();
+            playerInstance = new Plyr('#player', {
+                controls: ['play-large', 'play', 'progress', 'current-time', 'mute', 'volume', 'settings', 'pip'],
+                settings: ['quality', 'speed'],
+                autoplay: true,
+                fullscreen: { enabled: false, fallback: false, iosNative: false }
+            });
+        }
+
+        function mapHostName(name) {
+            name = name.toLowerCase();
+            if (name.includes('voe')) return 'voe';
+            if (name.includes('streamwish')) return 'streamwish';
+            if (name.includes('dood')) return 'doodstream';
+            if (name.includes('filemoon')) return 'filemoon';
+            if (name.includes('vidhide')) return 'vidhide';
+            return null;
+        }
+
+        function extractIdFromLink(link) {
+            const patterns = [/\/e\/([a-zA-Z0-9]+)/, /filemoon\.sx\/d\/([a-zA-Z0-9]+)/, /voe\.sx\/([a-zA-Z0-9]+)/, /streamwish\.com\/([a-zA-Z0-9]+)/, /dood\.to\/e\/([a-zA-Z0-9]+)/, /vidhide\.\w+\/([a-zA-Z0-9]+)/];
+            for (let p of patterns) {
+                const m = link.match(p);
+                if (m && m[1]) return m[1];
+            }
+            const parts = link.split('/');
+            return parts[parts.length - 1].replace('.html', '');
+        }
+
+        function normalizeStr(str) {
+            return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+        }
+
+        function toRoman(num) {
+            const lookup = {M:1000,CM:900,D:500,CD:400,C:100,XC:90,L:50,XL:40,X:10,IX:9,V:5,IV:4,I:1};
+            let roman = '', i;
+            for (i in lookup) {
+                while (num >= lookup[i]) { roman += i; num -= lookup[i]; }
+            }
+            return roman;
+        }
+
+        function updateStatus(msg) {
+            statusMsg.textContent = msg;
+            setTimeout(() => statusMsg.textContent = '', 4000);
+        }
+
         function setLoading(active, text) {
             const overlay = document.getElementById('loader-overlay');
+            const txt = document.getElementById('loader-text');
             if (active) {
                 overlay.classList.remove('hidden');
-                document.getElementById('loader-text').textContent = text;
-            } else overlay.classList.add('hidden');
+                requestAnimationFrame(() => overlay.classList.remove('opacity-0'));
+                txt.innerText = text;
+            } else {
+                overlay.classList.add('opacity-0');
+                setTimeout(() => overlay.classList.add('hidden'), 500);
+            }
+        }
+
+        function openPlayerUI() {
+            const modal = document.getElementById('player-modal');
+            modal.classList.remove('hidden');
+            requestAnimationFrame(() => {
+                modal.classList.remove('opacity-0', 'scale-95');
+                modal.classList.add('opacity-100', 'scale-100');
+            });
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closePlayer() {
+            const modal = document.getElementById('player-modal');
+            modal.classList.remove('opacity-100', 'scale-100');
+            modal.classList.add('opacity-0', 'scale-95');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                if (playerInstance) playerInstance.stop();
+                iframeContainer.innerHTML = '';
+            }, 700);
+            document.body.style.overflow = '';
         }
     </script>
 </body>
