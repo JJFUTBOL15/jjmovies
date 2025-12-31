@@ -191,246 +191,699 @@
                 <h2 id="episode-title" class="text-xl md:text-2xl text-gray-400 font-light mt-2 opacity-0 animate-fade-in-up delay-300 hidden-force"></h2>
             </div>
 
-            <div id="movie-genres" class="text-brand-light opacity-0 animate-fade-in-up delay-300 flex gap-2"></div>
+            <div id="movie-genres" class="text-brand-light font-medium text-lg flex gap-3 opacity-0 animate-fade-in-up delay-300"></div>
 
-            <p id="movie-overview" class="text-gray-300 text-lg md:text-xl leading-relaxed max-w-2xl opacity-0 animate-fade-in-up delay-400"></p>
+            <!-- Series Controls (Only for TV) -->
+            <div id="series-controls" class="hidden-force w-full flex flex-wrap items-center gap-4 opacity-0 animate-fade-in-up delay-400">
+                <div class="flex items-center bg-white/5 backdrop-blur-md rounded-xl border border-white/10 p-1 shadow-lg">
+                    <select id="season-select" onchange="onSeasonChange(this.value)" class="bg-transparent text-white font-bold px-3 py-2 outline-none cursor-pointer hover:text-brand transition-colors text-sm uppercase tracking-wide"></select>
+                    <div class="h-6 w-[1px] bg-white/10 mx-1"></div>
+                    <select id="episode-select" onchange="onEpisodeChange(this.value)" class="bg-transparent text-white font-bold px-3 py-2 outline-none cursor-pointer hover:text-brand transition-colors text-sm uppercase tracking-wide"></select>
+                </div>
+
+                <button id="btn-watched" onclick="toggleWatched()" class="group flex items-center gap-2 px-4 py-2.5 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 hover:border-brand/50 transition-all shadow-lg backdrop-blur-md">
+                    <i class="far fa-circle text-xl text-gray-400 group-hover:text-brand transition-colors" id="icon-watched"></i>
+                    <span class="text-sm font-bold text-gray-300 group-hover:text-white">Visto</span>
+                </button>
+
+                <button onclick="nextEpisode()" class="flex items-center gap-2 px-5 py-2.5 bg-brand hover:bg-brand-dark rounded-xl text-white font-bold transition-all shadow-[0_0_15px_rgba(59,130,246,0.4)] hover:shadow-[0_0_25px_rgba(59,130,246,0.6)]">
+                    Siguiente <i class="fas fa-step-forward text-xs"></i>
+                </button>
+            </div>
+
+            <p id="movie-overview" class="text-gray-300 text-lg md:text-xl leading-relaxed line-clamp-3 md:line-clamp-4 max-w-2xl opacity-0 animate-fade-in-up delay-400 drop-shadow-md">
+                Esperando datos...
+            </p>
 
             <div class="opacity-0 animate-fade-in-up delay-500">
-                <button onclick="startScraping()" class="px-10 py-5 bg-brand hover:bg-white rounded-full font-bold text-white hover:text-brand transition-all duration-500 shadow-[0_0_30px_rgba(59,130,246,0.4)] hover:shadow-[0_0_60px_rgba(59,130,246,0.8)] hover:scale-105 flex items-center gap-4">
-                    <i class="fas fa-play text-xl"></i> 
+                <button onclick="startScraping()" class="group relative px-10 py-5 bg-brand hover:bg-white rounded-full font-bold text-white hover:text-brand transition-all duration-500 shadow-[0_0_30px_rgba(59,130,246,0.4)] hover:shadow-[0_0_60px_rgba(59,130,246,0.8)] hover:scale-105 flex items-center gap-4 overflow-hidden border border-brand">
+                    <span class="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:animate-[shimmer_1.5s_infinite]"></span>
+                    <i class="fas fa-play text-xl group-hover:scale-125 transition-transform duration-300"></i> 
                     <span class="tracking-wider">REPRODUCIR AHORA</span>
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- Player Modal -->
-    <div id="player-modal" class="fixed inset-0 z-50 bg-[#050505] hidden flex flex-row overflow-hidden">
-        <div class="relative w-full md:w-3/4 h-full bg-black flex items-center justify-center">
-            <button onclick="closePlayer()" class="absolute top-4 left-4 z-20 w-10 h-10 rounded-full bg-white/10 hover:bg-red-500/20 flex items-center justify-center">
-                <i class="fas fa-arrow-left"></i>
-            </button>
-            <video id="player" class="w-full h-full" playsinline controls crossorigin></video>
-            <div id="iframe-container" class="absolute inset-0 hidden-force"></div>
+    <!-- Player Modal (Overlay) -->
+    <div id="player-modal" class="fixed inset-0 z-50 bg-[#050505] hidden opacity-0 transition-all duration-700 scale-95 flex flex-row transform-gpu overflow-hidden">
+        
+        <!-- Background Blur for Modal -->
+        <div id="player-bg-blur" class="absolute inset-0 bg-cover bg-center opacity-30 blur-[100px] z-0 pointer-events-none scale-110"></div>
+
+        <!-- Video Area -->
+        <div id="video-wrapper" class="relative w-full md:w-3/4 h-full bg-black/90 z-10 flex items-center justify-center shadow-[20px_0_50px_rgba(0,0,0,0.5)] border-r border-white/5 transition-width duration-500 ease-in-out">
+            
+            <!-- Top Controls (Back, Toggle Sidebar, Fullscreen) -->
+            <div class="absolute top-0 left-0 w-full p-4 flex justify-between z-20 pointer-events-none bg-gradient-to-b from-black/80 to-transparent transition-opacity duration-300 group-hover/video:opacity-100">
+                <button onclick="closePlayer()" class="pointer-events-auto w-10 h-10 rounded-full bg-white/10 hover:bg-red-500/20 hover:text-red-500 border border-white/10 backdrop-blur-md flex items-center justify-center transition-all duration-300 hover:scale-110" title="Cerrar">
+                    <i class="fas fa-arrow-left text-white"></i>
+                </button>
+
+                <div class="flex gap-2 pointer-events-auto">
+                    <button onclick="toggleFullscreen()" class="w-10 h-10 rounded-full bg-white/10 hover:bg-brand/20 hover:text-brand border border-white/10 backdrop-blur-md flex items-center justify-center transition-all duration-300 hover:scale-110" title="Modo Cine (Página Completa)">
+                        <i class="fas fa-expand"></i>
+                    </button>
+                    
+                    <button onclick="toggleSidebar()" class="w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 border border-white/10 backdrop-blur-md flex items-center justify-center transition-all duration-300 hover:scale-110" title="Alternar Lista">
+                        <i class="fas fa-list-ul"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Native Player (Plyr) -->
+            <video id="player" class="w-full h-full object-contain" playsinline controls crossorigin></video>
+            
+            <!-- Iframe Container (Fallback/Unlimplay) -->
+            <div id="iframe-container" class="absolute inset-0 w-full h-full hidden-force bg-black"></div>
         </div>
 
-        <div class="w-full md:w-1/4 h-full glass-panel flex flex-col">
-            <div class="p-6 border-b border-white/5 flex justify-between items-center">
-                <h3 class="text-xl font-bold"><i class="fas fa-server text-brand"></i> Fuentes</h3>
-                <div class="text-xs bg-white/5 px-2 py-1 rounded"><span id="server-count">0</span> Disp.</div>
+        <!-- Sidebar / Server List -->
+        <div id="server-panel" class="relative w-full md:w-1/4 h-full glass-panel border-l-0 flex flex-col z-10 backdrop-blur-3xl bg-black/60 shadow-2xl transition-transform-smooth duration-500 ease-in-out">
+            
+            <div class="p-6 border-b border-white/5 bg-gradient-to-b from-white/5 to-transparent flex flex-col gap-4">
+                <div class="flex justify-between items-center">
+                    <h3 class="text-xl font-bold text-white flex items-center gap-2">
+                        <i class="fas fa-server text-brand animate-pulse"></i> Fuentes
+                    </h3>
+                    <div class="text-[10px] bg-white/5 px-2 py-1 rounded text-gray-400">
+                        <span id="server-count">0</span> Disp.
+                    </div>
+                </div>
+
+                <!-- Language Selector -->
+                <div class="flex justify-center gap-3">
+                    <button onclick="setLanguageFilter('latino')" class="lang-flag cursor-pointer" id="btn-latino">
+                        <img src="https://embed69.org/static/lang/LAT.png" alt="Latino" class="w-8 h-auto" title="Audio Latino">
+                    </button>
+                    <button onclick="setLanguageFilter('castellano')" class="lang-flag cursor-pointer" id="btn-castellano">
+                        <img src="https://embed69.org/static/lang/ESP.png" alt="Castellano" class="w-8 h-auto" title="Audio Castellano">
+                    </button>
+                    <button onclick="setLanguageFilter('subtitulado')" class="lang-flag cursor-pointer" id="btn-subtitulado">
+                        <img src="https://embed69.org/static/lang/SUB.png" alt="Subtitulado" class="w-8 h-auto" title="Audio Subtitulado">
+                    </button>
+                </div>
             </div>
-            <div class="flex justify-center gap-3 p-4">
-                <button onclick="setLanguageFilter('latino')" class="lang-flag" id="btn-latino"><img src="https://flagcdn.com/h24/mx.png" alt="Latino" title="Latino"></button>
-                <button onclick="setLanguageFilter('castellano')" class="lang-flag" id="btn-castellano"><img src="https://flagcdn.com/h24/es.png" alt="Castellano" title="Castellano"></button>
-                <button onclick="setLanguageFilter('subtitulado')" class="lang-flag" id="btn-subtitulado"><img src="https://flagcdn.com/h24/us.png" alt="Sub" title="Subtitulado"></button>
+            
+            <div id="server-list-container" class="flex-1 overflow-y-auto p-4 space-y-3 custom-scrollbar">
+                <!-- Server items injected here by JS -->
+                <div class="text-center text-gray-500 mt-10 animate-pulse">Esperando selección...</div>
             </div>
-            <div id="server-list-container" class="flex-1 overflow-y-auto p-4 space-y-3">Esperando selección...</div>
         </div>
     </div>
 
-    <!-- Loader -->
-    <div id="loader-overlay" class="fixed inset-0 z-60 bg-black/95 hidden flex flex-col items-center justify-center">
-        <div class="w-24 h-24 border-4 border-t-brand rounded-full animate-spin"></div>
-        <p id="loader-text" class="mt-8 text-white font-bold text-sm uppercase">Buscando opciones</p>
+    <!-- Loader Overlay -->
+    <div id="loader-overlay" class="fixed inset-0 z-[60] bg-black/95 backdrop-blur-xl hidden flex flex-col items-center justify-center transition-opacity duration-500">
+        <div class="relative w-24 h-24">
+            <div class="absolute inset-0 border-4 border-white/10 rounded-full"></div>
+            <div class="absolute inset-0 border-4 border-t-brand rounded-full animate-spin shadow-[0_0_20px_rgba(59,130,246,0.6)]"></div>
+            <div class="absolute inset-0 flex items-center justify-center">
+                <i class="fas fa-rocket text-brand text-xl animate-pulse"></i>
+            </div>
+        </div>
+        <p id="loader-text" class="mt-8 text-white font-bold tracking-[0.3em] text-sm animate-pulse uppercase drop-shadow-lg text-center px-4">Iniciando Motor...</p>
     </div>
 
     <script>
-        const API_KEY = "da8b836389708e0558de674492931977";
-        const PROXY_URL = "https://api.codetabs.com/v1/proxy/?quest=";
-        const TARGET_BLOG = "https://darkstatonmovies1.blogspot.com";
-
-        let movieData = { tmdbId: null, imdbId: null, title: '', backdrop: '', type: 'movie', season: 1, episode: 1 };
-        let sourcesList = [];
+        // --- CONFIGURATION ---
+        const API_KEY = 'da8b836389708e0558de674492931977'; 
+        const PROXY_URL = 'https://api.codetabs.com/v1/proxy/?quest=';
+        const TARGET_BLOG = 'https://darkstatonmovies1.blogspot.com';
+        
+        // --- STATE VARIABLES ---
+        let movieData = {
+            tmdbId: null,
+            imdbId: null,
+            title: '',
+            backdrop: '',
+            poster: '',
+            type: 'movie', // 'movie' or 'tv'
+            season: 1,
+            episode: 1,
+            totalSeasons: 1,
+            episodesInSeason: []
+        };
         let playerInstance = null;
-        let currentLanguage = 'all';
+        let sourcesList = [];
+        let currentLanguage = 'all'; 
+        let isSidebarOpen = true;
+
+        // --- DOM ELEMENTS ---
         const statusMsg = document.getElementById('status-msg');
         const iframeContainer = document.getElementById('iframe-container');
-        const video = document.getElementById('player');
+        const videoElement = document.getElementById('player');
+        const videoWrapper = document.getElementById('video-wrapper');
+        const serverPanel = document.getElementById('server-panel');
 
+        // --- HELPER FUNCTIONS ---
+        function base64UrlDecode(str) {
+            str = str.replace(/-/g, '+').replace(/_/g, '/');
+            return decodeURIComponent(atob(str).split('').map(c =>
+                '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)
+            ).join(''));
+        }
+
+        function decodeJWT(token) {
+            try {
+                const payload = token.split('.')[1];
+                return JSON.parse(base64UrlDecode(payload));
+            } catch {
+                return null;
+            }
+        }
+
+        // --- INITIALIZATION ---
         document.addEventListener('DOMContentLoaded', () => {
             const urlParams = new URLSearchParams(window.location.search);
-            movieData.tmdbId = urlParams.get('id');
-            movieData.type = urlParams.get('type') || 'movie';
-            movieData.season = parseInt(urlParams.get('season') || 1);
-            movieData.episode = parseInt(urlParams.get('episode') || 1);
-            if (movieData.tmdbId) fetchTMDBData();
+            const id = urlParams.get('id');
+            const season = urlParams.get('season');
+            const episode = urlParams.get('episode');
+
+            window.addEventListener('scroll', () => {
+                const nav = document.getElementById('navbar');
+                if (window.scrollY > 50) nav.classList.add('glass-strong');
+                else nav.classList.remove('glass-strong');
+            });
+
+            if (id) {
+                if (season && episode) {
+                    movieData.type = 'tv';
+                    movieData.season = parseInt(season);
+                    movieData.episode = parseInt(episode);
+                    fetchTMDBTVData(id, movieData.season, movieData.episode);
+                } else {
+                    movieData.type = 'movie';
+                    fetchTMDBData(id);
+                }
+            } else {
+                updateStatus("⚠️ ID no encontrado.");
+                document.getElementById('movie-title').innerHTML = "Cine<span class='text-brand'>Max</span>";
+                document.getElementById('movie-overview').textContent = "Usa ?id=123 (Cine) o ?id=123&season=1&episode=1 (Series).";
+                const bgEl = document.getElementById('backdrop-img');
+                bgEl.style.backgroundImage = "url('https://image.tmdb.org/t/p/original/t5zCBSB5xMDKcDqe91qahCOUYVV.jpg')";
+                bgEl.classList.remove('opacity-0');
+                document.querySelectorAll('.animate-fade-in-up').forEach(el => el.classList.remove('opacity-0'));
+            }
         });
 
-        async function fetchTMDBData() {
-            let url = `https://api.themoviedb.org/3/${movieData.type}/${movieData.tmdbId}?api_key=${API_KEY}&language=es-MX&append_to_response=external_ids`;
-            if (movieData.type === 'tv') {
-                const seasonUrl = `https://api.themoviedb.org/3/tv/${movieData.tmdbId}/season/${movieData.season}?api_key=${API_KEY}&language=es-MX`;
-                const seasonRes = await fetch(seasonUrl);
-                const seasonData = await seasonRes.json();
-                const ep = seasonData.episodes.find(e => e.episode_number === movieData.episode) || {};
-                document.getElementById('episode-title').innerText = `S${movieData.season} E${movieData.episode}: ${ep.name || 'Capítulo ' + movieData.episode}`;
-                document.getElementById('episode-title').classList.remove('hidden-force');
+        // --- TMDB FETCH MOVIE ---
+        async function fetchTMDBData(id) {
+            try {
+                const response = await fetch(`https://api.themoviedb.org/3/movie/${id}?api_key=${API_KEY}&language=es-MX&append_to_response=external_ids`);
+                const data = await response.json();
+
+                if (data.status_code === 34) {
+                    updateStatus("Película no encontrada.");
+                    return;
+                }
+
+                movieData.tmdbId = data.id;
+                movieData.imdbId = data.external_ids ? data.external_ids.imdb_id : null;
+                movieData.title = data.title;
+                movieData.backdrop = data.backdrop_path ? `https://image.tmdb.org/t/p/original${data.backdrop_path}` : '';
+
+                updateUI(data);
+                document.getElementById('series-controls').classList.add('hidden-force'); // Ensure hidden
+            } catch (error) {
+                console.error(error);
+                updateStatus("Error de conexión.");
             }
-            const res = await fetch(url);
-            const data = await res.json();
-            movieData.imdbId = data.external_ids?.imdb_id;
-            movieData.title = data.title || data.name;
-            movieData.backdrop = data.backdrop_path ? `https://image.tmdb.org/t/p/original${data.backdrop_path}` : '';
-            document.getElementById('movie-title').textContent = movieData.title;
-            document.getElementById('movie-overview').textContent = data.overview || 'Sin descripción';
-            document.getElementById('movie-year').textContent = data.release_date?.split('-')[0] || data.first_air_date?.split('-')[0] || '????';
-            document.getElementById('movie-runtime').innerHTML = `<i class="far fa-clock mr-2"></i> ${data.runtime || data.episode_run_time?.[0] || '--'} min`;
-            document.getElementById('movie-rating').innerHTML = `<i class="fas fa-star mr-2"></i> ${data.vote_average?.toFixed(1) || 'N/A'}`;
-            if (data.genres?.length) {
-                document.getElementById('movie-genres').innerHTML = data.genres.slice(0,3).map(g => `<span class="bg-white/5 border border-white/10 px-3 py-1 rounded-full text-xs">${g.name}</span>`).join(' ');
+        }
+
+        // --- TMDB FETCH TV ---
+        async function fetchTMDBTVData(id, season, episode) {
+            try {
+                // 1. Fetch Show Data (Seasons info)
+                const showResp = await fetch(`https://api.themoviedb.org/3/tv/${id}?api_key=${API_KEY}&language=es-MX&append_to_response=external_ids`);
+                const showData = await showResp.json();
+
+                if (showData.status_code === 34) {
+                    updateStatus("Serie no encontrada.");
+                    return;
+                }
+
+                // 2. Fetch Season Data (All episodes in this season)
+                const seasonResp = await fetch(`https://api.themoviedb.org/3/tv/${id}/season/${season}?api_key=${API_KEY}&language=es-MX`);
+                const seasonData = await seasonResp.json();
+
+                // 3. Set Data
+                movieData.tmdbId = showData.id;
+                movieData.imdbId = showData.external_ids ? showData.external_ids.imdb_id : null;
+                movieData.totalSeasons = showData.number_of_seasons;
+                movieData.episodesInSeason = seasonData.episodes || [];
+                
+                // Find current episode data
+                const currentEpData = movieData.episodesInSeason.find(e => e.episode_number == episode) || {};
+
+                movieData.title = showData.name;
+                
+                // Use Episode Still if available, otherwise Show Backdrop
+                if (currentEpData.still_path) {
+                    movieData.backdrop = `https://image.tmdb.org/t/p/original${currentEpData.still_path}`;
+                } else {
+                    movieData.backdrop = showData.backdrop_path ? `https://image.tmdb.org/t/p/original${showData.backdrop_path}` : '';
+                }
+
+                const displayData = {
+                    title: showData.name,
+                    overview: currentEpData.overview || showData.overview || "Sin descripción.",
+                    vote_average: currentEpData.vote_average || showData.vote_average,
+                    release_date: currentEpData.air_date || showData.first_air_date,
+                    runtime: currentEpData.runtime || (showData.episode_run_time ? showData.episode_run_time[0] : 0),
+                    genres: showData.genres
+                };
+
+                updateUI(displayData);
+                
+                // Set Episode Title
+                const epTitleEl = document.getElementById('episode-title');
+                epTitleEl.innerText = `S${season} E${episode}: "${currentEpData.name || 'Capítulo ' + episode}"`;
+                epTitleEl.classList.remove('hidden-force');
+
+                // Render Controls
+                renderSeriesControls();
+                checkWatchedStatus();
+
+            } catch (error) {
+                console.error(error);
+                updateStatus("Error de conexión (Serie).");
             }
+        }
+
+        function updateUI(data) {
+            document.getElementById('movie-title').textContent = data.title;
+            document.getElementById('movie-overview').textContent = data.overview || "Sin descripción.";
+            document.getElementById('movie-rating').innerHTML = `<i class="fas fa-star text-sm mr-2"></i> ${data.vote_average ? data.vote_average.toFixed(1) : 'N/A'}`;
+            document.getElementById('movie-year').textContent = data.release_date?.split('-')[0] || 'N/A';
+            document.getElementById('movie-runtime').innerHTML = `<i class="far fa-clock mr-2"></i> ${data.runtime} min`;
+            
+            if(data.genres?.length) {
+                document.getElementById('movie-genres').innerHTML = data.genres.slice(0, 3).map(g => 
+                    `<span class="bg-white/5 border border-white/10 px-3 py-1 rounded-full text-xs uppercase tracking-wider hover:bg-brand hover:border-brand transition-colors cursor-default">${g.name}</span>`
+                ).join('');
+            }
+
             if (movieData.backdrop) {
-                document.getElementById('backdrop-img').style.backgroundImage = `url('${movieData.backdrop}')`;
-                document.getElementById('backdrop-img').classList.remove('opacity-0');
+                const bgEl = document.getElementById('backdrop-img');
+                bgEl.style.backgroundImage = `url('${movieData.backdrop}')`;
+                bgEl.classList.remove('opacity-0');
+                document.getElementById('player-bg-blur').style.backgroundImage = `url('${movieData.backdrop}')`;
             }
+            
             document.querySelectorAll('.animate-fade-in-up').forEach(el => el.classList.remove('opacity-0'));
+        }
+
+        // --- SERIES CONTROLS LOGIC ---
+
+        function renderSeriesControls() {
+            const controls = document.getElementById('series-controls');
+            controls.classList.remove('hidden-force');
+
+            // Populate Seasons
+            const seasonSelect = document.getElementById('season-select');
+            seasonSelect.innerHTML = '';
+            for (let i = 1; i <= movieData.totalSeasons; i++) {
+                const opt = document.createElement('option');
+                opt.value = i;
+                opt.text = `Temporada ${i}`;
+                if (i == movieData.season) opt.selected = true;
+                seasonSelect.appendChild(opt);
+            }
+
+            // Populate Episodes
+            const epSelect = document.getElementById('episode-select');
+            epSelect.innerHTML = '';
+            // If episodesInSeason is empty (rare error), fallback loop
+            const count = movieData.episodesInSeason.length > 0 ? movieData.episodesInSeason.length : 24; 
+            
+            if (movieData.episodesInSeason.length > 0) {
+                movieData.episodesInSeason.forEach(ep => {
+                    const opt = document.createElement('option');
+                    opt.value = ep.episode_number;
+                    opt.text = `Ep. ${ep.episode_number} - ${ep.name ? ep.name.substring(0, 20) + (ep.name.length>20?'...':'') : ''}`;
+                    if (ep.episode_number == movieData.episode) opt.selected = true;
+                    epSelect.appendChild(opt);
+                });
+            } else {
+                for (let i = 1; i <= count; i++) {
+                    const opt = document.createElement('option');
+                    opt.value = i;
+                    opt.text = `Episodio ${i}`;
+                    if (i == movieData.episode) opt.selected = true;
+                    epSelect.appendChild(opt);
+                }
+            }
+        }
+
+        function onSeasonChange(newSeason) {
+            // Update URL without reload
+            const newUrl = `${window.location.pathname}?id=${movieData.tmdbId}&season=${newSeason}&episode=1`;
+            window.history.pushState({path: newUrl}, '', newUrl);
+            
+            // Reload Data
+            setLoading(true, "Cambiando Temporada...");
+            movieData.season = parseInt(newSeason);
+            movieData.episode = 1;
+            fetchTMDBTVData(movieData.tmdbId, movieData.season, 1);
+        }
+
+        function onEpisodeChange(newEpisode) {
+            const newUrl = `${window.location.pathname}?id=${movieData.tmdbId}&season=${movieData.season}&episode=${newEpisode}`;
+            window.history.pushState({path: newUrl}, '', newUrl);
+            
+            // Just update UI data and scrape, season data is already there
+            movieData.episode = parseInt(newEpisode);
+            
+            // Update backdrop/title locally to save a fetch if possible, but fetch ensures details
+            setLoading(true, `Cargando Episodio ${newEpisode}...`);
+            
+            // Find logic to update local data or re-fetch. Re-fetch is safer for consistency.
+            fetchTMDBTVData(movieData.tmdbId, movieData.season, movieData.episode);
+        }
+
+        function nextEpisode() {
+            // Check if next episode exists in current season
+            const nextEpNum = movieData.episode + 1;
+            const exists = movieData.episodesInSeason.some(e => e.episode_number == nextEpNum);
+            
+            if (exists) {
+                onEpisodeChange(nextEpNum);
+            } else if (movieData.season < movieData.totalSeasons) {
+                // Next season
+                onSeasonChange(movieData.season + 1);
+            } else {
+                alert("¡Es el último episodio disponible!");
+            }
+        }
+
+        // --- WATCHED STATUS (LocalStorage) ---
+        function getWatchedKey() {
+            return `watched_${movieData.tmdbId}_s${movieData.season}_e${movieData.episode}`;
+        }
+
+        function checkWatchedStatus() {
+            const isWatched = localStorage.getItem(getWatchedKey()) === 'true';
+            updateWatchedUI(isWatched);
+        }
+
+        function toggleWatched() {
+            const key = getWatchedKey();
+            const current = localStorage.getItem(key) === 'true';
+            localStorage.setItem(key, !current);
+            updateWatchedUI(!current);
+        }
+
+        function updateWatchedUI(isWatched) {
+            const icon = document.getElementById('icon-watched');
+            const btn = document.getElementById('btn-watched');
+            
+            if (isWatched) {
+                icon.className = "fas fa-check-circle text-xl text-green-400 transition-colors";
+                btn.classList.add('border-green-500/50', 'bg-green-500/10');
+            } else {
+                icon.className = "far fa-circle text-xl text-gray-400 group-hover:text-brand transition-colors";
+                btn.classList.remove('border-green-500/50', 'bg-green-500/10');
+            }
+        }
+
+        // --- UI INTERACTION FUNCTIONS ---
+        function toggleSidebar() {
+            isSidebarOpen = !isSidebarOpen;
+            if (isSidebarOpen) {
+                videoWrapper.classList.remove('w-full');
+                videoWrapper.classList.add('md:w-3/4');
+                serverPanel.classList.remove('translate-x-full', 'hidden-force');
+                serverPanel.classList.add('w-full', 'md:w-1/4');
+            } else {
+                videoWrapper.classList.remove('md:w-3/4');
+                videoWrapper.classList.add('w-full');
+                serverPanel.classList.add('hidden-force');
+            }
+        }
+
+        function toggleFullscreen() {
+            const elem = document.getElementById('player-modal');
+            if (!document.fullscreenElement) {
+                if (elem.requestFullscreen) {
+                    elem.requestFullscreen();
+                } else if (elem.webkitRequestFullscreen) {
+                    elem.webkitRequestFullscreen();
+                } else if (elem.msRequestFullscreen) {
+                    elem.msRequestFullscreen();
+                }
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+            }
         }
 
         function setLanguageFilter(lang) {
             currentLanguage = lang;
+            document.querySelectorAll('.lang-flag').forEach(btn => btn.classList.remove('active'));
+            if(lang !== 'all') {
+                const btn = document.getElementById(`btn-${lang}`);
+                if(btn) btn.classList.add('active');
+            }
             updateServerList();
-            Array.from(document.querySelectorAll('.lang-flag')).forEach(btn => btn.classList.remove('active'));
-            document.getElementById('btn-' + lang).classList.add('active');
         }
 
+        // --- MAIN SCRAPING ORCHESTRATOR ---
         async function startScraping() {
+            if (!movieData.tmdbId) return;
+            
             openPlayerUI();
-            setLoading(true, "Buscando opciones");
+            setLoading(true, `BUSCANDO ENLACES...`);
             sourcesList = [];
+            currentLanguage = 'all'; 
+            document.querySelectorAll('.lang-flag').forEach(btn => btn.classList.remove('active'));
+            updateServerList();
+
+            const promises = [];
+
             if (movieData.type === 'tv') {
-                if (movieData.imdbId) await scrapeEmbed69Series();
+                // SERIES MODE: ONLY EMBED69 SERIES
+                if (movieData.imdbId && movieData.season && movieData.episode) {
+                    promises.push(scrapeEmbed69Series(movieData.imdbId, movieData.season, movieData.episode));
+                }
             } else {
-                await scrapeBlogFallback();
-                if (movieData.imdbId) {
-                    await scrapeEmbed69Movie();
-                    await scrapeVerHD();
+                // MOVIE MODE: ALL SCRAPERS
+                promises.push(scrapeBlogFallback());
+                if (movieData.imdbId) promises.push(scrapeEmbed69(movieData.imdbId));
+                if (movieData.imdbId) promises.push(scrapeVerHDLink(movieData.imdbId));
+            }
+            
+            await Promise.allSettled(promises);
+            setLoading(false);
+
+            if (sourcesList.length === 0) {
+                alert("No se encontraron servidores disponibles.");
+                closePlayer();
+            } else {
+                const first = sourcesList[0];
+                if(first) {
+                    playSource(first);
+                    const l = first.lang.toLowerCase();
+                    if(l.includes('lat')) setLanguageFilter('latino');
+                    else if(l.includes('cas') || l.includes('esp')) setLanguageFilter('castellano');
+                    else if(l.includes('sub')) setLanguageFilter('subtitulado');
                 }
             }
-            setLoading(false);
-            updateServerList();
         }
 
-        async function scrapeEmbed69Movie() {
-            const url = `https://embed69.org/f/${movieData.imdbId}/`;
-            const resp = await fetch(PROXY_URL + encodeURIComponent(url));
-            const html = await resp.text();
-            const match = html.match(/let dataLink\s*=\s*(\[[\s\S]*?\]);/);
-            if (match) {
+        // --- SCRAPER: Embed69 SERIES ---
+        async function scrapeEmbed69Series(imdbId, season, episode) {
+            try {
+                // Format: IMDBID-SEASONxEPISODE_PADDED (e.g., tt123456-1x01)
+                const s = parseInt(season);
+                const e = parseInt(episode).toString().padStart(2, '0');
+                const slug = `${imdbId}-${s}x${e}`;
+                
+                const url = `https://embed69.org/f/${slug}/`;
+                const res = await fetch(PROXY_URL + encodeURIComponent(url));
+                const html = await res.text();
+                
+                const match = html.match(/let dataLink\s*=\s*(\[[\s\S]*?\]);/);
+                if (!match) return;
+
                 const dataLink = JSON.parse(match[1]);
-                dataLink.forEach(item => {
-                    const rawLang = item.video_language || 'Desconocido';
-                    let lang = rawLang;
-                    if (/LAT/i.test(rawLang)) lang = 'Latino';
-                    else if (/ESP|CAS/i.test(rawLang)) lang = 'Castellano';
-                    else lang = 'Subtitulado';
-                    item.sortedEmbeds.forEach(embed => {
-                        const decoded = decodeJWT(embed.link);
-                        if (decoded && decoded.link) {
-                            const host = mapHostName(embed.servername);
-                            const id = extractIdFromLink(decoded.link);
-                            let url = decoded.link;
-                            if (host && id) url = `https://unlimplay.com/embed2/?host=${host}&id=${id}&poster=${encodeURIComponent(movieData.backdrop)}`;
-                            sourcesList.push({ name: embed.servername, lang, url, provider: 'embed69', icon: 'fa-globe', type: 'iframe' });
-                        }
-                    });
-                });
-            }
+                processEmbed69Data(dataLink, 'embed69-series');
+
+            } catch (e) { console.warn("Embed69 Series Error:", e); }
         }
 
-        async function scrapeEmbed69Series() {
-            const slug = `${movieData.imdbId}-${movieData.season}x${String(movieData.episode).padStart(2, '0')}`;
-            const url = `https://embed69.org/f/${slug}/`;
-            const resp = await fetch(PROXY_URL + encodeURIComponent(url));
-            const html = await resp.text();
-            const match = html.match(/let dataLink\s*=\s*(\[[\s\S]*?\]);/);
-            if (match) {
+        // --- SCRAPER: Embed69 MOVIE ---
+        async function scrapeEmbed69(imdbId) {
+            try {
+                const url = `https://embed69.org/f/${imdbId}/`;
+                const res = await fetch(PROXY_URL + encodeURIComponent(url));
+                const html = await res.text();
+                const match = html.match(/let dataLink\s*=\s*(\[[\s\S]*?\]);/);
+                if (!match) return;
+
                 const dataLink = JSON.parse(match[1]);
-                dataLink.forEach(item => {
-                    const rawLang = item.video_language || 'Desconocido';
-                    let lang = rawLang;
-                    if (/LAT/i.test(rawLang)) lang = 'Latino';
-                    else if (/ESP|CAS/i.test(rawLang)) lang = 'Castellano';
-                    else lang = 'Subtitulado';
-                    item.sortedEmbeds.forEach(embed => {
-                        const decoded = decodeJWT(embed.link);
-                        if (decoded && decoded.link) {
-                            const host = mapHostName(embed.servername);
-                            const id = extractIdFromLink(decoded.link);
-                            let url = decoded.link;
-                            if (host && id) url = `https://unlimplay.com/embed2/?host=${host}&id=${id}&poster=${encodeURIComponent(movieData.backdrop)}`;
-                            sourcesList.push({ name: embed.servername, lang, url, provider: 'embed69', icon: 'fa-globe', type: 'iframe' });
-                        }
-                    });
-                });
-            }
+                processEmbed69Data(dataLink, 'embed69');
+
+            } catch (e) { console.warn("Embed69 Error:", e); }
         }
 
-        async function scrapeVerHD() {
-            const url = `https://verhdlink.cam/movie/${movieData.imdbId}`;
-            const resp = await fetch(PROXY_URL + encodeURIComponent(url));
-            const html = await resp.text();
-            const mirrors = html.match(/<ul class="_player-mirrors[\\s\\S]*?</ul>/g) || [];
-            mirrors.forEach(ul => {
-                let lang = "Latino";
-                if (/subtitulado/i.test(ul)) lang = "Subtitulado";
-                else if (/castellano/i.test(ul)) lang = "Castellano";
-                const lis = ul.match(/<li data-link="([^"]*)"/g) || [];
-                lis.forEach(li => {
-                    const dataLink = li.match(/data-link="([^"]*)"/)[1];
-                    if (/dropload/i.test(dataLink)) {
-                        const match = dataLink.match(/embed-([a-zA-Z0-9_-]+)/) || dataLink.match(/dropload\.tv\/e\/([a-zA-Z0-9_-]+)/);
-                        if (match) {
-                            const droploadId = match[1];
-                            const url = `https://unlimplay.com/embed2/?host=dropload&id=${droploadId}&poster=${encodeURIComponent(movieData.backdrop)}`;
-                            sourcesList.push({ name: "⚡ THUNDERBOLT [Ultra]", lang, url, provider: 'verhd', icon: 'fa-bolt', type: 'iframe' });
+        // Shared Logic for Embed69 Data Processing
+        function processEmbed69Data(dataLink, providerName) {
+            dataLink.forEach(item => {
+                let rawLang = item.video_language || 'Desconocido';
+                let lang = rawLang;
+                if (rawLang.includes('LAT') || rawLang.includes('lat')) lang = 'Latino';
+                else if (rawLang.includes('ESP') || rawLang.includes('esp') || rawLang.includes('CAS')) lang = 'Castellano';
+                else if (rawLang.includes('SUB') || rawLang.includes('sub')) lang = 'Subtitulado';
+
+                item.sortedEmbeds.forEach(embed => {
+                    const lowerName = embed.servername.toLowerCase();
+                    if (lowerName.includes('fichier') || lowerName.includes('uptobox') || lowerName.includes('mega') || lowerName.includes('gofile')) return; 
+
+                    const decoded = decodeJWT(embed.link);
+                    if (decoded && decoded.link) {
+                        const host = mapHostName(embed.servername);
+                        const videoId = extractIdFromLink(decoded.link);
+                        const cleanName = embed.servername; 
+
+                        // For series, provider priority is high since it's the only one
+                        const prio = providerName === 'embed69-series' ? 'blog' : 'embed69'; 
+
+                        if (host && videoId) {
+                            const unlimplayUrl = `https://unlimplay.com/embed2/?host=${host}&id=${videoId}&poster=${encodeURIComponent(movieData.backdrop)}`;
+                            addSource({
+                                name: cleanName,
+                                lang: lang,
+                                type: 'iframe',
+                                url: unlimplayUrl,
+                                icon: 'fa-film',
+                                provider: prio
+                            });
+                        } else {
+                            addSource({
+                                name: cleanName,
+                                lang: lang,
+                                type: 'iframe',
+                                url: decoded.link,
+                                icon: 'fa-globe',
+                                provider: prio
+                            });
                         }
                     }
                 });
             });
         }
 
-        async function scrapeBlogFallback() {
-            const keyword = normalizeStr(movieData.title.split(":")[0]);
-            const searchUrl = `${TARGET_BLOG}/search?q=${encodeURIComponent(keyword)}`;
-            const resp = await fetch(PROXY_URL + encodeURIComponent(searchUrl));
-            const html = await resp.text();
-            const cards = html.match(/<div class="cards-movie">[\\s\\S]*?</div>/g) || [];
-            let bestUrl = null;
-            for (let card of cards) {
-                const h2 = card.match(/<h2>(.*?)</h2>/);
-                if (h2 && keyword in normalizeStr(h2[1])) {
-                    const a = card.match(/<a href="([^"]*)"/);
-                    if (a) {
-                        bestUrl = a[1];
-                        break;
-                    }
-                }
-            }
-            if (bestUrl) {
-                const mResp = await fetch(PROXY_URL + encodeURIComponent(bestUrl));
-                const mHtml = await mResp.text();
-                const iframes = mHtml.match(/<iframe src="([^"]*)"/g) || [];
-                iframes.forEach((src, i) => {
-                    if (/videoUrl=/.test(src)) {
-                        const params = new URLSearchParams(new URL(src.match(/src="([^"]*)"/)[1]).query);
-                        const encoded = params.get('videoUrl');
-                        if (encoded) {
-                            const url = atob(encoded);
-                            const suffix = iframes.length > 1 ? ` ${toRoman(i+1)}` : '';
-                            sourcesList.push({ name: `💎 DIAMOND [VIP]${suffix}`, lang: "Latino", url, provider: 'blog', icon: 'fa-crown', type: 'iframe' });
+        // --- SCRAPER: VerHDLink (Movie Only) ---
+        async function scrapeVerHDLink(imdbId) {
+            try {
+                const targetUrl = `https://verhdlink.cam/movie/${imdbId}`;
+                const res = await fetch(PROXY_URL + encodeURIComponent(targetUrl));
+                const html = await res.text();
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+                const mirrors = [...doc.querySelectorAll('ul._player-mirrors')];
+                
+                for(const ul of mirrors){
+                    let lang = 'Latino';
+                    if(ul.classList.contains('subtitulado') || ul.innerHTML.toLowerCase().includes('subtitulado')) lang = 'Subtitulado';
+                    else if(ul.classList.contains('castellano') || ul.innerHTML.toLowerCase().includes('castellano')) lang = 'Castellano';
+
+                    const lis = [...ul.querySelectorAll('li[data-link]')];
+                    const droploadLi = lis.find(li => (li.getAttribute('data-link') || '').includes('dropload'));
+
+                    if (droploadLi) {
+                        const rawLink = droploadLi.getAttribute('data-link');
+                        let match = rawLink.match(/embed-([a-zA-Z0-9_-]+)/) || rawLink.match(/dropload\.tv\/e\/([a-zA-Z0-9_-]+)/);
+                        
+                        if (match && match[1]) {
+                            const droploadId = match[1];
+                            const unlimplayUrl = `https://unlimplay.com/embed2/?host=dropload&id=${droploadId}&poster=${encodeURIComponent(movieData.backdrop)}`;
+                            addSource({
+                                name: `⚡ THUNDERBOLT [Ultra]`,
+                                lang: lang,
+                                type: 'iframe',
+                                url: unlimplayUrl,
+                                icon: 'fa-bolt',
+                                provider: 'verhd' 
+                            });
                         }
                     }
+                }
+            } catch (e) { console.warn("VerHD Error:", e); }
+        }
+
+        // --- SCRAPER: Blog (Movie Only) ---
+        async function scrapeBlogFallback() {
+            try {
+                if(!movieData.title) return;
+                const keyword = normalizeStr(movieData.title.split(':')[0]);
+                const searchUrl = `${TARGET_BLOG}/search?q=${encodeURIComponent(keyword)}`;
+                const res = await fetch(PROXY_URL + encodeURIComponent(searchUrl));
+                const text = await res.text();
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(text, 'text/html');
+                const cards = doc.querySelectorAll('.cards-movie');
+                let bestUrl = null;
+                
+                cards.forEach(card => {
+                    const t = card.querySelector('h2')?.textContent || '';
+                    if (normalizeStr(t).includes(keyword)) bestUrl = card.querySelector('a')?.href;
                 });
+
+                if (bestUrl) {
+                    const mRes = await fetch(PROXY_URL + encodeURIComponent(bestUrl));
+                    const mText = await mRes.text();
+                    const mDoc = parser.parseFromString(mText, 'text/html');
+                    const iframes = mDoc.querySelectorAll('iframe');
+                    
+                    iframes.forEach((iframe, i) => {
+                         if (iframe.src.includes('videoUrl=')) {
+                             const encoded = new URLSearchParams(iframe.src.split('?')[1]).get('videoUrl');
+                             if(encoded) {
+                                 try {
+                                     const suffix = iframes.length > 1 ? ` ${toRoman(i+1)}` : '';
+                                     addSource({
+                                        name: `💎 DIAMOND [VIP]${suffix}`,
+                                        lang: 'Latino',
+                                        type: 'direct',
+                                        url: atob(encoded),
+                                        icon: 'fa-star',
+                                        provider: 'blog' 
+                                     });
+                                 } catch(e){}
+                             }
+                         }
+                    });
+                }
+            } catch (e) { console.warn("Blog Error:", e); }
+        }
+
+        // --- SOURCE MANAGEMENT ---
+        function addSource(source) {
+            if (!sourcesList.some(s => s.url === source.url)) {
+                sourcesList.push(source);
+                updateServerList(); 
             }
         }
 
         function updateServerList() {
-            const displayList = sourcesList.filter(s => currentLanguage === 'all' || s.lang.toLowerCase().includes(currentLanguage));
+            let displayList = sourcesList;
+            if (currentLanguage !== 'all') {
+                displayList = sourcesList.filter(s => {
+                    const l = s.lang.toLowerCase();
+                    if(currentLanguage === 'latino') return l.includes('lat');
+                    if(currentLanguage === 'castellano') return l.includes('cas') || l.includes('esp');
+                    if(currentLanguage === 'subtitulado') return l.includes('sub');
+                    return true;
+                });
+            }
+
             displayList.sort((a, b) => {
                 const getSourcePriority = (p) => {
-                    if (p === 'blog') return 0;
-                    if (p === 'embed69') return 1;
-                    if (p === 'verhd') return 2;
+                    if (p === 'blog') return 0;    
+                    if (p === 'embed69') return 1; 
+                    if (p === 'verhd') return 2;   
                     return 3;
                 };
                 const getLangPriority = (lang) => {
@@ -518,7 +971,7 @@
                         initPlyr();
                         playerInstance.play();
                     });
-                    hls.on(Hls.Events.ERROR, (event, data) => {
+                    hls.on(Hls.Events.ERROR, function (event, data) {
                         if (data.fatal) playSource({...source, type: 'iframe'});
                     });
                 } else {
