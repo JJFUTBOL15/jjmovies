@@ -1,131 +1,201 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Reproductor - JJMOVIES</title>
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-    body, html {
-      background: #000;
-      color: white;
-      overflow: hidden;
-      height: 100vh;
-      font-family: 'Segoe UI', Arial, sans-serif;
-    }
-    .player-container {
-      width: 100vw;
-      height: 100vh;
-      display: flex;
-      flex-direction: column;
-    }
-    .video-wrapper {
-      flex: 1;
-      background: #000;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      position: relative;
-    }
-    .video-iframe, .video-element {
-      width: 100%;
-      height: 100%;
-      border: none;
-      outline: none;
-    }
-    .info-bar {
-      padding: 12px 20px;
-      background: rgba(0, 0, 0, 0.8);
-      border-top: 1px solid #333;
-      font-size: 14px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    @media (max-width: 600px) {
-      .info-bar {
-        flex-direction: column;
-        gap: 8px;
-        text-align: center;
-      }
-    }
-  </style>
-</head>
-<body>
-  <div class="player-container">
-    <div class="video-wrapper" id="video-container">
-      <!-- Aquí se carga el video (iframe interno o video directo) -->
-      <p id="loading" style="color: #aaa;">Cargando reproductor...</p>
-    </div>
-    <div class="info-bar">
-      <div id="movie-title">Cargando...</div>
-      <div>
-        <a href="https://jjmovies.lat" target="_blank" style="color: #6c5ce7; text-decoration: none;">🎬 JJMOVIES</a>
-      </div>
-    </div>
-  </div>
-
-  <script>
-    // === CONFIGURACIÓN ===
-    const API_KEY_TMDB = '936410eebae74f9895643e085cc4a740'; // ⚠️ Reemplaza esto con tu clave real
-
-    // Obtener ID de la URL
-    const urlParams = new URLSearchParams(window.location.search);
-    const movieId = urlParams.get('id');
-
-    if (!movieId || isNaN(movieId)) {
-      document.getElementById('loading').textContent = '❌ ID de película no válido';
-    } else {
-      loadMovieInfo(movieId);
-      loadVideoSource(movieId);
-    }
-
-    // === Cargar info de TMDB ===
-    async function loadMovieInfo(id) {
-      try {
-        const res = await fetch(`https://api.themoviedb.org/3/movie/${id}?api_key=${API_KEY_TMDB}&language=es`);
-        const data = await res.json();
-        if (data.title) {
-          document.getElementById('movie-title').textContent = `${data.title} (${data.release_date?.substring(0, 4) || '?'})`;
-        } else {
-          document.getElementById('movie-title').textContent = 'Película desconocida';
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JJMovies Player</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
+    <script src="https://cdn.plyr.io/3.7.8/plyr.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@1"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: { extend: { colors: { brand: { DEFAULT: '#3b82f6', light: '#60a5fa', dark: '#2563eb', glow: 'rgba(59, 130, 246, 0.5)' } }, fontFamily: { sans: ['Outfit', 'sans-serif'] }, animation: { 'fade-in-up': 'fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards' } } }
         }
-      } catch (err) {
-        console.warn('No se pudo cargar info de TMDB');
-        document.getElementById('movie-title').textContent = 'ID: ' + id;
-      }
-    }
+    </script>
+    <style>
+        body { background-color: #050505; color: white; overflow-x: hidden; }
+        .glass-panel { background: rgba(20, 20, 20, 0.6); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.08); box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5); }
+        .hidden-force { display: none !important; }
+        :root { --plyr-color-main: #3b82f6; }
+        .plyr--video .plyr__controls { background: linear-gradient(rgba(0,0,0,0), rgba(0,0,0,0.8)); }
+    </style>
+</head>
+<body class="relative min-h-screen font-sans">
+    <nav id="navbar" class="fixed top-0 w-full z-40 px-8 py-6 flex justify-between items-center">
+        <div class="text-3xl font-extrabold">JJ<span class="text-brand">Movies</span></div>
+        <div id="status-msg" class="text-sm text-brand animate-pulse"></div>
+    </nav>
 
-    // === Cargar video desde tu sistema (scraping interno) ===
-    function loadVideoSource(id) {
-      // ✅ AQUÍ ES DONDE INTEGRAS TU SCRAPER INTERNO
-      // Por ejemplo, si tu sistema devuelve un enlace de streaming en:
-      // https://jjmovies.lat/api/stream?id=12345 → devuelve JSON con "url"
+    <div class="fixed inset-0 overflow-hidden z-0 pointer-events-none">
+        <div id="backdrop-img" class="absolute inset-0 bg-cover bg-center opacity-0 animate-slow-zoom"></div>
+        <div class="absolute inset-0 bg-gradient-to-t from-[#050505] via-[#050505]/80 to-transparent"></div>
+    </div>
 
-      // Opción 1: Si ya tienes un iframe embebido interno (recomendado)
-      const iframe = document.createElement('iframe');
-      iframe.src = `https://tu-sistema-interno.com/embed/${id}`; // ⚠️ Reemplaza con tu URL real de streaming
-      iframe.className = 'video-iframe';
-      iframe.allowFullscreen = true;
-      iframe.allow = 'autoplay; encrypted-media';
-      document.getElementById('video-container').innerHTML = '';
-      document.getElementById('video-container').appendChild(iframe);
+    <div class="relative z-10 container mx-auto px-6 h-screen flex items-center">
+        <div id="movie-info" class="max-w-3xl flex flex-col gap-8">
+            <h1 id="movie-title" class="text-8xl font-black text-transparent bg-clip-text bg-gradient-to-br from-white to-gray-500 opacity-0 animate-fade-in-up">Cargando...</h1>
+            <h2 id="episode-title" class="text-2xl text-gray-400 hidden-force"></h2>
+            <p id="movie-overview" class="text-gray-300 text-xl opacity-0 animate-fade-in-up">Esperando...</p>
+            <button onclick="startScraping()" class="px-10 py-5 bg-brand rounded-full font-bold text-white shadow-[0_0_30px_rgba(59,130,246,0.4)] flex items-center gap-4">
+                <i class="fas fa-play"></i> Reproducir
+            </button>
+        </div>
+    </div>
 
-      // Opción 2: Si usas video directo (MP4, HLS, etc.)
-      /*
-      const video = document.createElement('video');
-      video.src = `https://tu-sistema-interno.com/stream/${id}`;
-      video.className = 'video-element';
-      video.controls = true;
-      video.autoplay = true;
-      document.getElementById('video-container').innerHTML = '';
-      document.getElementById('video-container').appendChild(video);
-      */
-    }
-  </script>
+    <div id="player-modal" class="fixed inset-0 z-50 bg-[#050505] hidden flex">
+        <div id="video-wrapper" class="w-3/4 h-full bg-black flex items-center justify-center">
+            <button onclick="closePlayer()" class="absolute top-4 left-4 z-20 bg-white/10 rounded-full p-2"><i class="fas fa-arrow-left"></i></button>
+            <video id="player" class="w-full h-full" playsinline controls></video>
+            <div id="iframe-container" class="absolute inset-0 hidden-force"></div>
+        </div>
+        <div id="server-panel" class="w-1/4 h-full glass-panel flex flex-col">
+            <div class="p-6 border-b border-white/5"><h3 class="text-xl font-bold"><i class="fas fa-server text-brand"></i> Fuentes (<span id="server-count">0</span>)</h3></div>
+            <div id="server-list-container" class="flex-1 overflow-y-auto p-4 space-y-3"></div>
+        </div>
+    </div>
+
+    <div id="loader-overlay" class="fixed inset-0 z-60 bg-black/95 hidden flex items-center justify-center">
+        <div class="w-24 h-24 border-4 border-t-brand rounded-full animate-spin"></div>
+        <p id="loader-text" class="mt-8 font-bold">Buscando enlaces...</p>
+    </div>
+
+    <script>
+        const API_KEY = 'da8b836389708e0558de674492931977';
+        const PROXY_URL = 'https://api.codetabs.com/v1/proxy/?quest=';
+        let movieData = { tmdbId: null, imdbId: null, title: '', backdrop: '', type: 'movie', season: 1, episode: 1 };
+        let sourcesList = [];
+        let playerInstance = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const params = new URLSearchParams(window.location.search);
+            movieData.tmdbId = params.get('id');
+            movieData.type = params.get('type') || 'movie';
+            movieData.season = parseInt(params.get('season') || 1);
+            movieData.episode = parseInt(params.get('episode') || 1);
+            if (movieData.tmdbId) fetchTMDBData();
+        });
+
+        async function fetchTMDBData() {
+            const url = movieData.type === 'tv' ? `https://api.themoviedb.org/3/tv/${movieData.tmdbId}?api_key=${API_KEY}&language=es-MX&append_to_response=external_ids` : `https://api.themoviedb.org/3/movie/${movieData.tmdbId}?api_key=${API_KEY}&language=es-MX&append_to_response=external_ids`;
+            const data = await fetch(url).then(r => r.json());
+            movieData.imdbId = data.external_ids?.imdb_id;
+            movieData.title = data.name || data.title;
+            movieData.backdrop = `https://image.tmdb.org/t/p/original${data.backdrop_path}`;
+            document.getElementById('movie-title').textContent = movieData.title;
+            document.getElementById('movie-overview').textContent = data.overview;
+            document.getElementById('backdrop-img').style.backgroundImage = `url('${movieData.backdrop}')`;
+            document.getElementById('backdrop-img').classList.remove('opacity-0');
+            if (movieData.type === 'tv') document.getElementById('episode-title').innerText = `S${movieData.season} E${movieData.episode}`;
+        }
+
+        async function startScraping() {
+            setLoading(true, "Buscando enlaces HD...");
+            sourcesList = [];
+            const titleNorm = encodeURIComponent(movieData.title.replace(/[^a-zA-Z0-9 ]/g, ''));
+            const promises = [scrapeCinecalidad(titleNorm), scrapeCuevana(titleNorm), scrapePelisplus(titleNorm), scrapeGnula(titleNorm), scrapeEmbed69()];
+            await Promise.allSettled(promises);
+            setLoading(false);
+            openPlayerUI();
+            updateServerList();
+            if (sourcesList.length) playSource(sourcesList[0]);
+            else alert('No enlaces encontrados hoy. Prueba mañana.');
+        }
+
+        async function scrapeCinecalidad(title) {
+            const res = await fetch(PROXY_URL + `https://cinecalidad.ec/?s=${title}`);
+            const html = await res.text();
+            const link = html.match(/href="(https:\/\/cinecalidad\.ec\/[^"]*?)"/);
+            if (link) {
+                const page = await fetch(PROXY_URL + link[1]);
+                const pageHtml = await page.text();
+                pageHtml.match(/src="(https:\/\/[^"]+?(streamtape|filemoon|voe)[^"]*)"/g)?.forEach(i => addSource({name: 'CineCalidad HD', lang: 'Latino', url: i.match(/src="([^"]*)"/)[1], provider: 'cinecalidad'}));
+            }
+        }
+
+        async function scrapeCuevana(title) {
+            const res = await fetch(PROXY_URL + `https://cuevana.pro/buscar?q=${title}`);
+            const html = await res.text();
+            const links = html.match(/href="(https:\/\/cuevana\.pro\/[^"]*?)"/g) || [];
+            for (let l of links.slice(0,3)) { // Limit to avoid overload
+                const page = await fetch(PROXY_URL + l.match(/href="([^"]*)"/)[1]);
+                const pageHtml = await page.text();
+                pageHtml.match(/src="(https:\/\/[^"]+?(streamtape|voe|filemoon)[^"]*)"/g)?.forEach(p => addSource({name: 'Cuevana Pro', lang: 'Latino', url: p.match(/src="([^"]*)"/)[1], provider: 'cuevana'}));
+            }
+        }
+
+        async function scrapePelisplus(title) {
+            const res = await fetch(PROXY_URL + `https://pelisplus.soy/buscar/${title}`);
+            const html = await res.text();
+            html.match(/data-src="(https:\/\/[^"]+?(streamtape|voe|filemoon)[^"]*)"/g)?.forEach(i => addSource({name: 'PelisPlus', lang: 'Latino', url: i.match(/data-src="([^"]*)"/)[1], provider: 'pelisplus'}));
+        }
+
+        async function scrapeGnula(title) {
+            const res = await fetch(PROXY_URL + `https://gnula.nu/?s=${title}`);
+            const html = await res.text();
+            const iframe = html.match(/src="(https:\/\/gnula\.nu\/wp-content[^"]*player[^"]*)"/);
+            if (iframe) addSource({name: 'Gnula Player', lang: 'Latino', url: iframe[1], provider: 'gnula'});
+        }
+
+        async function scrapeEmbed69() {
+            if (!movieData.imdbId) return;
+            const slug = movieData.type === 'tv' ? `${movieData.imdbId}-${movieData.season}x${String(movieData.episode).padStart(2, '0')}` : movieData.imdbId;
+            const res = await fetch(PROXY_URL + `https://embed69.org/f/${slug}/`);
+            const html = await res.text();
+            const match = html.match(/let dataLink\s*=\s*(\[[\s\S]*?\]);/);
+            if (match) {
+                JSON.parse(match[1]).forEach(item => {
+                    const lang = /LAT/i.test(item.video_language) ? "Latino" : /ESP|CAS/i.test(item.video_language) ? "Castellano" : "Subtitulado";
+                    item.sortedEmbeds.forEach(embed => {
+                        const decoded = decodeJWT(embed.link);
+                        if (decoded?.link) addSource({name: embed.servername, lang, url: decoded.link, provider: "embed69"});
+                    });
+                });
+            }
+        }
+
+        function decodeJWT(t) {
+            try { const p = t.split('.')[1]; return JSON.parse(atob(p.replace(/-/g, '+').replace(/_/g, '/'))); } catch { return null; }
+        }
+
+        function addSource(source) {
+            if (!sourcesList.some(s => s.url === source.url)) sourcesList.push(source);
+        }
+
+        function updateServerList() {
+            sourcesList.sort((a, b) => ['cinecalidad', 'cuevana', 'pelisplus', 'gnula', 'embed69'].indexOf(a.provider) - ['cinecalidad', 'cuevana', 'pelisplus', 'gnula', 'embed69'].indexOf(b.provider));
+            document.getElementById('server-count').textContent = sourcesList.length;
+            const container = document.getElementById('server-list-container');
+            container.innerHTML = '';
+            sourcesList.forEach(s => {
+                const div = document.createElement('div');
+                div.className = 'p-3 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 cursor-pointer';
+                div.innerHTML = `<h4 class="font-bold">${s.name}</h4><span class="text-xs text-gray-400">${s.lang}</span>`;
+                div.onclick = () => playSource(s);
+                container.appendChild(div);
+            });
+        }
+
+        function playSource(source) {
+            const video = document.getElementById('player');
+            const ifrCont = document.getElementById('iframe-container');
+            if (playerInstance) playerInstance.destroy();
+            video.style.display = 'none';
+            ifrCont.classList.remove('hidden-force');
+            ifrCont.innerHTML = `<iframe src="${source.url}" class="w-full h-full border-0" allowfullscreen></iframe>`;
+        }
+
+        function openPlayerUI() { document.getElementById('player-modal').classList.remove('hidden'); }
+        function closePlayer() { document.getElementById('player-modal').classList.add('hidden'); iframeContainer.innerHTML = ''; }
+        function setLoading(active, text) {
+            const overlay = document.getElementById('loader-overlay');
+            if (active) {
+                overlay.classList.remove('hidden');
+                document.getElementById('loader-text').textContent = text;
+            } else overlay.classList.add('hidden');
+        }
+    </script>
 </body>
 </html>
