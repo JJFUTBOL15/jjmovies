@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prueba JJMovies Player - Avatar 3</title>
+    <style>
+        body {
+            background: linear-gradient(to bottom, #0f172a, #1e293b);
+            color: white;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        header {
+            text-align: center;
+            padding: 40px 20px;
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 20px;
+            margin-bottom: 30px;
+        }
+        h1 {
+            font-size: 3rem;
+            margin: 0;
+            background: linear-gradient(to right, #8b5cf6, #3b82f6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .movie-info {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 1.2rem;
+            color: #cbd5e1;
+        }
+        .player-container {
+            position: relative;
+            width: 100%;
+            padding-top: 56.25%; /* Aspect ratio 16:9 */
+            background: #000;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+        }
+        .player-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        footer {
+            text-align: center;
+            margin-top: 50px;
+            padding: 20px;
+            color: #64748b;
+            font-size: 0.9rem;
+        }
+        .badge {
+            display: inline-block;
+            background: #8b5cf6;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            margin: 10px 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>JJMovies Player Demo</h1>
+            <p>Reproductor premium con múltiples fuentes automáticas</p>
+        </header>
+
+        <div class="movie-info">
+            <h2>Avatar: Fuego y ceniza (2025)</h2>
+            <p>Director: James Cameron | Duración: ~3h | Ciencia ficción / Aventura</p>
+            <div>
+                <span class="badge">Latino</span>
+                <span class="badge">Castellano</span>
+                <span class="badge">Subtitulado</span>
+                <span class="badge">HD Disponible</span>
+            </div>
+            <p style="max-width: 800px; margin: 20px auto; line-height: 1.6;">
+                Tercera entrega de la saga Avatar. Continúa la historia de Jake Sully y Neytiri 
+                en Pandora, enfrentándose a nuevas amenazas mientras exploran regiones inexploradas 
+                del planeta, incluyendo tribus del fuego.
+            </p>
+        </div>
+
+        <!-- TU IFRAME AQUÍ -->
+        <div class="player-container">
+            <iframe class="aspect-video w-full" 
+                    src="https://jjmovies.lat/player.html?id=83533&type=movie" 
+                    frameborder="0" 
+                    allowfullscreen>
+            </iframe>
+        </div>
+
+        <div class="movie-info" style="margin-top: 40px;">
+            <p>El reproductor buscará automáticamente las mejores fuentes disponibles (Cinecalidad, Cuevana, Pelisplus, etc.).</p>
+            <p><strong>Nota:</strong> Avatar 3 se estrenó el 19 de diciembre de 2025. Las versiones digitales completas aparecerán en las próximas semanas.</p>
+        </div>
+    </div>
+
+    <footer>
+        <p>Prueba de embed de <strong>JJMovies.lat</strong> • Player premium con scraping automático • Uso personal</p>
+        <p>Si te gusta, genera más embeds en <a href="https://jjmovies.lat/api.html" style="color: #8b5cf6;">https://jjmovies.lat/api.html</a></p>
+    </footer>
+</body>
+</html>
