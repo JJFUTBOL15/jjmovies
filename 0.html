@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>JJMOVIES - Ultra Premium</title>
+    <title>JJMOVIES - Powered by CineMax Engine</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
@@ -17,18 +17,18 @@
             theme: {
                 extend: {
                     colors: {
-                        netflixRed: '#E50914',
-                        netflixDark: '#141414',
-                        brandBlue: '#3b82f6', // Azul de tu otro código
+                        brand: { DEFAULT: '#3b82f6', light: '#60a5fa', dark: '#2563eb' }, // Tu azul original
+                        netflixRed: '#E50914', // Rojo Netflix
+                        netflixBlack: '#141414'
                     },
+                    fontFamily: { sans: ['Outfit', 'sans-serif'], logo: ['Bebas Neue', 'cursive'] },
                     animation: {
-                        'fade-in': 'fadeIn 0.5s ease-out',
-                        'slide-up': 'slideUp 0.8s ease-out',
-                        'pulse-slow': 'pulse 3s infinite',
+                        'fade-in-up': 'fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+                        'slide-in-right': 'slideInRight 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards',
                     },
                     keyframes: {
-                        fadeIn: { '0%': { opacity: 0 }, '100%': { opacity: 1 } },
-                        slideUp: { '0%': { transform: 'translateY(20px)', opacity: 0 }, '100%': { transform: 'translateY(0)', opacity: 1 } }
+                        fadeInUp: { '0%': { opacity: 0, transform: 'translateY(40px)' }, '100%': { opacity: 1, transform: 'translateY(0)' } },
+                        slideInRight: { '0%': { opacity: 0, transform: 'translateX(20px)' }, '100%': { opacity: 1, transform: 'translateX(0)' } }
                     }
                 }
             }
@@ -36,474 +36,317 @@
     </script>
 
     <style>
-        body {
-            background-color: #141414;
-            color: white;
-            font-family: 'Inter', sans-serif;
-            overflow-x: hidden;
-        }
-
-        /* Tipografía Logo */
-        .font-logo { font-family: 'Bebas Neue', cursive; letter-spacing: 2px; }
-
-        /* Scrollbars Ocultos pero funcionales */
+        /* Estilos Base (Netflix Style) */
+        body { background-color: #141414; color: white; overflow-x: hidden; }
         .hide-scroll::-webkit-scrollbar { display: none; }
         .hide-scroll { -ms-overflow-style: none; scrollbar-width: none; }
-
-        /* Scrollbar personalizado para la lista de servidores */
-        .custom-scroll::-webkit-scrollbar { width: 6px; }
-        .custom-scroll::-webkit-scrollbar-track { background: #111; }
-        .custom-scroll::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
-        .custom-scroll::-webkit-scrollbar-thumb:hover { background: #E50914; }
-
-        /* Efectos Hover Cards */
-        .movie-card { transition: transform 0.3s, z-index 0.3s; z-index: 10; position: relative; }
-        .movie-card:hover { transform: scale(1.1); z-index: 50; box-shadow: 0 10px 20px rgba(0,0,0,0.8); }
-
-        /* Navbar Gradiente */
-        .nav-gradient { background: linear-gradient(to bottom, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0) 100%); }
-        .nav-solid { background-color: #141414; box-shadow: 0 2px 10px rgba(0,0,0,0.5); }
-
-        /* Estilos del Reproductor (Glassmorphism del otro código) */
+        .movie-card { transition: transform 0.3s; z-index: 10; position: relative; aspect-ratio: 2/3; }
+        .movie-card:hover { transform: scale(1.1); z-index: 50; }
+        
+        /* Estilos de TU Reproductor Original (CineMax) */
         .glass-panel {
-            background: rgba(20, 20, 20, 0.85);
+            background: rgba(20, 20, 20, 0.95);
             backdrop-filter: blur(20px);
             border-left: 1px solid rgba(255, 255, 255, 0.1);
         }
-
-        /* Plyr Colors Overrides */
-        :root { --plyr-color-main: #E50914; } /* Rojo Netflix en el player */
+        .lang-flag { transition: all 0.3s; filter: grayscale(100%) opacity(0.6); transform: scale(0.9); }
+        .lang-flag:hover, .lang-flag.active { filter: grayscale(0%) opacity(1); transform: scale(1.1); border: 2px solid #3b82f6; border-radius: 4px; }
         
-        /* Flags */
-        .lang-flag.active { filter: brightness(1.2); transform: scale(1.1); border: 2px solid white; border-radius: 4px; }
-        .lang-flag { transition: all 0.2s; opacity: 0.6; filter: grayscale(1); }
-        .lang-flag:hover { opacity: 1; filter: grayscale(0); }
-
-        /* Loader */
-        .spinner {
-            width: 50px; height: 50px;
-            border: 5px solid rgba(255,255,255,0.1);
-            border-top-color: #E50914;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
+        /* Plyr Customization (Manteniendo tu estilo azul) */
+        :root { --plyr-color-main: #3b82f6; }
+        
+        /* Loader Spinner */
+        .loader-ring { display: inline-block; width: 64px; height: 64px; }
+        .loader-ring:after {
+            content: " "; display: block; width: 46px; height: 46px; margin: 8px; border-radius: 50%;
+            border: 5px solid #fff; border-color: #3b82f6 transparent #3b82f6 transparent;
+            animation: ring 1.2s linear infinite;
         }
-        @keyframes spin { 100% { transform: rotate(360deg); } }
+        @keyframes ring { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
-<body class="selection:bg-red-600 selection:text-white">
+<body>
 
-    <nav id="navbar" class="fixed top-0 w-full z-50 px-4 md:px-12 py-4 transition-all duration-300 nav-gradient flex items-center justify-between">
+    <nav id="navbar" class="fixed top-0 w-full z-40 px-4 md:px-12 py-4 bg-gradient-to-b from-black/90 to-transparent flex items-center justify-between transition-all duration-300">
         <div class="flex items-center gap-8">
-            <a href="#" onclick="app.loadHome()" class="text-3xl md:text-4xl font-logo text-netflixRed cursor-pointer drop-shadow-md">JJMOVIES</a>
-            
+            <a href="#" onclick="window.location.reload()" class="text-3xl md:text-4xl font-logo text-netflixRed tracking-widest drop-shadow-md">JJMOVIES</a>
             <div class="hidden md:flex gap-6 text-sm font-medium text-gray-300">
-                <a onclick="app.loadHome()" class="hover:text-white cursor-pointer font-bold">Inicio</a>
-                <a onclick="app.loadGenre(28, 'Acción')" class="hover:text-white cursor-pointer">Acción</a>
-                <a onclick="app.loadGenre(16, 'Animación')" class="hover:text-white cursor-pointer">Infantil</a>
-                <a onclick="app.loadGenre(27, 'Terror')" class="hover:text-white cursor-pointer">Terror</a>
+                <a onclick="ui.showHome()" class="hover:text-white cursor-pointer font-bold">Inicio</a>
+                <a onclick="ui.loadGenre(28, 'Acción')" class="hover:text-white cursor-pointer">Acción</a>
+                <a onclick="ui.loadGenre(27, 'Terror')" class="hover:text-white cursor-pointer">Terror</a>
+                <a onclick="ui.loadGenre(16, 'Animación')" class="hover:text-white cursor-pointer">Infantil</a>
             </div>
         </div>
-
         <div class="flex items-center gap-4">
-            <div class="hidden md:flex items-center bg-black/60 border border-white/30 rounded px-3 py-1 focus-within:border-white w-64 transition-all">
+            <div class="relative bg-black/60 border border-white/30 rounded px-2 py-1 flex items-center">
                 <i class="fas fa-search text-gray-400 mr-2"></i>
-                <input type="text" id="searchInput" placeholder="Títulos, personas..." class="bg-transparent border-none outline-none text-sm text-white w-full" onkeyup="app.handleSearch(this.value)">
+                <input type="text" id="searchInput" placeholder="Películas, Series..." class="bg-transparent border-none outline-none text-white text-sm w-32 md:w-64 focus:w-72 transition-all" onkeyup="ui.handleSearch(this.value)">
             </div>
-            <i class="fas fa-search md:hidden text-white text-xl cursor-pointer" onclick="document.getElementById('mobile-search').classList.toggle('hidden')"></i>
-            <img src="https://upload.wikimedia.org/wikipedia/commons/0/0b/Netflix-avatar.png" class="w-8 h-8 rounded cursor-pointer border border-transparent hover:border-white">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/0/0b/Netflix-avatar.png" class="w-8 h-8 rounded">
         </div>
     </nav>
 
-    <div id="mobile-search" class="fixed top-0 left-0 w-full bg-[#141414] p-4 z-[60] hidden border-b border-gray-800 flex items-center gap-3">
-        <i class="fas fa-arrow-left text-white text-xl" onclick="document.getElementById('mobile-search').classList.add('hidden')"></i>
-        <input type="text" class="w-full bg-[#333] text-white p-2 rounded outline-none" placeholder="Buscar..." onkeyup="app.handleSearch(this.value)">
-    </div>
-
-    <main class="min-h-screen pb-20">
-        
-        <header id="hero" class="relative h-[80vh] w-full bg-cover bg-center hidden">
-            <div class="absolute inset-0 bg-gradient-to-r from-black via-black/50 to-transparent"></div>
-            <div class="absolute inset-0 bg-gradient-to-t from-[#141414] via-transparent to-transparent"></div>
+    <main id="main-view" class="min-h-screen pb-20">
+        <header id="hero" class="relative h-[80vh] w-full bg-cover bg-center hidden group">
+            <div class="absolute inset-0 bg-gradient-to-r from-[#141414] via-transparent to-transparent"></div>
+            <div class="absolute inset-0 bg-gradient-to-t from-[#141414] via-[#141414]/20 to-transparent"></div>
             
-            <div class="absolute bottom-[20%] left-4 md:left-12 max-w-2xl space-y-4 animate-slide-up">
-                <div class="flex items-center gap-2">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/08/Netflix_2015_N_logo.svg/1200px-Netflix_2015_N_logo.svg.png" class="w-5">
-                    <span class="text-xs font-bold tracking-widest text-gray-300 uppercase">Película / Serie</span>
-                </div>
-                <h1 id="hero-title" class="text-5xl md:text-7xl font-black leading-none drop-shadow-lg font-logo">TITULO</h1>
-                <p id="hero-desc" class="text-white text-base md:text-lg line-clamp-3 drop-shadow-md text-gray-200"></p>
-                
+            <div class="absolute bottom-[20%] left-4 md:left-12 max-w-2xl space-y-4 z-10">
+                <h1 id="hero-title" class="text-5xl md:text-7xl font-black font-logo leading-none drop-shadow-xl">CARGANDO...</h1>
+                <p id="hero-desc" class="text-gray-200 text-sm md:text-lg line-clamp-3 drop-shadow-md"></p>
                 <div class="flex gap-4 pt-4">
-                    <button id="hero-play-btn" class="bg-white text-black px-8 py-3 rounded font-bold hover:bg-gray-200 flex items-center gap-2 transition hover:scale-105">
+                    <button id="hero-play" class="bg-white text-black px-8 py-3 rounded font-bold hover:bg-gray-200 flex items-center gap-2 transition hover:scale-105">
                         <i class="fas fa-play"></i> Reproducir
                     </button>
-                    <button id="hero-info-btn" class="bg-gray-500/40 text-white px-8 py-3 rounded font-bold hover:bg-gray-500/30 flex items-center gap-2 backdrop-blur-md transition">
-                        <i class="fas fa-info-circle"></i> Más información
+                    <button class="bg-gray-500/50 text-white px-8 py-3 rounded font-bold hover:bg-gray-500/40 flex items-center gap-2 backdrop-blur-md">
+                        <i class="fas fa-info-circle"></i> Más Info
                     </button>
                 </div>
             </div>
         </header>
 
-        <div id="home-rows" class="relative z-10 -mt-32 pl-4 md:pl-12 pb-12 space-y-10 hidden">
-            </div>
+        <div id="home-rows" class="relative z-20 -mt-24 space-y-8 pl-4 md:pl-12 pb-12 hidden"></div>
 
         <div id="grid-view" class="hidden pt-24 px-4 md:px-12">
-            <div class="flex justify-between items-center mb-6 border-b border-gray-800 pb-4">
-                <h2 id="grid-title" class="text-2xl font-bold text-white">Resultados</h2>
-                <i class="fas fa-times text-2xl cursor-pointer hover:text-red-500" onclick="app.loadHome()"></i>
+            <div class="flex justify-between items-center mb-6">
+                <h2 id="grid-title" class="text-2xl font-bold">Resultados</h2>
+                <button onclick="ui.showHome()" class="text-gray-400 hover:text-white"><i class="fas fa-times text-2xl"></i></button>
             </div>
             <div id="grid-container" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4"></div>
         </div>
-
-        <div id="global-loader" class="fixed inset-0 bg-[#141414] z-[100] flex items-center justify-center">
-            <div class="spinner"></div>
-        </div>
     </main>
 
-    <div id="player-modal" class="fixed inset-0 z-[200] bg-black hidden flex opacity-0 transition-opacity duration-500">
+    <div id="player-modal" class="fixed inset-0 z-[100] bg-black hidden flex opacity-0 transition-opacity duration-500">
         
-        <div id="video-wrapper" class="relative w-full md:w-3/4 h-full bg-black flex items-center justify-center transition-all duration-300">
-            <div class="absolute top-4 left-4 z-20 flex gap-4">
-                <button onclick="player.close()" class="bg-black/50 hover:bg-red-600 text-white w-10 h-10 rounded-full flex items-center justify-center backdrop-blur transition border border-white/10">
+        <div id="video-wrapper" class="relative w-full md:w-3/4 h-full bg-black flex items-center justify-center">
+            <div class="absolute top-0 left-0 w-full p-4 flex justify-between z-20 bg-gradient-to-b from-black/80 to-transparent">
+                <button onclick="playerCore.close()" class="w-10 h-10 rounded-full bg-white/10 hover:bg-red-600 hover:text-white border border-white/10 backdrop-blur-md flex items-center justify-center transition">
                     <i class="fas fa-arrow-left"></i>
                 </button>
-                <button onclick="player.toggleSidebar()" class="md:hidden bg-black/50 text-white w-10 h-10 rounded-full flex items-center justify-center backdrop-blur border border-white/10">
-                    <i class="fas fa-list"></i>
-                </button>
+                <div class="flex gap-2">
+                    <button onclick="playerCore.toggleSidebar()" class="md:hidden w-10 h-10 rounded-full bg-white/10 hover:bg-brand/50 border border-white/10 backdrop-blur-md flex items-center justify-center transition">
+                        <i class="fas fa-list-ul"></i>
+                    </button>
+                </div>
             </div>
 
-            <video id="plyr-player" class="w-full h-full" playsinline controls></video>
-            <div id="iframe-fallback" class="absolute inset-0 w-full h-full hidden bg-black"></div>
+            <video id="player" class="w-full h-full object-contain" playsinline controls crossorigin></video>
+            
+            <div id="iframe-container" class="absolute inset-0 w-full h-full hidden bg-black"></div>
+            
+            <div id="loader-overlay" class="absolute inset-0 bg-black/80 flex flex-col items-center justify-center z-50">
+                <div class="loader-ring"></div>
+                <p id="loader-text" class="mt-4 text-brand font-bold tracking-widest animate-pulse">BUSCANDO ENLACES...</p>
+            </div>
         </div>
 
-        <div id="server-sidebar" class="absolute right-0 top-0 h-full w-full md:w-1/4 glass-panel flex flex-col z-30 transform translate-x-full md:translate-x-0 transition-transform duration-300">
-            
-            <div class="p-6 border-b border-white/10 bg-black/40">
-                <h3 class="text-xl font-bold text-white mb-1 flex items-center gap-2">
-                    <i class="fas fa-server text-netflixRed"></i> Servidores
+        <div id="server-panel" class="absolute right-0 h-full w-full md:w-1/4 glass-panel flex flex-col z-30 transform md:translate-x-0 translate-x-full transition-transform duration-300">
+            <div class="p-6 border-b border-white/10 bg-gradient-to-b from-white/5 to-transparent">
+                <h3 class="text-xl font-bold text-white flex items-center gap-2 mb-2">
+                    <i class="fas fa-server text-brand animate-pulse"></i> Fuentes
                 </h3>
-                <p id="server-status" class="text-xs text-gray-400">Buscando enlaces...</p>
                 
-                <div class="flex justify-center gap-4 mt-4">
-                    <img src="https://embed69.org/static/lang/LAT.png" class="w-8 cursor-pointer lang-flag active" onclick="player.filterLang('Latino', this)" title="Latino">
-                    <img src="https://embed69.org/static/lang/ESP.png" class="w-8 cursor-pointer lang-flag" onclick="player.filterLang('Castellano', this)" title="Castellano">
-                    <img src="https://embed69.org/static/lang/SUB.png" class="w-8 cursor-pointer lang-flag" onclick="player.filterLang('Subtitulado', this)" title="Subtitulado">
+                <div class="flex justify-center gap-3 mb-4">
+                    <button onclick="playerCore.setLanguageFilter('latino')" class="lang-flag" id="btn-latino">
+                        <img src="https://embed69.org/static/lang/LAT.png" class="w-8" title="Latino">
+                    </button>
+                    <button onclick="playerCore.setLanguageFilter('castellano')" class="lang-flag" id="btn-castellano">
+                        <img src="https://embed69.org/static/lang/ESP.png" class="w-8" title="Castellano">
+                    </button>
+                    <button onclick="playerCore.setLanguageFilter('subtitulado')" class="lang-flag" id="btn-subtitulado">
+                        <img src="https://embed69.org/static/lang/SUB.png" class="w-8" title="Subtitulado">
+                    </button>
                 </div>
-            </div>
 
-            <div id="server-list" class="flex-1 overflow-y-auto p-4 space-y-3 custom-scroll">
-                <div class="text-center mt-10 text-gray-500 animate-pulse">
-                    <i class="fas fa-satellite-dish text-4xl mb-2"></i>
-                    <p>Escaneando la red...</p>
+                <div id="series-controls" class="hidden flex flex-col gap-2 bg-black/40 p-2 rounded border border-white/10">
+                    <div class="flex gap-1">
+                        <select id="season-select" onchange="seriesCore.onSeasonChange(this.value)" class="bg-[#222] text-white text-xs p-1 rounded flex-1 outline-none"></select>
+                        <select id="episode-select" class="bg-[#222] text-white text-xs p-1 rounded flex-1 outline-none"></select>
+                    </div>
+                    <button onclick="seriesCore.loadEpisode()" class="w-full bg-brand hover:bg-blue-600 text-white text-xs font-bold py-1 rounded transition">
+                        <i class="fas fa-play"></i> CARGAR EPISODIO
+                    </button>
                 </div>
             </div>
-
-            <div id="season-selector" class="p-4 border-t border-white/10 bg-black/60 hidden">
-                <div class="flex gap-2 mb-2">
-                    <select id="sel-season" class="bg-[#333] text-white text-xs p-2 rounded flex-1 outline-none"></select>
-                    <select id="sel-episode" class="bg-[#333] text-white text-xs p-2 rounded flex-1 outline-none"></select>
+            
+            <div id="server-list-container" class="flex-1 overflow-y-auto p-4 space-y-3 custom-scrollbar">
                 </div>
-                <button onclick="player.loadEpisode()" class="w-full bg-netflixRed hover:bg-red-700 text-white py-2 rounded text-xs font-bold transition">
-                    CAMBIAR EPISODIO
-                </button>
-            </div>
         </div>
     </div>
 
     <script>
-        // --- CONSTANTES ---
+        // --- 1. CONFIGURACIÓN DEL SISTEMA (INTACTA) ---
         const CONFIG = {
-            apiKey: 'da8b836389708e0558de674492931977', // Tu API Key
-            baseUrl: 'https://api.themoviedb.org/3',
-            imgBase: 'https://image.tmdb.org/t/p/original',
-            posterBase: 'https://image.tmdb.org/t/p/w500',
-            proxy: 'https://api.codetabs.com/v1/proxy/?quest=',
-            targetBlog: 'https://darkstatonmovies1.blogspot.com'
+            API_KEY: 'da8b836389708e0558de674492931977', // Tu Key original
+            PROXY_URL: 'https://api.codetabs.com/v1/proxy/?quest=',
+            TARGET_BLOG: 'https://darkstatonmovies1.blogspot.com',
+            TMDB_BASE: 'https://api.themoviedb.org/3',
+            IMG_BASE: 'https://image.tmdb.org/t/p/original',
+            POSTER_BASE: 'https://image.tmdb.org/t/p/w500'
         };
 
-        // --- ESTADO DE LA APP ---
-        const state = {
-            currentMovie: null, // Datos de TMDB
-            sources: [], // Lista de servidores encontrados
-            filter: 'Latino', // Filtro actual
-            plyr: null, // Instancia del player
-            isSidebarOpen: false
-        };
+        // --- 2. VARIABLES DE ESTADO ---
+        let movieData = { tmdbId: null, imdbId: null, title: '', backdrop: '', type: 'movie', season: 1, episode: 1, totalSeasons: 1 };
+        let playerInstance = null;
+        let sourcesList = [];
+        let currentLanguage = 'all';
 
-        // --- APP PRINCIPAL (UI) ---
-        const app = {
+        // --- 3. UI DEL NETFLIX (FRONTEND) ---
+        const ui = {
             init: function() {
                 this.loadHome();
-                // Scroll effect
-                window.addEventListener('scroll', () => {
-                    const nav = document.getElementById('navbar');
-                    if(window.scrollY > 50) { nav.classList.add('nav-solid'); nav.classList.remove('nav-gradient'); }
-                    else { nav.classList.add('nav-gradient'); nav.classList.remove('nav-solid'); }
-                });
             },
-
-            fetch: async function(endpoint) {
+            
+            fetchTMDB: async function(url) {
                 try {
-                    const res = await fetch(`${CONFIG.baseUrl}${endpoint}&api_key=${CONFIG.apiKey}&language=es-MX`);
+                    const res = await fetch(`${CONFIG.TMDB_BASE}${url}&api_key=${CONFIG.API_KEY}&language=es-MX`);
                     return await res.json();
                 } catch(e) { console.error(e); return null; }
             },
 
             loadHome: async function() {
-                this.toggleView('home');
-                const loader = document.getElementById('global-loader');
-                
-                // Cargar Tendencias
-                const trending = await this.fetch('/trending/all/day?');
+                this.showHome();
+                const trending = await this.fetchTMDB('/trending/all/day?');
                 if(!trending || !trending.results) return;
 
-                // Configurar Hero
+                // Hero
                 const heroItem = trending.results[0];
-                const heroBg = document.getElementById('hero');
-                heroBg.style.backgroundImage = `url('${CONFIG.imgBase}${heroItem.backdrop_path}')`;
+                const hero = document.getElementById('hero');
+                hero.classList.remove('hidden');
+                hero.style.backgroundImage = `url('${CONFIG.IMG_BASE}${heroItem.backdrop_path}')`;
                 document.getElementById('hero-title').innerText = heroItem.title || heroItem.name;
                 document.getElementById('hero-desc').innerText = heroItem.overview;
-                document.getElementById('hero').classList.remove('hidden');
-                
-                // Configurar botones Hero
-                document.getElementById('hero-play-btn').onclick = () => player.open(heroItem.id, heroItem.media_type || 'movie');
+                document.getElementById('hero-play').onclick = () => playerCore.init(heroItem.id, heroItem.media_type || 'movie');
 
-                // Renderizar Filas
+                // Rows
                 const container = document.getElementById('home-rows');
                 container.innerHTML = '';
-                this.createRow(container, "Tendencias Ahora", trending.results);
+                container.classList.remove('hidden');
                 
-                const action = await this.fetch('/discover/movie?with_genres=28');
-                this.createRow(container, "Pura Adrenalina", action.results);
+                this.createRow(container, 'Tendencias', trending.results);
                 
-                const comedy = await this.fetch('/discover/movie?with_genres=35');
-                this.createRow(container, "Comedias", comedy.results);
-
-                loader.style.display = 'none';
+                const action = await this.fetchTMDB('/discover/movie?with_genres=28');
+                this.createRow(container, 'Acción Explosiva', action.results);
+                
+                const comedy = await this.fetchTMDB('/discover/movie?with_genres=35');
+                this.createRow(container, 'Comedia', comedy.results);
             },
 
             createRow: function(container, title, items) {
-                const section = document.createElement('div');
-                section.innerHTML = `
-                    <h3 class="text-white font-bold text-lg md:text-xl mb-4 hover:text-netflixRed cursor-pointer flex items-center gap-2 group">
-                        ${title} <i class="fas fa-chevron-right text-xs opacity-0 group-hover:opacity-100 transition"></i>
-                    </h3>
-                    <div class="flex gap-3 overflow-x-auto hide-scroll pb-4">
-                        ${items.map(m => m.poster_path ? `
-                            <div class="relative flex-shrink-0 w-32 md:w-44 cursor-pointer movie-card rounded-md overflow-hidden" 
-                                 onclick="player.open(${m.id}, '${m.title ? 'movie' : 'tv'}')">
-                                <img src="${CONFIG.posterBase}${m.poster_path}" class="w-full h-full object-cover">
-                            </div>
-                        ` : '').join('')}
-                    </div>
-                `;
-                container.appendChild(section);
+                const div = document.createElement('div');
+                div.innerHTML = `<h3 class="text-xl font-bold text-white mb-2">${title}</h3>`;
+                const slider = document.createElement('div');
+                slider.className = 'flex gap-3 overflow-x-auto hide-scroll pb-4';
+                
+                items.forEach(m => {
+                    if(m.poster_path) {
+                        const img = document.createElement('img');
+                        img.src = CONFIG.POSTER_BASE + m.poster_path;
+                        img.className = 'w-32 md:w-40 rounded cursor-pointer movie-card';
+                        img.onclick = () => playerCore.init(m.id, m.title ? 'movie' : 'tv');
+                        slider.appendChild(img);
+                    }
+                });
+                div.appendChild(slider);
+                container.appendChild(div);
             },
 
-            handleSearch: async function(query) {
-                if(query.length < 3) return;
-                this.toggleView('grid');
-                document.getElementById('grid-title').innerText = `Buscando: ${query}`;
-                
-                const res = await this.fetch(`/search/multi?query=${query}`);
+            handleSearch: async function(q) {
+                if(q.length < 3) return;
+                this.showGrid();
+                const res = await this.fetchTMDB(`/search/multi?query=${q}&include_adult=false`);
                 this.renderGrid(res.results);
             },
 
             loadGenre: async function(id, name) {
-                this.toggleView('grid');
-                document.getElementById('grid-title').innerText = name;
-                const res = await this.fetch(`/discover/movie?with_genres=${id}`);
+                this.showGrid();
+                const res = await this.fetchTMDB(`/discover/movie?with_genres=${id}`);
                 this.renderGrid(res.results);
             },
 
             renderGrid: function(items) {
                 const grid = document.getElementById('grid-container');
                 grid.innerHTML = items.filter(i => i.poster_path).map(m => `
-                    <div class="cursor-pointer relative group" onclick="player.open(${m.id}, '${m.title ? 'movie' : 'tv'}')">
-                        <img src="${CONFIG.posterBase}${m.poster_path}" class="w-full rounded-md shadow-lg transition duration-300 group-hover:scale-105">
-                        <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex items-center justify-center transition rounded-md">
-                            <i class="fas fa-play-circle text-4xl text-netflixRed"></i>
+                    <div class="cursor-pointer group relative" onclick="playerCore.init(${m.id}, '${m.title ? 'movie' : 'tv'}')">
+                        <img src="${CONFIG.POSTER_BASE}${m.poster_path}" class="w-full rounded shadow-lg">
+                        <div class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 flex items-center justify-center transition">
+                            <i class="fas fa-play text-white text-3xl"></i>
                         </div>
                     </div>
                 `).join('');
             },
 
-            toggleView: function(view) {
-                const home = document.getElementById('home-rows');
-                const hero = document.getElementById('hero');
-                const grid = document.getElementById('grid-view');
-                
-                if(view === 'home') {
-                    home.classList.remove('hidden'); hero.classList.remove('hidden'); grid.classList.add('hidden');
-                } else {
-                    home.classList.add('hidden'); hero.classList.add('hidden'); grid.classList.remove('hidden');
-                }
+            showHome: function() {
+                document.getElementById('home-rows').classList.remove('hidden');
+                document.getElementById('hero').classList.remove('hidden');
+                document.getElementById('grid-view').classList.add('hidden');
+            },
+            showGrid: function() {
+                document.getElementById('home-rows').classList.add('hidden');
+                document.getElementById('hero').classList.add('hidden');
+                document.getElementById('grid-view').classList.remove('hidden');
             }
         };
 
-        // --- MOTOR DE SCRAPING (Extracción de Enlaces) ---
-        // Aquí está la magia del otro archivo, adaptada.
-        const scraper = {
-            searchLinks: async function(tmdbId, type, season = 1, episode = 1) {
-                state.sources = [];
-                player.updateListUI();
+        // --- 4. CORE DEL REPRODUCTOR (LÓGICA DE CINEMAX) ---
+        const playerCore = {
+            init: async function(tmdbId, type) {
+                // Preparar UI
+                const modal = document.getElementById('player-modal');
+                modal.classList.remove('hidden');
+                requestAnimationFrame(() => modal.classList.remove('opacity-0'));
+                this.setLoader(true, "CARGANDO DATOS...");
+                document.getElementById('server-list-container').innerHTML = '';
                 
-                // Obtener ID IMDB primero
+                // Reiniciar estado
+                sourcesList = [];
+                movieData = { tmdbId: tmdbId, type: type, season: 1, episode: 1 };
+
+                // Obtener Metadata Completa (incluyendo IMDB ID)
                 const endpoint = type === 'movie' ? `/movie/${tmdbId}` : `/tv/${tmdbId}`;
-                const meta = await app.fetch(`${endpoint}?append_to_response=external_ids`);
-                const imdbId = meta.external_ids?.imdb_id;
+                const data = await ui.fetchTMDB(`${endpoint}?append_to_response=external_ids`);
                 
-                if(!imdbId) {
-                    this.addSource({ name: 'Error: No IMDB ID', url: '', lang: 'Error' });
-                    return;
+                if(!data) { alert("Error al cargar datos"); this.close(); return; }
+
+                movieData.imdbId = data.external_ids?.imdb_id;
+                movieData.title = data.title || data.name;
+                movieData.backdrop = data.backdrop_path ? CONFIG.IMG_BASE + data.backdrop_path : '';
+                
+                // Configurar controles de series
+                const seriesControls = document.getElementById('series-controls');
+                if(type === 'tv') {
+                    seriesControls.classList.remove('hidden');
+                    movieData.totalSeasons = data.number_of_seasons;
+                    seriesCore.populateSeasons();
+                    seriesCore.populateEpisodes(1); // Cargar Temp 1 por defecto
+                } else {
+                    seriesControls.classList.add('hidden');
+                    this.startScraping(); // Si es peli, arrancar directo
                 }
+            },
 
-                state.currentMovie = { ...meta, type, season, episode, imdbId };
-
-                // Iniciar escaneo paralelo
+            startScraping: async function() {
+                if(!movieData.imdbId) { alert("No se encontró ID IMDB"); return; }
+                this.setLoader(true, "BUSCANDO ENLACES...");
+                sourcesList = [];
+                currentLanguage = 'all';
+                
                 const promises = [];
                 
-                if(type === 'movie') {
-                    promises.push(this.scrapeEmbed69(imdbId));
-                    promises.push(this.scrapeVerHD(imdbId));
-                    promises.push(this.scrapeBlog(meta.title));
+                if(movieData.type === 'movie') {
+                    promises.push(scraper.scrapeEmbed69(movieData.imdbId));
+                    promises.push(scraper.scrapeVerHDLink(movieData.imdbId));
+                    promises.push(scraper.scrapeBlogFallback(movieData.title));
                 } else {
-                    promises.push(this.scrapeEmbed69Series(imdbId, season, episode));
+                    promises.push(scraper.scrapeEmbed69Series(movieData.imdbId, movieData.season, movieData.episode));
                 }
 
                 await Promise.allSettled(promises);
-                
-                if(state.sources.length === 0) {
-                    document.getElementById('server-list').innerHTML = '<div class="text-center mt-10">No se encontraron enlaces :(</div>';
-                }
-            },
+                this.setLoader(false);
+                this.updateServerList();
 
-            // Fuente 1: Embed69
-            scrapeEmbed69: async function(imdbId) {
-                try {
-                    const url = `https://embed69.org/f/${imdbId}/`;
-                    const html = await this.getHtml(url);
-                    this.parseEmbed69(html, 'Embed69');
-                } catch(e) { console.log('Embed69 Error', e); }
-            },
-
-            scrapeEmbed69Series: async function(imdbId, s, e) {
-                try {
-                    const slug = `${imdbId}-${s}x${e}`; // Formato tt12345-1x1
-                    // A veces necesita padding 1x01
-                    const slugPad = `${imdbId}-${s}x${String(e).padStart(2,'0')}`;
-                    
-                    let html = await this.getHtml(`https://embed69.org/f/${slugPad}/`);
-                    if(!html.includes('dataLink')) html = await this.getHtml(`https://embed69.org/f/${slug}/`);
-                    
-                    this.parseEmbed69(html, 'Embed69 TV');
-                } catch(e) { console.log('Embed69 TV Error', e); }
-            },
-
-            parseEmbed69: function(html, sourceName) {
-                const match = html.match(/let dataLink\s*=\s*(\[[\s\S]*?\]);/);
-                if(match) {
-                    const data = JSON.parse(match[1]);
-                    data.forEach(item => {
-                        let lang = 'Subtitulado';
-                        if(item.video_language.includes('LAT')) lang = 'Latino';
-                        if(item.video_language.includes('ESP') || item.video_language.includes('CAS')) lang = 'Castellano';
-                        
-                        item.sortedEmbeds.forEach(embed => {
-                            const link = this.decodeJWT(embed.link);
-                            if(link) this.addSource({
-                                name: embed.servername + ` [${sourceName}]`,
-                                url: link,
-                                lang: lang,
-                                type: 'iframe'
-                            });
-                        });
-                    });
-                }
-            },
-
-            // Fuente 2: VerHDLink
-            scrapeVerHD: async function(imdbId) {
-                try {
-                    const html = await this.getHtml(`https://verhdlink.cam/movie/${imdbId}`);
-                    const parser = new DOMParser();
-                    const doc = parser.parseFromString(html, 'text/html');
-                    
-                    doc.querySelectorAll('ul._player-mirrors').forEach(ul => {
-                        let lang = 'Latino';
-                        if(ul.className.includes('subtitulado')) lang = 'Subtitulado';
-                        if(ul.className.includes('castellano')) lang = 'Castellano';
-                        
-                        ul.querySelectorAll('li').forEach(li => {
-                            const raw = li.getAttribute('data-link');
-                            // Extraer ID de Dropload o similares
-                            if(raw && raw.includes('dropload')) {
-                                const id = raw.split('/').pop();
-                                this.addSource({
-                                    name: 'Ultra Fast (VerHD)',
-                                    url: `https://dropload.io/e/${id}`, 
-                                    lang: lang,
-                                    type: 'iframe'
-                                });
-                            }
-                        });
-                    });
-                } catch(e) {}
-            },
-
-            // Fuente 3: Blogspot (Fallback)
-            scrapeBlog: async function(title) {
-                // Lógica simplificada para el ejemplo, busca en el blog configurado
-                try {
-                    const query = encodeURIComponent(title.split(':')[0]); // Solo primera parte del titulo
-                    const html = await this.getHtml(`${CONFIG.targetBlog}/search?q=${query}`);
-                    // Parsing básico... (depende de la estructura del blog)
-                } catch(e) {}
-            },
-
-            // Utilidades
-            getHtml: async function(url) {
-                const res = await fetch(CONFIG.proxy + encodeURIComponent(url));
-                return await res.text();
-            },
-
-            decodeJWT: function(token) {
-                try {
-                    const base64Url = token.split('.')[1];
-                    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-                    const jsonPayload = decodeURIComponent(window.atob(base64).split('').map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)).join(''));
-                    return JSON.parse(jsonPayload).link;
-                } catch(e) { return null; }
-            },
-
-            addSource: function(src) {
-                // Evitar duplicados
-                if(!state.sources.some(s => s.url === src.url)) {
-                    state.sources.push(src);
-                    player.updateListUI();
-                }
-            }
-        };
-
-        // --- CONTROLADOR DEL REPRODUCTOR (UI) ---
-        const player = {
-            open: function(tmdbId, type) {
-                // Mostrar Modal
-                const modal = document.getElementById('player-modal');
-                modal.classList.remove('hidden');
-                setTimeout(() => modal.classList.remove('opacity-0'), 10);
-                
-                // Resetear estado
-                document.getElementById('server-list').innerHTML = '<div class="text-center mt-10"><div class="spinner mx-auto mb-4"></div>Buscando...</div>';
-                
-                // Si es serie, mostrar selectores
-                const seasonSel = document.getElementById('season-selector');
-                if(type === 'tv') {
-                    seasonSel.classList.remove('hidden');
-                    this.setupSeriesUI(tmdbId);
-                } else {
-                    seasonSel.classList.add('hidden');
-                    scraper.searchLinks(tmdbId, 'movie');
+                if(sourcesList.length === 0) {
+                    document.getElementById('server-list-container').innerHTML = '<div class="text-center text-gray-500 mt-10">No se encontraron enlaces.</div>';
                 }
             },
 
@@ -512,121 +355,284 @@
                 modal.classList.add('opacity-0');
                 setTimeout(() => {
                     modal.classList.add('hidden');
-                    if(state.plyr) state.plyr.stop();
-                    document.getElementById('iframe-fallback').innerHTML = '';
+                    if(playerInstance) playerInstance.stop();
+                    document.getElementById('iframe-container').innerHTML = '';
+                    document.getElementById('player').style.display = 'none';
                 }, 500);
             },
 
-            updateListUI: function() {
-                const list = document.getElementById('server-list');
-                const filtered = state.sources.filter(s => s.lang === state.filter);
-                
-                document.getElementById('server-status').innerText = `${state.sources.length} encontrados | ${filtered.length} filtrados`;
-
-                list.innerHTML = filtered.map(s => `
-                    <div onclick="player.play('${s.url}', '${s.type}')" 
-                         class="bg-[#222] p-3 rounded flex items-center justify-between cursor-pointer hover:bg-[#333] hover:border-l-4 hover:border-blue-500 transition-all border border-transparent">
-                        <div class="flex items-center gap-3">
-                            <div class="w-8 h-8 rounded-full bg-blue-900/50 flex items-center justify-center text-blue-400">
-                                <i class="fas fa-play text-xs"></i>
-                            </div>
-                            <div>
-                                <h4 class="text-sm font-bold text-gray-200">${s.name}</h4>
-                                <span class="text-xs text-gray-500">${s.lang}</span>
-                            </div>
-                        </div>
-                        <i class="fas fa-chevron-right text-gray-600"></i>
-                    </div>
-                `).join('');
-                
-                if(filtered.length === 0 && state.sources.length > 0) {
-                    list.innerHTML = '<div class="text-center text-gray-500 mt-4">No hay servidores en este idioma. Prueba otro.</div>';
-                }
-            },
-
-            filterLang: function(lang, btn) {
-                state.filter = lang;
-                document.querySelectorAll('.lang-flag').forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                this.updateListUI();
-            },
-
-            play: function(url, type) {
-                const videoEl = document.getElementById('plyr-player');
-                const iframeDiv = document.getElementById('iframe-fallback');
-                
-                // Limpiar anterior
-                if(state.plyr) state.plyr.destroy();
-                iframeDiv.classList.add('hidden');
-                iframeDiv.innerHTML = '';
-                videoEl.style.display = 'block';
-
-                // Si es M3U8 o MP4 directo
-                if(url.includes('.m3u8') || url.includes('.mp4')) {
-                    if (Hls.isSupported() && url.includes('.m3u8')) {
-                        const hls = new Hls();
-                        hls.loadSource(url);
-                        hls.attachMedia(videoEl);
-                    } else {
-                        videoEl.src = url;
-                    }
-                    state.plyr = new Plyr(videoEl, { autoplay: true, controls: ['play-large', 'play', 'progress', 'current-time', 'mute', 'volume', 'fullscreen'] });
+            setLoader: function(active, text) {
+                const overlay = document.getElementById('loader-overlay');
+                if(active) {
+                    overlay.classList.remove('hidden');
+                    document.getElementById('loader-text').innerText = text;
                 } else {
-                    // Si es Iframe (Embed normal)
-                    videoEl.style.display = 'none';
-                    iframeDiv.classList.remove('hidden');
-                    iframeDiv.innerHTML = `<iframe src="${url}" class="w-full h-full border-0" allowfullscreen></iframe>`;
+                    overlay.classList.add('hidden');
                 }
-            },
-
-            setupSeriesUI: async function(id) {
-                const data = await app.fetch(`/tv/${id}?`);
-                const sSelect = document.getElementById('sel-season');
-                sSelect.innerHTML = '';
-                
-                for(let i=1; i<=data.number_of_seasons; i++) {
-                    sSelect.innerHTML += `<option value="${i}">Temporada ${i}</option>`;
-                }
-                
-                // Llenar episodios de la temp 1 por defecto
-                this.updateEpisodes(id, 1);
-                
-                sSelect.onchange = (e) => this.updateEpisodes(id, e.target.value);
-            },
-
-            updateEpisodes: async function(id, season) {
-                const data = await app.fetch(`/tv/${id}/season/${season}?`);
-                const eSelect = document.getElementById('sel-episode');
-                eSelect.innerHTML = '';
-                
-                data.episodes.forEach(ep => {
-                    eSelect.innerHTML += `<option value="${ep.episode_number}">Ep. ${ep.episode_number} - ${ep.name}</option>`;
-                });
-            },
-
-            loadEpisode: function() {
-                const s = document.getElementById('sel-season').value;
-                const e = document.getElementById('sel-episode').value;
-                const m = state.currentMovie;
-                
-                document.getElementById('server-list').innerHTML = '<div class="text-center mt-10"><div class="spinner mx-auto"></div>Buscando S'+s+' E'+e+'...</div>';
-                scraper.searchLinks(m.id, 'tv', s, e);
             },
 
             toggleSidebar: function() {
-                const sb = document.getElementById('server-sidebar');
-                state.isSidebarOpen = !state.isSidebarOpen;
-                if(state.isSidebarOpen) {
-                    sb.classList.remove('translate-x-full');
-                } else {
-                    sb.classList.add('translate-x-full');
+                document.getElementById('server-panel').classList.toggle('translate-x-full');
+            },
+
+            setLanguageFilter: function(lang) {
+                currentLanguage = lang;
+                document.querySelectorAll('.lang-flag').forEach(btn => btn.classList.remove('active'));
+                if(lang !== 'all') document.getElementById(`btn-${lang}`).classList.add('active');
+                this.updateServerList();
+            },
+
+            updateServerList: function() {
+                const container = document.getElementById('server-list-container');
+                container.innerHTML = '';
+                
+                let filtered = sourcesList;
+                if(currentLanguage !== 'all') {
+                    filtered = sourcesList.filter(s => {
+                        const l = s.lang.toLowerCase();
+                        if(currentLanguage === 'latino') return l.includes('lat');
+                        if(currentLanguage === 'castellano') return l.includes('cas') || l.includes('esp');
+                        if(currentLanguage === 'subtitulado') return l.includes('sub');
+                        return true;
+                    });
                 }
+
+                filtered.forEach(src => {
+                    const div = document.createElement('div');
+                    let badge = '';
+                    if(src.provider === 'blog') badge = '<span class="text-yellow-400 text-[10px] ml-auto"><i class="fas fa-crown"></i> VIP</span>';
+                    if(src.provider === 'verhd') badge = '<span class="text-cyan-400 text-[10px] ml-auto"><i class="fas fa-bolt"></i> ULTRA</span>';
+
+                    div.className = 'flex items-center gap-3 p-3 bg-white/5 hover:bg-white/10 rounded cursor-pointer border border-transparent hover:border-brand/50 transition animate-slide-in-right';
+                    div.innerHTML = `
+                        <div class="w-8 h-8 rounded-full bg-black/50 flex items-center justify-center text-brand font-bold"><i class="fas ${src.icon}"></i></div>
+                        <div>
+                            <h4 class="text-xs font-bold text-gray-200">${src.name}</h4>
+                            <span class="text-[10px] text-gray-400 uppercase">${src.lang}</span>
+                        </div>
+                        ${badge}
+                    `;
+                    div.onclick = () => this.playSource(src);
+                    container.appendChild(div);
+                });
+            },
+
+            playSource: function(src) {
+                const video = document.getElementById('player');
+                const iframeCont = document.getElementById('iframe-container');
+
+                if(playerInstance) playerInstance.stop();
+                iframeCont.innerHTML = '';
+                iframeCont.classList.add('hidden');
+                video.style.display = 'block';
+
+                if(src.type === 'direct' && (src.url.includes('.mp4') || src.url.includes('.m3u8'))) {
+                     if (src.url.includes('.m3u8') && Hls.isSupported()) {
+                        const hls = new Hls();
+                        hls.loadSource(src.url);
+                        hls.attachMedia(video);
+                    } else {
+                        video.src = src.url;
+                    }
+                    this.initPlyr();
+                } else {
+                    video.style.display = 'none';
+                    iframeCont.classList.remove('hidden');
+                    iframeCont.innerHTML = `<iframe src="${src.url}" class="w-full h-full border-0" allowfullscreen></iframe>`;
+                }
+            },
+
+            initPlyr: function() {
+                if(playerInstance) playerInstance.destroy();
+                playerInstance = new Plyr('#player', {
+                    controls: ['play-large', 'play', 'progress', 'current-time', 'mute', 'volume', 'fullscreen'],
+                    autoplay: true
+                });
+                playerInstance.play();
             }
         };
 
-        // Iniciar
-        window.addEventListener('load', () => app.init());
+        // --- 5. LÓGICA DE SERIES ---
+        const seriesCore = {
+            populateSeasons: function() {
+                const sel = document.getElementById('season-select');
+                sel.innerHTML = '';
+                for(let i=1; i<=movieData.totalSeasons; i++) {
+                    sel.innerHTML += `<option value="${i}">T${i}</option>`;
+                }
+            },
+            populateEpisodes: async function(season) {
+                movieData.season = season;
+                const data = await ui.fetchTMDB(`/tv/${movieData.tmdbId}/season/${season}?`);
+                const sel = document.getElementById('episode-select');
+                sel.innerHTML = '';
+                data.episodes.forEach(ep => {
+                    sel.innerHTML += `<option value="${ep.episode_number}">Ep ${ep.episode_number}</option>`;
+                });
+            },
+            onSeasonChange: function(val) {
+                this.populateEpisodes(val);
+            },
+            loadEpisode: function() {
+                const ep = document.getElementById('episode-select').value;
+                movieData.episode = ep;
+                playerCore.startScraping();
+            }
+        };
 
+        // --- 6. MOTOR DE SCRAPING EXACTO (TU CÓDIGO COPIADO) ---
+        const scraper = {
+            // Helpers originales
+            base64UrlDecode: function(str) {
+                str = str.replace(/-/g, '+').replace(/_/g, '/');
+                return decodeURIComponent(atob(str).split('').map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)).join(''));
+            },
+            decodeJWT: function(token) {
+                try { return JSON.parse(this.base64UrlDecode(token.split('.')[1])); } catch { return null; }
+            },
+            mapHostName: function(name) {
+                name = name.toLowerCase();
+                if (name.includes('voe')) return 'voe';
+                if (name.includes('streamwish')) return 'streamwish';
+                if (name.includes('dood')) return 'doodstream';
+                if (name.includes('filemoon')) return 'filemoon';
+                if (name.includes('vidhide')) return 'vidhide';
+                return null;
+            },
+            extractId: function(link) {
+                const patterns = [/\/e\/([a-zA-Z0-9]+)/, /filemoon\.sx\/d\/([a-zA-Z0-9]+)/, /voe\.sx\/([a-zA-Z0-9]+)/];
+                for (let p of patterns) { const m = link.match(p); if (m && m[1]) return m[1]; }
+                return link.split('/').pop().replace('.html','');
+            },
+
+            addSource: function(src) {
+                if (!sourcesList.some(s => s.url === src.url)) sourcesList.push(src);
+            },
+
+            // --- Embed69 ---
+            scrapeEmbed69: async function(imdbId) {
+                try {
+                    const res = await fetch(CONFIG.PROXY_URL + encodeURIComponent(`https://embed69.org/f/${imdbId}/`));
+                    const html = await res.text();
+                    this.processEmbed69Data(html, 'embed69');
+                } catch(e) {}
+            },
+            scrapeEmbed69Series: async function(imdbId, s, e) {
+                try {
+                    const slug = `${imdbId}-${s}x${e}`;
+                    const res = await fetch(CONFIG.PROXY_URL + encodeURIComponent(`https://embed69.org/f/${slug}/`));
+                    const html = await res.text();
+                    this.processEmbed69Data(html, 'embed69-series');
+                } catch(e) {}
+            },
+            processEmbed69Data: function(html, provider) {
+                const match = html.match(/let dataLink\s*=\s*(\[[\s\S]*?\]);/);
+                if (!match) return;
+                const data = JSON.parse(match[1]);
+                
+                data.forEach(item => {
+                    let lang = 'Latino';
+                    if(item.video_language.includes('ESP') || item.video_language.includes('CAS')) lang = 'Castellano';
+                    if(item.video_language.includes('SUB')) lang = 'Subtitulado';
+
+                    item.sortedEmbeds.forEach(embed => {
+                        const decoded = this.decodeJWT(embed.link);
+                        if (decoded && decoded.link) {
+                             // Lógica Unlimplay del código original
+                            const host = this.mapHostName(embed.servername);
+                            const vidId = this.extractId(decoded.link);
+                            let finalUrl = decoded.link;
+                            
+                            if (host && vidId) {
+                                finalUrl = `https://unlimplay.com/embed2/?host=${host}&id=${vidId}&poster=${encodeURIComponent(movieData.backdrop)}`;
+                            }
+                            
+                            this.addSource({
+                                name: embed.servername,
+                                lang: lang,
+                                type: 'iframe',
+                                url: finalUrl,
+                                icon: 'fa-globe',
+                                provider: provider
+                            });
+                        }
+                    });
+                });
+            },
+
+            // --- VerHD ---
+            scrapeVerHDLink: async function(imdbId) {
+                try {
+                    const res = await fetch(CONFIG.PROXY_URL + encodeURIComponent(`https://verhdlink.cam/movie/${imdbId}`));
+                    const html = await res.text();
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(html, 'text/html');
+                    
+                    doc.querySelectorAll('ul._player-mirrors').forEach(ul => {
+                        let lang = 'Latino';
+                        if(ul.className.includes('subtitulado')) lang = 'Subtitulado';
+                        if(ul.className.includes('castellano')) lang = 'Castellano';
+
+                        ul.querySelectorAll('li[data-link]').forEach(li => {
+                            const raw = li.getAttribute('data-link');
+                            if(raw && raw.includes('dropload')) {
+                                const id = raw.match(/dropload\.tv\/e\/([a-zA-Z0-9_-]+)/)?.[1];
+                                if(id) {
+                                    this.addSource({
+                                        name: '⚡ THUNDERBOLT',
+                                        lang: lang,
+                                        type: 'iframe',
+                                        url: `https://unlimplay.com/embed2/?host=dropload&id=${id}&poster=${encodeURIComponent(movieData.backdrop)}`,
+                                        icon: 'fa-bolt',
+                                        provider: 'verhd'
+                                    });
+                                }
+                            }
+                        });
+                    });
+                } catch(e) {}
+            },
+
+            // --- Blog ---
+            scrapeBlogFallback: async function(title) {
+                try {
+                    if(!title) return;
+                    const query = encodeURIComponent(title.split(':')[0].toLowerCase());
+                    const res = await fetch(CONFIG.PROXY_URL + encodeURIComponent(`${CONFIG.TARGET_BLOG}/search?q=${query}`));
+                    const html = await res.text();
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(html, 'text/html');
+                    
+                    // Lógica simplificada de tu código original para encontrar el post
+                    const card = Array.from(doc.querySelectorAll('.cards-movie')).find(c => c.textContent.toLowerCase().includes(title.split(':')[0].toLowerCase()));
+                    if(card) {
+                        const link = card.querySelector('a').href;
+                        const postRes = await fetch(CONFIG.PROXY_URL + encodeURIComponent(link));
+                        const postHtml = await postRes.text();
+                        const postDoc = parser.parseFromString(postHtml, 'text/html');
+                        
+                        postDoc.querySelectorAll('iframe').forEach((iframe, i) => {
+                             if(iframe.src.includes('videoUrl=')) {
+                                 const encoded = new URLSearchParams(iframe.src.split('?')[1]).get('videoUrl');
+                                 if(encoded) {
+                                     this.addSource({
+                                         name: `💎 DIAMOND [VIP] ${i+1}`,
+                                         lang: 'Latino',
+                                         type: 'direct', // Asume que el blog da MP4 directo
+                                         url: atob(encoded),
+                                         icon: 'fa-star',
+                                         provider: 'blog'
+                                     });
+                                 }
+                             }
+                        });
+                    }
+                } catch(e) {}
+            }
+        };
+
+        // INICIAR
+        window.addEventListener('load', () => ui.init());
     </script>
 </body>
 </html>
