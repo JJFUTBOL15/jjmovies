@@ -354,10 +354,9 @@
     const API_KEY = 'da8b836389708e0558de674492931977'; // API Key pública de prueba (o usa la tuya)
     
     // ==================================================================================
-    // ¡¡¡ ATENCIÓN: EDITA LA SIGUIENTE LÍNEA !!!
+    // CONFIGURACIÓN AUTOMÁTICA
     // ==================================================================================
-    const URL_TU_REPRODUCTOR = 'PON_AQUI_LA_URL_DE_TU_REPRODUCTOR'; 
-    // Ejemplo correcto: const URL_TU_REPRODUCTOR = 'https://jjmovies.lat/p/player.html';
+    const URL_TU_REPRODUCTOR = 'https://jjmovies.lat/player.html'; 
     // ==================================================================================
 
     const BASE_URL = 'https://api.themoviedb.org/3';
@@ -578,7 +577,7 @@
         let finalUrl = '';
 
         // Validación de Seguridad
-        if (URL_TU_REPRODUCTOR === 'https://jjmovies.lat/player.html') {
+        if (URL_TU_REPRODUCTOR === 'PON_AQUI_LA_URL_DE_TU_REPRODUCTOR') {
             const errorMsg = "⚠️ ERROR CRÍTICO:\nNo has configurado la URL de tu reproductor.\nAbre el archivo admin.html, ve a la línea 460 y pon tu enlace.";
             document.getElementById('modal-code').value = errorMsg;
             return;
