@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Generador de Iframe - Dashboard</title>
+    <title>Generador CineMax - JJMovies</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
@@ -31,7 +31,7 @@
             <div class="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center shadow-[0_0_15px_rgba(99,102,241,0.5)]">
                 <i data-lucide="play" class="text-white w-5 h-5 fill-current"></i>
             </div>
-            <h1 class="text-lg font-bold text-white tracking-wider">Cine<span class="text-indigo-500">Max</span> API</h1>
+            <h1 class="text-lg font-bold text-white tracking-wider">JJMovies<span class="text-indigo-500">API</span></h1>
         </div>
 
         <nav class="flex-1 overflow-y-auto py-4 px-3 space-y-2">
@@ -48,14 +48,14 @@
             <div class="mt-8 px-4">
                 <div class="bg-gradient-to-br from-indigo-900/50 to-purple-900/50 rounded-xl p-4 border border-indigo-500/30 shadow-lg">
                     <h3 class="text-white font-bold text-xs mb-1 flex items-center gap-2">
-                        <i data-lucide="wifi" class="w-3 h-3"></i> Sistema Listo
+                        <i data-lucide="wifi" class="w-3 h-3"></i> Estado
                     </h3>
                     <div class="flex items-center gap-2 mb-2">
                         <span class="relative flex h-2 w-2">
                           <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
                           <span class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
                         </span>
-                        <span class="text-[10px] text-green-400 font-mono">Conectado a TMDB</span>
+                        <span class="text-[10px] text-green-400 font-mono">Sistema Online</span>
                     </div>
                 </div>
             </div>
@@ -149,7 +149,7 @@
                     </div>
 
                     <div>
-                        <label class="block text-[10px] uppercase text-slate-400 font-bold mb-1">Código Iframe (Copiar y Pegar)</label>
+                        <label class="block text-[10px] uppercase text-slate-400 font-bold mb-1">Código Iframe (Copia esto en tu web)</label>
                         <div class="relative group cursor-pointer" onclick="copyCode()">
                             <code id="modal-code" class="code-font block text-green-400 text-xs break-all bg-[#050911] p-4 rounded-lg border border-slate-800 hover:border-indigo-500 transition-colors">
                                 ...
@@ -160,15 +160,15 @@
                         </div>
                     </div>
 
-                    <div class="p-3 bg-yellow-500/10 border border-yellow-500/20 rounded-lg">
-                        <p class="text-[10px] text-yellow-500">Este código funcionará en cualquier sitio web donde lo pegues, siempre que el reproductor original esté online.</p>
+                    <div class="p-3 bg-indigo-500/10 border border-indigo-500/20 rounded-lg">
+                        <p class="text-[10px] text-indigo-400">Este código llama a tu reproductor automáticamente con los datos correctos.</p>
                     </div>
                 </div>
 
                 <div class="flex flex-col gap-2">
                     <label class="block text-[10px] uppercase text-slate-400 font-bold">Vista Previa</label>
                     <div class="w-full aspect-video bg-black rounded-xl overflow-hidden border border-slate-700 shadow-lg relative">
-                         <div id="modal-preview-container" class="w-full h-full"></div>
+                        <div id="modal-preview-container" class="w-full h-full"></div>
                     </div>
                     <a id="modal-external-link" href="#" target="_blank" class="text-xs text-center text-indigo-400 hover:underline mt-2 block">Abrir en pestaña nueva</a>
                 </div>
@@ -184,21 +184,20 @@
 
 <script>
     // --- CONFIGURACIÓN PRINCIPAL ---
-    const TMDB_KEY = 'da8b836389708e0558de674492931977'; // Tu API Key
-    
-    // IMPORTANTE: REEMPLAZA ESTO CON LA URL REAL DONDE SUBISTE EL ARCHIVO online_viewer_net (81).html
-    // Ejemplo: 'https://tu-web.com/reproductor.html' o 'https://tu-blog.blogspot.com/p/player.html'
-    const URL_TU_REPRODUCTOR = 'https://TU-SITIO-WEB.com/ruta-a-tu-archivo-player.html'; 
+    const TMDB_KEY = 'da8b836389708e0558de674492931977'; 
+
+    // ¡¡¡CAMBIA ESTO!!! Pega aquí el enlace donde subiste el código del REPRODUCTOR
+    const URL_TU_REPRODUCTOR = 'PON_AQUI_LA_URL_DE_TU_REPRODUCTOR'; 
+    // Ejemplo: const URL_TU_REPRODUCTOR = 'https://jjmovies.lat/p/player.html';
 
     const BASE_URL = 'https://api.themoviedb.org/3';
     const IMAGE_BASE = 'https://image.tmdb.org/t/p/w200';
     let currentModalData = { type: 'movie', id: null, title: '' };
 
-    // Inicializar Iconos
     lucide.createIcons();
     loadTrending();
 
-    // --- FUNCIONES DE NAVEGACIÓN ---
+    // --- NAVEGACIÓN ---
     function switchTab(tabId) {
         ['dashboard', 'movies', 'series'].forEach(id => {
             document.getElementById('view-' + id).classList.add('hidden');
@@ -216,7 +215,7 @@
         document.getElementById('page-title').innerText = titles[tabId];
     }
 
-    // --- LÓGICA TMDB ---
+    // --- API TMDB ---
     async function loadTrending() {
         const container = document.getElementById('dashboard-trending');
         try {
@@ -256,7 +255,6 @@
         const type = forceType || (item.media_type === 'movie' ? 'movie' : 'tv');
         const title = type === 'movie' ? item.title : item.name;
         const poster = item.poster_path ? `${IMAGE_BASE}${item.poster_path}` : 'https://via.placeholder.com/200x300/1e293b/475569?text=No+Img';
-        // Escapar comillas simples para el onclick
         const safeTitle = title.replace(/'/g, "\\'");
         
         return `
@@ -276,7 +274,7 @@
         `;
     }
 
-    // --- LÓGICA DEL MODAL Y GENERADOR ---
+    // --- MODAL & GENERACIÓN ---
     function openModal(type, id, title, poster) {
         currentModalData = { type, id, title };
         document.getElementById('modal-title').innerText = title;
@@ -308,33 +306,29 @@
     function closeModal() {
         const modal = document.getElementById('universal-modal');
         modal.classList.add('hidden-modal');
-        // Limpiar iframe para detener video
         document.getElementById('modal-preview-container').innerHTML = '';
     }
 
-    // --- AQUÍ ESTÁ LA MAGIA DE LA GENERACIÓN ---
     function updateModalCode() {
         const { type, id } = currentModalData;
-        let finalUrl = '';
+        
+        if (URL_TU_REPRODUCTOR === 'PON_AQUI_LA_URL_DE_TU_REPRODUCTOR') {
+            document.getElementById('modal-code').innerText = "⚠️ ERROR: Debes editar el archivo admin.html y poner la URL de tu reproductor en la línea 232.";
+            return;
+        }
 
-        // Construcción de la URL basada en tu archivo online_viewer_net (81).html
+        let finalUrl = '';
         if (type === 'movie') {
-            // Para películas, tu archivo espera: ?id=123
             finalUrl = `${URL_TU_REPRODUCTOR}?id=${id}`;
         } else {
-            // Para series, tu archivo espera: ?id=123&season=1&episode=1
             const s = document.getElementById('modal-season').value;
             const e = document.getElementById('modal-episode').value;
             finalUrl = `${URL_TU_REPRODUCTOR}?id=${id}&season=${s}&episode=${e}`;
         }
 
-        // Generar etiqueta iframe
         const iframeCode = `<iframe class="aspect-video w-full" src="${finalUrl}" frameborder="0" allowfullscreen></iframe>`;
-        
         document.getElementById('modal-code').innerText = iframeCode;
         document.getElementById('modal-external-link').href = finalUrl;
-        
-        // Actualizar vista previa
         document.getElementById('modal-preview-container').innerHTML = `<iframe src="${finalUrl}" class="w-full h-full border-0" allowfullscreen></iframe>`;
     }
 
@@ -346,7 +340,6 @@
             setTimeout(() => toast.classList.add('opacity-0', 'pointer-events-none', 'translate-y-10'), 2000);
         });
     }
-
 </script>
 </body>
 </html>
