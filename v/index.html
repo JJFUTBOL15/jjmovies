@@ -1,38 +1,90 @@
-<div class="platform-grid">
-  <div class="platform-card" data-platform="netflix" onclick="cargarPlataforma('netflix')">
-    <img src="https://upload.wikimedia.org/wikipedia/commons/0/08/Netflix_2015_logo.svg" alt="Netflix" />
-    <span>Netflix</span>
-  </div>
-  <div class="platform-card" data-platform="disneyplus" onclick="cargarPlataforma('disneyplus')">
-    <img src="https://upload.wikimedia.org/wikipedia/commons/3/3e/Disney%2B_logo.svg" alt="Disney+" />
-    <span>Disney+</span>
-  </div>
-  <div class="platform-card" data-platform="primevideo" onclick="cargarPlataforma('primevideo')">
-    <img src="https://upload.wikimedia.org/wikipedia/commons/1/11/Amazon_Prime_Video_logo.svg" alt="Prime Video" />
-    <span>Prime Video</span>
-  </div>
-  <div class="platform-card" data-platform="max" onclick="cargarPlataforma('max')">
-    <img src="https://upload.wikimedia.org/wikipedia/commons/1/17/HBO_Max_Logo.svg" alt="Max" />
-    <span>Max</span>
-  </div>
-  <div class="platform-card" data-platform="appletv" onclick="cargarPlataforma('appletv')">
-    <img src="https://upload.wikimedia.org/wikipedia/commons/2/28/Apple_TV_Plus_Logo.svg" alt="Apple TV+" />
-    <span>Apple TV+</span>
-  </div>
-  <div class="platform-card" data-platform="hulu" onclick="cargarPlataforma('hulu')">
-    <img src="https://upload.wikimedia.org/wikipedia/commons/0/03/Hulu_logo_%282014%29.svg" alt="Hulu" />
-    <span>Hulu</span>
-  </div>
-  <div class="platform-card" data-platform="paramountplus" onclick="cargarPlataforma('paramountplus')">
-    <img src="https://upload.wikimedia.org/wikipedia/commons/4/4e/Paramount%2B_logo.svg" alt="Paramount+" />
-    <span>Paramount+</span>
-  </div>
-  <div class="platform-card" data-platform="peacock" onclick="cargarPlataforma('peacock')">
-    <img src="https://upload.wikimedia.org/wikipedia/commons/d/d3/NBCUniversal_Peacock_Logo.svg" alt="Peacock" />
-    <span>Peacock</span>
-  </div>
-  <div class="platform-card" data-platform="starz" onclick="cargarPlataforma('starz')">
-    <img src="https://upload.wikimedia.org/wikipedia/commons/e/ed/Starz_2016.svg" alt="Starz" />
-    <span>Starz</span>
-  </div>
-</div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Web de Películas - JJMovies</title>
+    <link rel="stylesheet" href="style.css">  <!-- Copia el contenido del style.css proporcionado en un archivo style.css -->
+    <meta name="description" content="Ver películas y series online gratis con JJMovies">
+</head>
+<body class="antialiased" style="background-color: #141414;">
+    <div class="min-h-screen overflow-x-hidden">
+        <!-- Header inspirado en el proporcionado -->
+        <header class="fixed top-0 z-50 w-full transition-all duration-500 bg-gradient-to-b from-black to-transparent">
+            <div class="flex items-center justify-between px-6 py-4 md:px-12 lg:px-16">
+                <div class="flex items-center space-x-6 md:space-x-8">
+                    <a href="/">
+                        <h1 class="text-red-600 text-2xl md:text-3xl font-bold cursor-pointer hover:opacity-80 transition-opacity">JJMovies</h1>
+                    </a>
+                    <nav class="hidden md:flex space-x-5">
+                        <a class="text-white hover:text-gray-300 transition-colors" href="/">Inicio</a>
+                        <a class="text-white hover:text-gray-300 transition-colors" href="#peliculas">Películas</a>
+                        <a class="text-white hover:text-gray-300 transition-colors" href="#series">Series</a>
+                    </nav>
+                </div>
+                <div class="flex items-center space-x-5">
+                    <!-- Puedes agregar búsqueda o perfil aquí -->
+                </div>
+            </div>
+        </header>
+
+        <!-- Banner con reproductor integrado -->
+        <div class="relative h-[70vh] w-full overflow-hidden mt-16">
+            <div class="absolute inset-0 bg-gradient-to-t from-[#141414] via-transparent to-transparent"></div>
+            <div class="absolute bottom-0 left-0 right-0 px-4 md:px-8 pb-8 space-y-4">
+                <h1 class="text-white text-3xl md:text-5xl font-bold">Reproductor de Películas</h1>
+                <p class="text-white text-lg md:text-xl max-w-2xl">Usa el reproductor abajo para ver películas. Genera embeds desde <a href="https://jjmovies.lat/generador.html" class="text-blue-400 hover:underline">tu generador</a> y pégalos aquí.</p>
+            </div>
+            <!-- Integra tu reproductor como iframe. Asume que necesita un parámetro, e.g., ?id=pelicula1. Cámbialo según tu API. -->
+            <iframe src="https://jjmovies.lat/player.html" class="absolute inset-0 w-full h-full" frameborder="0" allowfullscreen></iframe>
+        </div>
+
+        <!-- Secciones de películas (inspirado en rows del index.html) -->
+        <div class="pb-16 px-4 md:px-8">
+            <section id="peliculas" class="mb-8">
+                <h2 class="text-white text-xl md:text-2xl font-normal mb-4">Películas en Tendencia</h2>
+                <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+                    <!-- Ejemplo de tarjetas de películas. Agrega más y enlaza a tu player con parámetros -->
+                    <div class="relative cursor-pointer group">
+                        <img src="https://via.placeholder.com/200x300?text=Pelicula+1" alt="Película 1" class="w-full rounded-lg">
+                        <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-4 rounded-b-lg opacity-0 group-hover:opacity-100 transition-opacity">
+                            <h3 class="text-white text-lg font-semibold">Película 1</h3>
+                            <a href="https://jjmovies.lat/player.html?id=pelicula1" target="_blank" class="text-blue-400 hover:underline">Ver ahora</a>
+                        </div>
+                    </div>
+                    <div class="relative cursor-pointer group">
+                        <img src="https://via.placeholder.com/200x300?text=Pelicula+2" alt="Película 2" class="w-full rounded-lg">
+                        <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-4 rounded-b-lg opacity-0 group-hover:opacity-100 transition-opacity">
+                            <h3 class="text-white text-lg font-semibold">Película 2</h3>
+                            <a href="https://jjmovies.lat/player.html?id=pelicula2" target="_blank" class="text-blue-400 hover:underline">Ver ahora</a>
+                        </div>
+                    </div>
+                    <!-- Agrega más tarjetas según tus películas -->
+                </div>
+            </section>
+
+            <section id="series" class="mb-8">
+                <h2 class="text-white text-xl md:text-2xl font-normal mb-4">Series Populares</h2>
+                <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+                    <!-- Similar a películas -->
+                    <div class="relative cursor-pointer group">
+                        <img src="https://via.placeholder.com/200x300?text=Serie+1" alt="Serie 1" class="w-full rounded-lg">
+                        <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-4 rounded-b-lg opacity-0 group-hover:opacity-100 transition-opacity">
+                            <h3 class="text-white text-lg font-semibold">Serie 1</h3>
+                            <a href="https://jjmovies.lat/player.html?id=serie1" target="_blank" class="text-blue-400 hover:underline">Ver ahora</a>
+                        </div>
+                    </div>
+                    <!-- Agrega más -->
+                </div>
+            </section>
+        </div>
+
+        <!-- Footer inspirado en el proporcionado -->
+        <footer class="w-full py-12 border-t border-gray-800" style="background-color: #141414;">
+            <div class="max-w-7xl mx-auto px-4 md:px-8 text-center text-gray-500">
+                © 2026 JJMovies. Todos los derechos reservados.
+            </div>
+        </footer>
+    </div>
+</body>
+</html>
