@@ -2,6 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>MiCine - Plataformas</title>
   <link rel="stylesheet" href="style.css" />
 </head>
@@ -10,21 +11,21 @@
   <nav>
     <div class="logo">MiCine</div>
     <ul>
-      <li><a href="#" onclick="cargarHome()">Home</a></li>
+      <li><a href="#" onclick="cargarHome()" class="active">Home</a></li>
       <li><a href="#">Movies</a></li>
       <li><a href="#">TV Shows</a></li>
       <li><a href="#">Filter</a></li>
-      <li><a href="#" class="active">Platforms</a></li>
+      <li><a href="#" onclick="cargarPlataformas()">Platforms</a></li>
     </ul>
     <div class="search-box">
-      <input type="text" placeholder="Buscar..." id="searchInput" />
+      <input type="text" placeholder="Buscar películas..." id="searchInput" />
       <button onclick="buscar()">🔍</button>
     </div>
   </nav>
 
-  <!-- Sección principal -->
+  <!-- Contenido principal -->
   <main id="main-content">
-    <!-- Por defecto: "Browse by Platform" -->
+    <!-- Sección inicial: Browse by Platform -->
     <section id="browse-platforms">
       <h2>Browse by Platform</h2>
       <div class="platform-grid">
@@ -59,7 +60,7 @@
       </div>
     </section>
 
-    <!-- Sección de películas por plataforma (se carga dinámicamente) -->
+    <!-- Sección de películas por plataforma -->
     <section id="platform-movies" style="display:none;">
       <div class="back-button" onclick="cargarHome()">
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
@@ -70,7 +71,7 @@
     </section>
   </main>
 
-  <!-- Reproductor (iframe) -->
+  <!-- Reproductor iframe -->
   <div id="player-container" style="display:none;">
     <iframe id="player-iframe" src="" frameborder="0" allowfullscreen></iframe>
     <button class="close-player" onclick="cerrarReproductor()">✖</button>
