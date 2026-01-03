@@ -1,7 +1,8 @@
 // Tu API Key
 const API_KEY = '936410eebae74f9895643e085cc4a740';
 
-// Datos simulados de películas por plataforma (en producción, esto vendría de tu API)
+// Datos simulados de películas por plataforma
+// Reemplaza esto con llamadas a tu API cuando esté disponible
 const platformMovies = {
   netflix: [
     { id: 'bahunali-the-epic', title: 'Bāhubali: The Epic', rating: 6.4, poster: 'https://image.tmdb.org/t/p/w500/...jpg' },
@@ -40,6 +41,13 @@ function cargarHome() {
   document.getElementById('platform-movies').style.display = 'none';
   document.querySelector('.active')?.classList.remove('active');
   document.querySelectorAll('nav ul li a')[0].classList.add('active');
+}
+
+function cargarPlataformas() {
+  document.getElementById('browse-platforms').style.display = 'block';
+  document.getElementById('platform-movies').style.display = 'none';
+  document.querySelector('.active')?.classList.remove('active');
+  document.querySelectorAll('nav ul li a')[4].classList.add('active');
 }
 
 function cargarPlataforma(platform) {
