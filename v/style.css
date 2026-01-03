@@ -5,7 +5,7 @@
 }
 
 body {
-  background: #000;
+  background: #090a0a;
   color: white;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
@@ -72,6 +72,7 @@ nav ul li a.active {
 #browse-platforms h2 {
   margin-bottom: 1rem;
   font-size: 1.8rem;
+  color: #fff;
 }
 
 .platform-grid {
@@ -128,6 +129,7 @@ nav ul li a.active {
 #platform-title {
   margin-bottom: 1rem;
   font-size: 1.8rem;
+  color: #fff;
 }
 
 .movies-grid {
@@ -178,6 +180,7 @@ nav ul li a.active {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  color: #ddd;
 }
 
 /* Reproductor */
