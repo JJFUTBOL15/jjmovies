@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Reproductor en Vivo</title>
+  <!-- Clappr + HLS.js -->
+  <script src="https://cdn.jsdelivr.net/npm/clappr@latest/dist/clappr.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+  <style>
+    body {
+      margin: 0;
+      padding: 20px;
+      font-family: Arial, sans-serif;
+      background: #000;
+      color: white;
+      text-align: center;
+    }
+    #player {
+      width: 100%;
+      max-width: 900px;
+      height: 500px;
+      margin: 0 auto 20px;
+    }
+    .controls {
+      margin-top: 10px;
+    }
+    button {
+      background: #e60012; /* rojo similar a Claro/Telecom */
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      margin: 0 5px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    button:hover {
+      background: #b3000e;
+    }
+    button#live {
+      background: #00a86b;
+    }
+    button#live:hover {
+      background: #007f54;
+    }
+  </style>
+</head>
+<body>
+  <h2>Canal en Vivo</h2>
+  <div id="player"></div>
+
+  <div class="controls">
+    <button onclick="seekBack(3)">-3s</button>
+    <button onclick="seekBack(5)">-5s</button>
+    <button onclick="seekBack(10)">-10s</button>
+    <button id="live" onclick="goLive()">🟢 En Vivo</button>
+  </div>
+
+  <script>
+    // URL de tu stream
+    const streamUrl = "https://live.plplayer.com/play/D2UoHPkyR-5uxgoCnSrjqFoKjqZFnqPeJkdzSN-IFxc/m3u8";
+
+    // Inicializar Clappr
+    const player = new Clappr.Player({
+      source: streamUrl,
+      parentId: "#player",
+      autoPlay: true,
+      mute: false,
+      height: "100%",
+      width: "100%",
+      mediacontrol: { seekbar: "#E11F26", buttons: "#FFFFFF" },
+      plugins: [Hlsjs]
+    });
+
+    // Función para retroceder
+    function seekBack(seconds) {
+      const currentTime = player.getCurrentTime();
+      const newTime = Math.max(0, currentTime - seconds);
+      player.seekTo(newTime);
+    }
+
+    // Función para volver al en vivo
+    function goLive() {
+      if (player.getPlaybackType() === "live") {
+        // Clappr/HLS.js: para volver a live, establecemos currentTime en Infinity
+        player.seekTo(Number.MAX_SAFE_INTEGER);
+      }
+    }
+
+    // Opcional: muestra estado del stream
+    player.on(Clappr.Events.PLAYER_PLAY, () => console.log("Reproduciendo"));
+    player.on(Clappr.Events.PLAYER_ERROR, () => console.error("Error en el stream"));
+  </script>
+</body>
+</html>
