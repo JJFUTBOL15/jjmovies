@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard Admin - JJMovies</title>
+    <title>Dashboard Admin - JJMOVIES</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -11,51 +11,48 @@
 
     <style>
         :root {
-            --bg-dark: #0B1120;
-            --bg-card: #1e293b;
-            --primary: #4f46e5;
-            --primary-hover: #4338ca;
+            --bg-dark: #000000;
+            --bg-card: #1a1a1a;
+            --primary: #dc2626; /* Rojo */
+            --primary-hover: #b91c1c;
+            --gold: #d4af37; /* Dorado premium */
         }
 
         body {
             font-family: 'Inter', sans-serif;
             background-color: var(--bg-dark);
-            color: #cbd5e1;
-            overflow: hidden; /* Evita doble scroll */
+            color: #e2e8f0;
+            overflow: hidden;
         }
 
-        /* Fuente para el código generado */
         .code-font {
             font-family: 'JetBrains Mono', monospace;
         }
 
-        /* Scrollbar personalizado */
         ::-webkit-scrollbar {
             width: 8px;
             height: 8px;
         }
         ::-webkit-scrollbar-track {
-            background: #0f172a;
+            background: #0f0f0f;
         }
         ::-webkit-scrollbar-thumb {
-            background: #334155;
+            background: #333333;
             border-radius: 4px;
         }
         ::-webkit-scrollbar-thumb:hover {
             background: var(--primary);
         }
 
-        /* Efectos de Hover en las tarjetas */
         .card-hover {
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
         .card-hover:hover {
             transform: translateY(-5px);
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.7), 0 8px 10px -6px rgba(0, 0, 0, 0.7);
             border-color: var(--primary);
         }
 
-        /* Animaciones del Modal */
         .hidden-modal {
             opacity: 0;
             pointer-events: none;
@@ -66,91 +63,101 @@
         .modal-panel {
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        
-        /* Utilidades extra */
+
         .glass-effect {
-            background: rgba(15, 23, 42, 0.7);
+            background: rgba(10, 10, 10, 0.7);
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
+        }
+
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+            70% { box-shadow: 0 0 0 12px rgba(16, 185, 129, 0); }
+        }
+        .api-light {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: #10b981;
+            box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+            animation: pulse-glow 2s infinite;
         }
     </style>
 </head>
 <body class="flex items-center justify-center min-h-screen md:p-4">
 
-<div id="app-container" class="relative w-full max-w-[1400px] h-screen md:h-[90vh] bg-[#0B1120] md:rounded-2xl overflow-hidden flex flex-col md:flex-row border-0 md:border border-slate-700 shadow-2xl">
+<div id="app-container" class="relative w-full max-w-[1400px] h-screen md:h-[90vh] bg-[#000000] md:rounded-2xl overflow-hidden flex flex-col md:flex-row border-0 md:border border-gray-900 shadow-2xl">
 
-    <aside id="sidebar" class="w-full md:w-72 bg-slate-900 border-r border-slate-800 flex flex-col flex-shrink-0 transition-all duration-300">
+    <aside id="sidebar" class="w-full md:w-72 bg-gray-900 border-r border-gray-800 flex flex-col flex-shrink-0 transition-all duration-300">
         
-        <div class="p-6 flex items-center gap-3 border-b border-slate-800/50">
-            <div class="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center shadow-[0_0_20px_rgba(99,102,241,0.3)]">
+        <div class="p-6 flex items-center gap-3 border-b border-gray-800/50">
+            <div class="w-10 h-10 bg-[var(--primary)] rounded-xl flex items-center justify-center shadow-[0_0_20px_rgba(220,38,38,0.4)]">
                 <i data-lucide="play" class="text-white w-6 h-6 fill-current"></i>
             </div>
             <div>
-                <h1 class="text-xl font-bold text-white tracking-wide">JJMovies</h1>
-                <p class="text-[10px] text-slate-400 uppercase tracking-widest font-semibold">Admin Panel</p>
+                <h1 class="text-xl font-bold text-white tracking-wide">JJMOVIES</h1>
+                <p class="text-[10px] text-gray-400 uppercase tracking-widest font-semibold">Admin Panel</p>
             </div>
         </div>
 
         <nav class="flex-1 overflow-y-auto py-6 px-4 space-y-2">
             
-            <p class="px-4 text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Principal</p>
+            <p class="px-4 text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Principal</p>
             
-            <button onclick="switchTab('dashboard')" id="btn-dashboard" class="nav-item w-full flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 bg-indigo-600/10 text-indigo-400 border border-indigo-500/20 shadow-sm">
+            <button onclick="switchTab('dashboard')" id="btn-dashboard" class="nav-item w-full flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 bg-[#dc2626]/10 text-[#dc2626] border border-[#dc2626]/20 shadow-sm">
                 <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
                 Dashboard
             </button>
             
-            <p class="px-4 text-xs font-bold text-slate-500 uppercase tracking-wider mt-6 mb-2">Generadores</p>
+            <p class="px-4 text-xs font-bold text-gray-500 uppercase tracking-wider mt-6 mb-2">Generadores</p>
 
-            <button onclick="switchTab('movies')" id="btn-movies" class="nav-item w-full flex items-center gap-3 px-4 py-3 text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-white rounded-xl transition-all duration-200 border border-transparent">
+            <button onclick="switchTab('movies')" id="btn-movies" class="nav-item w-full flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-400 hover:bg-gray-800 hover:text-white rounded-xl transition-all duration-200 border border-transparent">
                 <i data-lucide="film" class="w-5 h-5"></i>
                 Películas
             </button>
             
-            <button onclick="switchTab('series')" id="btn-series" class="nav-item w-full flex items-center gap-3 px-4 py-3 text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-white rounded-xl transition-all duration-200 border border-transparent">
+            <button onclick="switchTab('series')" id="btn-series" class="nav-item w-full flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-400 hover:bg-gray-800 hover:text-white rounded-xl transition-all duration-200 border border-transparent">
                 <i data-lucide="tv" class="w-5 h-5"></i>
                 Series TV
             </button>
             
             <div class="mt-auto pt-10">
-                <div class="bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl p-4 border border-slate-700 shadow-lg relative overflow-hidden group">
-                    <div class="absolute top-0 right-0 w-20 h-20 bg-indigo-500/10 rounded-full blur-2xl -mr-10 -mt-10 transition-all group-hover:bg-indigo-500/20"></div>
+                <div class="bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl p-4 border border-gray-700 shadow-lg relative overflow-hidden group">
+                    <div class="absolute top-0 right-0 w-20 h-20 bg-[var(--primary)]/10 rounded-full blur-2xl -mr-10 -mt-10 transition-all group-hover:bg-[var(--primary)]/20"></div>
                     
                     <h3 class="text-white font-bold text-xs mb-2 flex items-center gap-2 relative z-10">
-                        <i data-lucide="server" class="w-3 h-3 text-indigo-400"></i> Sistema API
+                        <i data-lucide="server" class="w-3 h-3 text-[var(--gold)]"></i> Sistema API
                     </h3>
                     
                     <div class="flex items-center gap-2 mb-1">
-                        <span class="relative flex h-2.5 w-2.5">
-                          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                          <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
-                        </span>
+                        <span class="api-light"></span>
                         <span class="text-xs text-emerald-400 font-mono font-bold">ONLINE</span>
                     </div>
-                    <p class="text-[10px] text-slate-500 mt-2">Conectado a JJMovies Player</p>
+                    <p class="text-[10px] text-gray-500 mt-2">Conectado a JJMOVIES</p>
                 </div>
             </div>
         </nav>
         
-        <div class="p-4 border-t border-slate-800 text-center">
-            <p class="text-[10px] text-slate-600">v2.5.0 Pro Edition</p>
+        <div class="p-4 border-t border-gray-800 text-center">
+            <p class="text-[10px] text-gray-600">v1.0.0 Pro</p>
         </div>
     </aside>
 
-    <main class="flex-1 flex flex-col h-full overflow-hidden relative min-w-0 bg-[#0B1120]">
+    <main class="flex-1 flex flex-col h-full overflow-hidden relative min-w-0 bg-[#000000]">
         
-        <header class="h-16 border-b border-slate-800/80 flex items-center justify-between px-6 bg-slate-900/50 backdrop-blur-md sticky top-0 z-30 shrink-0">
+        <header class="h-16 border-b border-gray-800/80 flex items-center justify-between px-6 bg-gray-900/50 backdrop-blur-md sticky top-0 z-30 shrink-0">
             <div class="flex items-center gap-3">
                 <h2 class="text-lg font-semibold text-white tracking-tight" id="page-title">Panel de Control</h2>
             </div>
             
             <div class="flex items-center gap-4">
-                <div class="hidden md:flex items-center gap-2 px-3 py-1.5 bg-slate-800/80 rounded-full border border-slate-700">
+                <div class="hidden md:flex items-center gap-2 px-3 py-1.5 bg-gray-800/80 rounded-full border border-gray-700">
                     <span class="w-2 h-2 rounded-full bg-green-500"></span>
-                    <span class="text-[11px] text-slate-300 font-medium">Modo Admin</span>
+                    <span class="text-[11px] text-gray-300 font-medium">Modo Admin</span>
                 </div>
-                <button class="w-9 h-9 rounded-full bg-indigo-600 flex items-center justify-center text-white font-bold text-sm shadow-lg shadow-indigo-500/30 border border-indigo-400">
-                    A
+                <button class="w-9 h-9 rounded-full bg-[var(--primary)] flex items-center justify-center text-white font-bold text-sm shadow-lg shadow-[var(--primary)]/30 border border-[var(--primary)]">
+                    JJ
                 </button>
             </div>
         </header>
@@ -159,12 +166,35 @@
             
             <div id="view-dashboard" class="space-y-8 animate-fade-in">
                 
-                <div class="relative overflow-hidden rounded-2xl bg-gradient-to-r from-indigo-900 via-indigo-800 to-slate-900 p-8 border border-indigo-700/50 shadow-2xl">
+                <div class="relative overflow-hidden rounded-2xl bg-gradient-to-r from-[var(--primary)] via-[#b91c1c] to-gray-900 p-8 border border-[var(--primary)]/50 shadow-2xl">
                     <div class="relative z-10">
-                        <h2 class="text-2xl md:text-3xl font-bold text-white mb-2">Bienvenido de nuevo</h2>
-                        <p class="text-indigo-200 text-sm md:text-base max-w-xl">Selecciona una película o serie de las tendencias o usa el buscador en las pestañas laterales para generar tus iframes.</p>
+                        <h2 class="text-2xl md:text-3xl font-bold text-white mb-4">Añadir usuario</h2>
+                        <div class="flex flex-col sm:flex-row gap-3 max-w-2xl">
+                            <input type="text" id="username-input" placeholder="Ingresa un nombre de usuario" class="flex-1 px-4 py-2.5 bg-black/50 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-[var(--gold)] focus:ring-1 focus:ring-[var(--gold)]">
+                            <button onclick="saveUsername()" class="px-6 py-2.5 bg-[var(--gold)] hover:bg-[#c59b2e] text-black font-bold rounded-lg transition-all shadow-lg">Guardar</button>
+                        </div>
+                        <p id="saved-username" class="mt-3 text-sm text-[var(--gold)] font-medium"></p>
                     </div>
-                    <div class="absolute top-0 right-0 -mt-10 -mr-10 w-64 h-64 bg-indigo-500/20 rounded-full blur-3xl"></div>
+                    <div class="absolute top-0 right-0 -mt-10 -mr-10 w-64 h-64 bg-[var(--primary)]/20 rounded-full blur-3xl"></div>
+                </div>
+
+                <!-- Buscador global -->
+                <div class="bg-gray-900/60 backdrop-blur p-5 rounded-xl border border-gray-800">
+                    <h3 class="text-lg font-bold text-white mb-3">Buscar en todo el catálogo</h3>
+                    <div class="flex flex-col md:flex-row gap-3">
+                        <div class="relative flex-1">
+                            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                <i data-lucide="search" class="text-gray-500 w-5 h-5"></i>
+                            </div>
+                            <input type="text" id="global-search" 
+                                   class="block w-full pl-12 pr-4 py-3 bg-gray-800 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-[var(--primary)] focus:ring-1 focus:ring-[var(--primary)] transition-all text-sm" 
+                                   placeholder="Escribe película o serie..."
+                                   onkeypress="handleEnterGlobal(event)">
+                        </div>
+                        <button onclick="searchGlobal()" class="bg-[var(--primary)] hover:bg-[var(--primary-hover)] text-white px-6 py-3 rounded-xl font-medium transition-all shadow-lg flex items-center justify-center gap-2">
+                            Buscar
+                        </button>
+                    </div>
                 </div>
 
                 <div>
@@ -172,13 +202,13 @@
                         <h3 class="text-xl font-bold text-white flex items-center gap-2">
                             <i data-lucide="trending-up" class="text-orange-500 w-6 h-6"></i> Tendencias de Hoy
                         </h3>
-                        <span class="text-xs bg-slate-800 text-slate-400 px-3 py-1 rounded-full border border-slate-700">Top 10 TMDB</span>
+                        <span class="text-xs bg-gray-800 text-gray-400 px-3 py-1 rounded-full border border-gray-700">Top 10 TMDB</span>
                     </div>
 
                     <div id="dashboard-trending" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4 md:gap-6">
                         <div class="col-span-full flex flex-col items-center justify-center py-20 gap-4">
-                            <div class="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-indigo-500"></div>
-                            <span class="text-sm text-slate-500 animate-pulse">Cargando catálogo...</span>
+                            <div class="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-[var(--primary)]"></div>
+                            <span class="text-sm text-gray-500 animate-pulse">Cargando catálogo...</span>
                         </div>
                     </div>
                 </div>
@@ -186,23 +216,23 @@
 
             <div id="view-movies" class="hidden space-y-6 animate-fade-in">
                 
-                <div class="flex flex-col md:flex-row gap-4 sticky top-0 z-20 bg-[#0B1120]/95 backdrop-blur py-4 -mt-4 border-b border-slate-800/50">
+                <div class="flex flex-col md:flex-row gap-4 sticky top-0 z-20 bg-[#000000]/95 backdrop-blur py-4 -mt-4 border-b border-gray-800/50">
                     <div class="relative flex-1 group">
                         <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                            <i data-lucide="search" class="text-slate-500 w-5 h-5 group-focus-within:text-indigo-500 transition-colors"></i>
+                            <i data-lucide="search" class="text-gray-500 w-5 h-5 group-focus-within:text-[var(--primary)] transition-colors"></i>
                         </div>
                         <input type="text" id="movie-search" 
-                               class="block w-full pl-12 pr-4 py-3 bg-slate-800/50 border border-slate-700 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all text-sm" 
+                               class="block w-full pl-12 pr-4 py-3 bg-gray-800/50 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-[var(--primary)] focus:ring-1 focus:ring-[var(--primary)] transition-all text-sm" 
                                placeholder="Escribe el nombre de la película..."
                                onkeypress="handleEnter(event, 'movie')">
                     </div>
-                    <button onclick="searchContent('movie')" class="bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-3 rounded-xl font-medium transition-all shadow-lg shadow-indigo-500/20 flex items-center justify-center gap-2">
+                    <button onclick="searchContent('movie')" class="bg-[var(--primary)] hover:bg-[var(--primary-hover)] text-white px-8 py-3 rounded-xl font-medium transition-all shadow-lg shadow-[var(--primary)]/20 flex items-center justify-center gap-2">
                         <span>Buscar</span>
                     </button>
                 </div>
 
                 <div id="movie-results" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4 md:gap-6 pb-20">
-                    <div class="col-span-full flex flex-col items-center justify-center py-32 text-slate-600">
+                    <div class="col-span-full flex flex-col items-center justify-center py-32 text-gray-600">
                         <i data-lucide="film" class="w-16 h-16 mb-4 opacity-20"></i>
                         <p class="text-sm">Utiliza el buscador superior para encontrar contenido.</p>
                     </div>
@@ -211,13 +241,13 @@
 
             <div id="view-series" class="hidden space-y-6 animate-fade-in">
                 
-                <div class="flex flex-col md:flex-row gap-4 sticky top-0 z-20 bg-[#0B1120]/95 backdrop-blur py-4 -mt-4 border-b border-slate-800/50">
+                <div class="flex flex-col md:flex-row gap-4 sticky top-0 z-20 bg-[#000000]/95 backdrop-blur py-4 -mt-4 border-b border-gray-800/50">
                     <div class="relative flex-1 group">
                         <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                            <i data-lucide="search" class="text-slate-500 w-5 h-5 group-focus-within:text-purple-500 transition-colors"></i>
+                            <i data-lucide="search" class="text-gray-500 w-5 h-5 group-focus-within:text-purple-500 transition-colors"></i>
                         </div>
                         <input type="text" id="series-search" 
-                               class="block w-full pl-12 pr-4 py-3 bg-slate-800/50 border border-slate-700 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-all text-sm" 
+                               class="block w-full pl-12 pr-4 py-3 bg-gray-800/50 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-all text-sm" 
                                placeholder="Escribe el nombre de la serie..."
                                onkeypress="handleEnter(event, 'tv')">
                     </div>
@@ -227,7 +257,7 @@
                 </div>
 
                 <div id="series-results" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4 md:gap-6 pb-20">
-                    <div class="col-span-full flex flex-col items-center justify-center py-32 text-slate-600">
+                    <div class="col-span-full flex flex-col items-center justify-center py-32 text-gray-600">
                         <i data-lucide="tv" class="w-16 h-16 mb-4 opacity-20"></i>
                         <p class="text-sm">Utiliza el buscador superior para encontrar series.</p>
                     </div>
@@ -238,51 +268,50 @@
     </main>
 </div>
 
+<!-- Modal y resto del código sin cambios funcionales -->
 <div id="universal-modal" class="fixed inset-0 z-[100] hidden-modal modal-bg flex items-center justify-center p-4">
     <div class="absolute inset-0 bg-black/90 backdrop-blur-sm transition-opacity" onclick="closeModal()"></div>
     
-    <div class="relative bg-[#0f172a] border border-slate-700 w-full max-w-5xl max-h-[90vh] rounded-2xl shadow-2xl modal-panel flex flex-col overflow-hidden transform scale-95 opacity-0 transition-all duration-300">
+    <div class="relative bg-[#0f0f0f] border border-gray-700 w-full max-w-5xl max-h-[90vh] rounded-2xl shadow-2xl modal-panel flex flex-col overflow-hidden transform scale-95 opacity-0 transition-all duration-300">
         
-        <div class="flex justify-between items-center p-5 border-b border-slate-800 bg-slate-900/50">
+        <div class="flex justify-between items-center p-5 border-b border-gray-800 bg-gray-900/50">
             <div class="flex items-center gap-4 overflow-hidden">
-                <img id="modal-poster-thumb" src="" class="w-12 h-16 object-cover rounded-md shadow-lg bg-slate-800 border border-slate-700">
+                <img id="modal-poster-thumb" src="" class="w-12 h-16 object-cover rounded-md shadow-lg bg-gray-800 border border-gray-700">
                 <div class="min-w-0">
                     <h3 class="text-xl font-bold text-white truncate" id="modal-title">Título de la Película</h3>
                     <div class="flex items-center gap-3 mt-1">
-                        <span id="modal-type-badge" class="bg-indigo-600 text-white text-[10px] px-2 py-0.5 rounded uppercase font-bold tracking-wider">MOVIE</span>
-                        <div class="flex items-center gap-1 text-slate-400 text-xs font-mono bg-slate-800 px-2 py-0.5 rounded border border-slate-700">
+                        <span id="modal-type-badge" class="bg-[var(--primary)] text-white text-[10px] px-2 py-0.5 rounded uppercase font-bold tracking-wider">MOVIE</span>
+                        <div class="flex items-center gap-1 text-gray-400 text-xs font-mono bg-gray-800 px-2 py-0.5 rounded border border-gray-700">
                             <span>ID:</span>
-                            <span class="text-indigo-400" id="modal-id">000</span>
+                            <span class="text-[var(--primary)]" id="modal-id">000</span>
                         </div>
                     </div>
                 </div>
             </div>
-            <button onclick="closeModal()" class="text-slate-400 hover:text-white hover:bg-slate-800 p-2 rounded-full transition-all">
+            <button onclick="closeModal()" class="text-gray-400 hover:text-white hover:bg-gray-800 p-2 rounded-full transition-all">
                 <i data-lucide="x" class="w-6 h-6"></i>
             </button>
         </div>
 
         <div class="overflow-y-auto flex-1 p-6 md:p-8">
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 h-full">
-                
                 <div class="lg:col-span-5 space-y-6 flex flex-col">
-                    
                     <div id="series-controls" class="hidden animate-fade-in">
-                        <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">Configuración de Episodio</label>
-                        <div class="grid grid-cols-2 gap-4 p-4 bg-slate-800/50 rounded-xl border border-slate-700">
+                        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">Configuración de Episodio</label>
+                        <div class="grid grid-cols-2 gap-4 p-4 bg-gray-800/50 rounded-xl border border-gray-700">
                             <div>
-                                <label class="block text-[10px] text-slate-400 font-bold mb-1 uppercase">Temporada</label>
+                                <label class="block text-[10px] text-gray-400 font-bold mb-1 uppercase">Temporada</label>
                                 <div class="relative">
                                     <input type="number" id="modal-season" value="1" min="1" 
-                                           class="w-full bg-slate-900 border border-slate-600 rounded-lg py-2 px-3 text-white text-center font-mono focus:border-purple-500 focus:ring-1 focus:ring-purple-500 outline-none transition-all" 
+                                           class="w-full bg-gray-900 border border-gray-600 rounded-lg py-2 px-3 text-white text-center font-mono focus:border-purple-500 focus:ring-1 focus:ring-purple-500 outline-none transition-all" 
                                            oninput="updateModalCode()">
                                 </div>
                             </div>
                             <div>
-                                <label class="block text-[10px] text-slate-400 font-bold mb-1 uppercase">Episodio</label>
+                                <label class="block text-[10px] text-gray-400 font-bold mb-1 uppercase">Episodio</label>
                                 <div class="relative">
                                     <input type="number" id="modal-episode" value="1" min="1" 
-                                           class="w-full bg-slate-900 border border-slate-600 rounded-lg py-2 px-3 text-white text-center font-mono focus:border-purple-500 focus:ring-1 focus:ring-purple-500 outline-none transition-all" 
+                                           class="w-full bg-gray-900 border border-gray-600 rounded-lg py-2 px-3 text-white text-center font-mono focus:border-purple-500 focus:ring-1 focus:ring-purple-500 outline-none transition-all" 
                                            oninput="updateModalCode()">
                                 </div>
                             </div>
@@ -291,36 +320,35 @@
 
                     <div class="flex-1 flex flex-col">
                         <div class="flex items-center justify-between mb-2">
-                            <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider">Código Iframe Generado</label>
+                            <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider">Código Iframe Generado</label>
                             <span class="text-[10px] text-green-400 bg-green-500/10 px-2 py-0.5 rounded border border-green-500/20">Listo para usar</span>
                         </div>
                         
                         <div class="relative group flex-1">
                             <textarea id="modal-code" readonly 
-                                      class="code-font w-full h-32 lg:h-full bg-[#050911] text-green-400 text-xs p-4 rounded-xl border border-slate-800 focus:border-indigo-500 outline-none resize-none transition-colors selection:bg-green-900"></textarea>
+                                      class="code-font w-full h-32 lg:h-full bg-[#050505] text-green-400 text-xs p-4 rounded-xl border border-gray-800 focus:border-[var(--primary)] outline-none resize-none transition-colors selection:bg-green-900"></textarea>
                             
                             <div class="absolute bottom-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity">
-                                <button onclick="copyCode()" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs px-3 py-1.5 rounded-lg font-bold shadow-lg flex items-center gap-2 transition-all">
+                                <button onclick="copyCode()" class="bg-[var(--primary)] hover:bg-[var(--primary-hover)] text-white text-xs px-3 py-1.5 rounded-lg font-bold shadow-lg flex items-center gap-2 transition-all">
                                     <i data-lucide="copy" class="w-3 h-3"></i> Copiar
                                 </button>
                             </div>
                         </div>
-                        <p class="text-[10px] text-slate-500 mt-2">Copia este código y pégalo en la entrada de tu sitio web.</p>
+                        <p class="text-[10px] text-gray-500 mt-2">Copia este código y pégalo en la entrada de tu sitio web.</p>
                     </div>
                 </div>
 
                 <div class="lg:col-span-7 flex flex-col gap-3">
                     <div class="flex items-center justify-between">
-                        <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider">Vista Previa en Vivo</label>
-                        <a id="modal-external-link" href="#" target="_blank" class="text-[11px] text-indigo-400 hover:text-indigo-300 flex items-center gap-1 hover:underline">
+                        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider">Vista Previa en Vivo</label>
+                        <a id="modal-external-link" href="#" target="_blank" class="text-[11px] text-[var(--primary)] hover:text-[#ef4444] flex items-center gap-1 hover:underline">
                             Abrir en pestaña nueva <i data-lucide="external-link" class="w-3 h-3"></i>
                         </a>
                     </div>
                     
-                    <div class="w-full aspect-video bg-black rounded-xl overflow-hidden border border-slate-700 shadow-2xl relative group bg-[url('https://media.tenor.com/On7kbq105NYAAAAC/loading-gif.gif')] bg-center bg-no-repeat bg-[length:50px]">
+                    <div class="w-full aspect-video bg-black rounded-xl overflow-hidden border border-gray-700 shadow-2xl relative group bg-[url('https://media.tenor.com/On7kbq105NYAAAAC/loading-gif.gif')] bg-center bg-no-repeat bg-[length:50px]">
                         <div id="modal-preview-container" class="w-full h-full relative z-10"></div>
-                        
-                        <div class="absolute inset-0 border-2 border-transparent group-hover:border-indigo-500/30 rounded-xl transition-colors pointer-events-none z-20"></div>
+                        <div class="absolute inset-0 border-2 border-transparent group-hover:border-[var(--primary)]/30 rounded-xl transition-colors pointer-events-none z-20"></div>
                     </div>
 
                     <div class="bg-blue-500/10 border border-blue-500/20 rounded-lg p-3 flex items-start gap-3 mt-auto">
@@ -331,66 +359,97 @@
                         </div>
                     </div>
                 </div>
-
             </div>
         </div>
     </div>
 </div>
 
-<div id="toast" class="fixed bottom-8 right-8 bg-slate-800 border border-green-500/30 text-white px-5 py-3 rounded-xl shadow-[0_10px_40px_-10px_rgba(0,0,0,0.5)] flex items-center gap-3 z-[200] transition-all duration-500 opacity-0 translate-y-10 pointer-events-none">
+<div id="toast" class="fixed bottom-8 right-8 bg-gray-800 border border-green-500/30 text-white px-5 py-3 rounded-xl shadow-[0_10px_40px_-10px_rgba(0,0,0,0.5)] flex items-center gap-3 z-[200] transition-all duration-500 opacity-0 translate-y-10 pointer-events-none">
     <div class="bg-green-500/20 p-2 rounded-full">
         <i data-lucide="check" class="w-4 h-4 text-green-400"></i>
     </div>
     <div>
         <h4 class="text-sm font-bold text-white">¡Copiado!</h4>
-        <p class="text-xs text-slate-400">Código guardado en portapapeles.</p>
+        <p class="text-xs text-gray-400">Código guardado en portapapeles.</p>
     </div>
 </div>
 
 <script>
-    // ----------------------------------------------------------------------------------
-    // 1. CONFIGURACIÓN
-    // ----------------------------------------------------------------------------------
-    const API_KEY = 'da8b836389708e0558de674492931977'; // API Key pública de prueba (o usa la tuya)
-    
-    // ==================================================================================
-    // CONFIGURACIÓN AUTOMÁTICA
-    // ==================================================================================
-    const URL_TU_REPRODUCTOR = 'https://jjmovies.lat/player.html'; 
-    // ==================================================================================
-
+    const API_KEY = 'da8b836389708e0558de674492931977';
+    const URL_TU_REPRODUCTOR = 'https://jjmovies.lat/player.html';
     const BASE_URL = 'https://api.themoviedb.org/3';
-    const IMAGE_BASE = 'https://image.tmdb.org/t/p/w300'; // Imágenes optimizadas
+    const IMAGE_BASE = 'https://image.tmdb.org/t/p/w300';
     let currentModalData = { type: 'movie', id: null, title: '' };
 
-    // Inicializar Iconos y Cargar Dashboard
     lucide.createIcons();
     loadTrending();
+    loadSavedUsername();
 
-    // ----------------------------------------------------------------------------------
-    // 2. SISTEMA DE NAVEGACIÓN (TABS)
-    // ----------------------------------------------------------------------------------
+    function loadSavedUsername() {
+        const saved = localStorage.getItem('adminUsername');
+        if (saved) {
+            document.getElementById('saved-username').innerText = `Usuario guardado: ${saved}`;
+        }
+    }
+
+    function saveUsername() {
+        const input = document.getElementById('username-input');
+        const name = input.value.trim();
+        if (name) {
+            localStorage.setItem('adminUsername', name);
+            document.getElementById('saved-username').innerText = `Usuario guardado: ${name}`;
+            input.value = '';
+        }
+    }
+
+    function searchGlobal() {
+        const query = document.getElementById('global-search').value.trim();
+        if (!query) return;
+
+        // Busca en ambas categorías y muestra en el dashboard
+        const container = document.getElementById('dashboard-trending');
+        container.innerHTML = `
+            <div class="col-span-full flex justify-center py-20">
+                <div class="flex flex-col items-center gap-4">
+                    <div class="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-[var(--primary)]"></div>
+                    <span class="text-xs text-gray-500 font-mono">Buscando en la base de datos...</span>
+                </div>
+            </div>`;
+
+        fetch(`${BASE_URL}/search/multi?api_key=${API_KEY}&language=es-MX&query=${encodeURIComponent(query)}`)
+            .then(res => res.json())
+            .then(data => {
+                if (data.results.length === 0) {
+                    container.innerHTML = `<div class="col-span-full text-center py-20 text-gray-500">No se encontraron resultados para "${query}".</div>`;
+                } else {
+                    container.innerHTML = data.results.slice(0, 10).map(cardTemplate).join('');
+                    lucide.createIcons();
+                }
+            })
+            .catch(() => {
+                container.innerHTML = '<p class="text-red-500 text-xs text-center col-span-full">Error en la búsqueda global.</p>';
+            });
+    }
+
+    function handleEnterGlobal(e) {
+        if (e.key === 'Enter') searchGlobal();
+    }
+
+    // --- El resto de las funciones originales se mantienen intactas ---
     function switchTab(tabId) {
-        // Ocultar todas las vistas
         ['dashboard', 'movies', 'series'].forEach(id => {
             document.getElementById('view-' + id).classList.add('hidden');
             const btn = document.getElementById('btn-' + id);
-            
-            // Estilos inactivos
-            btn.classList.remove('bg-indigo-600/10', 'text-indigo-400', 'border-indigo-500/20', 'shadow-sm');
-            btn.classList.add('text-slate-400', 'border-transparent');
+            btn.classList.remove('bg-[#dc2626]/10', 'text-[#dc2626]', 'border-[#dc2626]/20', 'shadow-sm');
+            btn.classList.add('text-gray-400', 'border-transparent');
             btn.classList.remove('border');
         });
 
-        // Mostrar vista seleccionada
         document.getElementById('view-' + tabId).classList.remove('hidden');
-        
-        // Estilos activos
         const activeBtn = document.getElementById('btn-' + tabId);
-        activeBtn.classList.add('bg-indigo-600/10', 'text-indigo-400', 'border', 'border-indigo-500/20', 'shadow-sm');
-        activeBtn.classList.remove('text-slate-400', 'border-transparent');
+        activeBtn.classList.add('bg-[#dc2626]/10', 'text-[#dc2626]', 'border', 'border-[#dc2626]/20', 'shadow-sm');
+        activeBtn.classList.remove('text-gray-400', 'border-transparent');
         
-        // Actualizar título de página
         const titles = {
             'dashboard': 'Panel de Control', 
             'movies': 'Generador de Películas', 
@@ -399,110 +458,71 @@
         document.getElementById('page-title').innerText = titles[tabId];
     }
 
-    // ----------------------------------------------------------------------------------
-    // 3. FUNCIONES API (TMDB)
-    // ----------------------------------------------------------------------------------
-    
-    // Cargar Tendencias (Dashboard)
     async function loadTrending() {
         const container = document.getElementById('dashboard-trending');
         try {
             const res = await fetch(`${BASE_URL}/trending/all/day?api_key=${API_KEY}&language=es-MX`);
             const data = await res.json();
-            
-            // Renderizar tarjetas
             container.innerHTML = data.results.slice(0, 10).map(item => cardTemplate(item)).join('');
-            
-            // Refrescar iconos en el nuevo HTML inyectado
             lucide.createIcons();
         } catch (e) {
-            console.error(e);
-            container.innerHTML = `
-                <div class="col-span-full text-center py-10">
-                    <p class="text-red-400 bg-red-500/10 p-4 rounded-xl border border-red-500/20 inline-block">
-                        Error conectando con TMDB. Verifica tu conexión.
-                    </p>
-                </div>`;
+            container.innerHTML = `<div class="col-span-full text-center py-10"><p class="text-red-400 bg-red-500/10 p-4 rounded-xl border border-red-500/20 inline-block">Error conectando con TMDB.</p></div>`;
         }
     }
 
-    // Buscar Contenido
     async function searchContent(type) {
         const inputId = type === 'movie' ? 'movie-search' : 'series-search';
         const containerId = type === 'movie' ? 'movie-results' : 'series-results';
         const query = document.getElementById(inputId).value;
-        
         if (!query) return;
 
         const container = document.getElementById(containerId);
-        // Loader bonito
-        container.innerHTML = `
-            <div class="col-span-full flex justify-center py-20">
-                <div class="flex flex-col items-center gap-4">
-                    <div class="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-indigo-500"></div>
-                    <span class="text-xs text-slate-500 font-mono">Buscando en la base de datos...</span>
-                </div>
-            </div>`;
+        container.innerHTML = `<div class="col-span-full flex justify-center py-20"><div class="flex flex-col items-center gap-4"><div class="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-[var(--primary)]"></div><span class="text-xs text-gray-500 font-mono">Buscando en la base de datos...</span></div></div>`;
 
         try {
             const res = await fetch(`${BASE_URL}/search/${type}?api_key=${API_KEY}&language=es-MX&query=${encodeURIComponent(query)}`);
             const data = await res.json();
-            
             if (data.results.length === 0) {
-                container.innerHTML = `
-                    <div class="col-span-full text-center py-20 text-slate-500">
-                        <p>No se encontraron resultados para "${query}".</p>
-                    </div>`;
+                container.innerHTML = `<div class="col-span-full text-center py-20 text-gray-500">No se encontraron resultados para "${query}".</div>`;
                 return;
             }
-            
             container.innerHTML = data.results.map(item => cardTemplate(item, type)).join('');
             lucide.createIcons();
-            
-        } catch (e) { 
-            container.innerHTML = '<p class="text-red-500 text-xs text-center col-span-full">Error en la búsqueda.</p>'; 
+        } catch (e) {
+            container.innerHTML = '<p class="text-red-500 text-xs text-center col-span-full">Error en la búsqueda.</p>';
         }
     }
 
-    // Detectar tecla Enter en inputs
     function handleEnter(e, type) {
         if (e.key === 'Enter') searchContent(type);
     }
 
-    // Plantilla HTML de la Tarjeta (Card)
     function cardTemplate(item, forceType) {
         const type = forceType || (item.media_type === 'movie' ? 'movie' : 'tv');
         const title = type === 'movie' ? item.title : item.name;
-        // Poster con fallback si no hay imagen
         const poster = item.poster_path 
             ? `${IMAGE_BASE}${item.poster_path}` 
-            : 'https://via.placeholder.com/200x300/1e293b/475569?text=Sin+Imagen';
-        
-        // Escapar comillas simples para evitar errores de JS en el onclick
+            : 'https://via.placeholder.com/200x300/1a1a1a/475569?text=Sin+Imagen';
         const safeTitle = title.replace(/'/g, "\\'");
         const year = (item.release_date || item.first_air_date || 'N/A').split('-')[0];
         
         return `
             <div onclick="openModal('${type}', '${item.id}', '${safeTitle}', '${poster}')" 
-                 class="group relative bg-slate-800 rounded-xl overflow-hidden cursor-pointer border border-slate-700 hover:border-indigo-500/50 shadow-md card-hover">
-                
+                 class="group relative bg-gray-800 rounded-xl overflow-hidden cursor-pointer border border-gray-700 hover:border-[var(--primary)]/50 shadow-md card-hover">
                 <div class="aspect-[2/3] overflow-hidden relative">
                     <img src="${poster}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" loading="lazy">
-                    
                     <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-60 group-hover:opacity-80 transition-opacity"></div>
-                    
                     <div class="absolute top-2 right-2 bg-black/60 backdrop-blur-md text-white text-[9px] font-bold px-2 py-1 rounded-md border border-white/10 uppercase tracking-wider">
                         ${type === 'movie' ? 'PELI' : 'SERIE'}
                     </div>
                 </div>
-
                 <div class="p-3">
-                    <h4 class="font-bold text-slate-200 text-sm truncate group-hover:text-indigo-400 transition-colors">${title}</h4>
+                    <h4 class="font-bold text-gray-200 text-sm truncate group-hover:text-[var(--primary)] transition-colors">${title}</h4>
                     <div class="flex items-center justify-between mt-1">
-                        <span class="text-[10px] text-slate-500 font-mono">${year}</span>
+                        <span class="text-[10px] text-gray-500 font-mono">${year}</span>
                         <div class="flex items-center gap-1">
                             <i data-lucide="star" class="w-3 h-3 text-yellow-500 fill-current"></i>
-                            <span class="text-[10px] text-slate-400">${item.vote_average ? item.vote_average.toFixed(1) : '-'}</span>
+                            <span class="text-[10px] text-gray-400">${item.vote_average ? item.vote_average.toFixed(1) : '-'}</span>
                         </div>
                     </div>
                 </div>
@@ -510,46 +530,31 @@
         `;
     }
 
-    // ----------------------------------------------------------------------------------
-    // 4. LÓGICA DEL MODAL Y GENERADOR
-    // ----------------------------------------------------------------------------------
-    
     function openModal(type, id, title, poster) {
         currentModalData = { type, id, title };
-        
-        // Llenar datos visuales
         document.getElementById('modal-title').innerText = title;
         document.getElementById('modal-id').innerText = id;
         document.getElementById('modal-poster-thumb').src = poster;
         
-        // Configurar UI según tipo
         const badge = document.getElementById('modal-type-badge');
         const seriesCtrl = document.getElementById('series-controls');
         
         if (type === 'tv') {
-            // Es Serie
             badge.innerText = 'SERIE TV';
             badge.className = 'bg-purple-600 text-white text-[10px] px-2 py-0.5 rounded uppercase font-bold tracking-wider';
             seriesCtrl.classList.remove('hidden');
-            // Resetear inputs
             document.getElementById('modal-season').value = 1;
             document.getElementById('modal-episode').value = 1;
         } else {
-            // Es Película
             badge.innerText = 'PELÍCULA';
-            badge.className = 'bg-indigo-600 text-white text-[10px] px-2 py-0.5 rounded uppercase font-bold tracking-wider';
+            badge.className = 'bg-[var(--primary)] text-white text-[10px] px-2 py-0.5 rounded uppercase font-bold tracking-wider';
             seriesCtrl.classList.add('hidden');
         }
         
-        // Generar código inicial
         updateModalCode();
-        
-        // Mostrar Modal con Animación
         const modal = document.getElementById('universal-modal');
         const panel = modal.querySelector('.modal-panel');
-        
         modal.classList.remove('hidden-modal');
-        // Pequeño delay para permitir que el navegador renderice antes de la transición CSS
         setTimeout(() => {
             panel.classList.remove('scale-95', 'opacity-0');
             panel.classList.add('scale-100', 'opacity-100');
@@ -559,73 +564,51 @@
     function closeModal() {
         const modal = document.getElementById('universal-modal');
         const panel = modal.querySelector('.modal-panel');
-        
-        // Animación de salida
         panel.classList.remove('scale-100', 'opacity-100');
         panel.classList.add('scale-95', 'opacity-0');
-        
         setTimeout(() => {
             modal.classList.add('hidden-modal');
-            // Limpiar iframe para detener consumo de recursos
             document.getElementById('modal-preview-container').innerHTML = '';
         }, 300);
     }
 
-    // EL NÚCLEO DEL GENERADOR
     function updateModalCode() {
         const { type, id } = currentModalData;
         let finalUrl = '';
 
-        // Validación de Seguridad
         if (URL_TU_REPRODUCTOR === 'PON_AQUI_LA_URL_DE_TU_REPRODUCTOR') {
-            const errorMsg = "⚠️ ERROR CRÍTICO:\nNo has configurado la URL de tu reproductor.\nAbre el archivo admin.html, ve a la línea 460 y pon tu enlace.";
-            document.getElementById('modal-code').value = errorMsg;
+            document.getElementById('modal-code').value = "⚠️ ERROR CRÍTICO:\nNo has configurado la URL de tu reproductor.";
             return;
         }
 
-        // Construcción de la URL
         if (type === 'movie') {
-            // Formato Película: ?id=12345
             finalUrl = `${URL_TU_REPRODUCTOR}?id=${id}`;
         } else {
-            // Formato Serie: ?id=12345&season=1&episode=1
             const s = document.getElementById('modal-season').value;
             const e = document.getElementById('modal-episode').value;
             finalUrl = `${URL_TU_REPRODUCTOR}?id=${id}&season=${s}&episode=${e}`;
         }
 
-        // Crear la etiqueta Iframe
         const iframeCode = `<iframe class="aspect-video w-full" src="${finalUrl}" frameborder="0" allowfullscreen></iframe>`;
-        
-        // Actualizar Textarea y Links
         document.getElementById('modal-code').value = iframeCode;
         document.getElementById('modal-external-link').href = finalUrl;
-        
-        // Actualizar Preview (Iframe real)
         document.getElementById('modal-preview-container').innerHTML = `<iframe src="${finalUrl}" class="w-full h-full border-0" allowfullscreen></iframe>`;
     }
 
-    // Función Copiar al Portapapeles
     function copyCode() {
         const codeBox = document.getElementById('modal-code');
         codeBox.select();
-        codeBox.setSelectionRange(0, 99999); // Para móviles
-        
-        navigator.clipboard.writeText(codeBox.value).then(() => {
-            showToast();
-        });
+        codeBox.setSelectionRange(0, 99999);
+        navigator.clipboard.writeText(codeBox.value).then(() => showToast());
     }
 
-    // Mostrar Notificación Toast
     function showToast() {
         const toast = document.getElementById('toast');
         toast.classList.remove('opacity-0', 'translate-y-10');
-        
         setTimeout(() => {
             toast.classList.add('opacity-0', 'translate-y-10');
         }, 3000);
     }
-
 </script>
 </body>
 </html>
