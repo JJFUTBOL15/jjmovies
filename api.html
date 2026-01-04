@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CineMax Premium Ultra</title>
+<title>JJMOVIES - Streaming sin Anuncios</title>
 <!-- Tailwind CSS -->
 <script src="https://cdn.tailwindcss.com"></script>
 <!-- Plyr CSS & JS -->
@@ -21,10 +21,15 @@ theme: {
 extend: {
 colors: {
 brand: {
-DEFAULT: '#3b82f6',
-light: '#60a5fa',
-dark: '#2563eb',
-glow: 'rgba(59, 130, 246, 0.5)'
+DEFAULT: '#dc2626', // Rojo principal
+light: '#ef4444',
+dark: '#b91c1c',
+glow: 'rgba(220, 38, 38, 0.5)'
+},
+glass: {
+bg: 'rgba(10, 10, 10, 0.8)',
+border: 'rgba(255, 255, 255, 0.08)',
+shadow: 'rgba(0, 0, 0, 0.5)'
 }
 },
 fontFamily: {
@@ -52,8 +57,8 @@ slideInRight: {
 '100%': { opacity: 1, transform: 'translateX(0)' },
 },
 pulseGlow: {
-'0%, 100%': { boxShadow: '0 0 20px rgba(59, 130, 246, 0.2)' },
-'50%': { boxShadow: '0 0 40px rgba(59, 130, 246, 0.6)' },
+'0%, 100%': { boxShadow: '0 0 20px rgba(220, 38, 38, 0.2)' },
+'50%': { boxShadow: '0 0 40px rgba(220, 38, 38, 0.6)' },
 },
 slowZoom: {
 '0%': { transform: 'scale(1)' },
@@ -101,13 +106,13 @@ border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 .transition-transform-smooth { transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
 /* Plyr Customization */
 :root {
---plyr-color-main: #3b82f6;
+--plyr-color-main: #dc2626;
 --plyr-video-background: #000;
 --plyr-menu-background: rgba(20, 20, 20, 0.95);
 --plyr-menu-color: #fff;
 }
 .plyr--full-ui input[type=range] { color: var(--plyr-color-main); }
-.plyr__control--overlaid { background: rgba(59, 130, 246, 0.9); }
+.plyr__control--overlaid { background: rgba(220, 38, 38, 0.9); }
 .plyr--video .plyr__controls { background: linear-gradient(rgba(0,0,0,0), rgba(0,0,0,0.8)); padding-bottom: 30px; }
 /* Language Flags Active State */
 .lang-flag {
@@ -124,8 +129,8 @@ transform: scale(1.05);
 .lang-flag.active {
 filter: grayscale(0%) opacity(1);
 transform: scale(1.1);
-border-color: #3b82f6;
-box-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
+border-color: #dc2626;
+box-shadow: 0 0 10px rgba(220, 38, 38, 0.5);
 }
 /* Select Options Dark Mode */
 select option {
@@ -136,14 +141,64 @@ color: white;
 ::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-track { background: #050505; }
 ::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
-::-webkit-scrollbar-thumb:hover { background: #3b82f6; }
+::-webkit-scrollbar-thumb:hover { background: #dc2626; }
+/* Server Dropdown Style */
+.server-dropdown {
+position: absolute;
+top: 10px;
+right: 10px;
+background: rgba(10, 10, 10, 0.9);
+border: 1px solid rgba(255, 255, 255, 0.1);
+border-radius: 8px;
+box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+z-index: 1000;
+max-height: 400px;
+overflow-y: auto;
+padding: 8px;
+min-width: 200px;
+}
+.server-dropdown-item {
+display: flex;
+justify-content: space-between;
+align-items: center;
+padding: 8px 12px;
+cursor: pointer;
+border-radius: 6px;
+transition: all 0.2s ease;
+}
+.server-dropdown-item:hover {
+background: rgba(220, 38, 38, 0.1);
+}
+.server-dropdown-item.active {
+background: rgba(220, 38, 38, 0.2);
+border-left: 3px solid #dc2626;
+}
+.server-dropdown-item .label {
+font-size: 14px;
+font-weight: 500;
+}
+.server-dropdown-item .tag {
+font-size: 10px;
+padding: 2px 6px;
+border-radius: 4px;
+font-weight: bold;
+text-transform: uppercase;
+}
+.tag-noads {
+background: #10b981;
+color: white;
+}
+.tag-ads {
+background: #dc2626;
+color: white;
+}
 </style>
 </head>
 <body class="relative min-h-screen font-sans selection:bg-brand selection:text-white">
 <!-- Navbar -->
 <nav id="navbar" class="fixed top-0 w-full z-40 transition-all duration-500 px-8 py-6 flex justify-between items-center opacity-0 animate-fade-in-up">
 <div class="text-3xl font-extrabold tracking-tighter cursor-default group">
-Cine<span class="text-brand group-hover:text-white transition-colors duration-300">Max</span>
+<span class="text-brand">JJ</span><span class="text-white">MOVIES</span>
 <div class="h-1 w-0 bg-brand group-hover:w-full transition-all duration-300 rounded-full"></div>
 </div>
 <div id="status-msg" class="text-sm font-semibold text-brand animate-pulse tracking-wide"></div>
@@ -181,7 +236,7 @@ Cargando...
 <i class="far fa-circle text-xl text-gray-400 group-hover:text-brand transition-colors" id="icon-watched"></i>
 <span class="text-sm font-bold text-gray-300 group-hover:text-white">Visto</span>
 </button>
-<button onclick="nextEpisode()" class="flex items-center gap-2 px-5 py-2.5 bg-brand hover:bg-brand-dark rounded-xl text-white font-bold transition-all shadow-[0_0_15px_rgba(59,130,246,0.4)] hover:shadow-[0_0_25px_rgba(59,130,246,0.6)]">
+<button onclick="nextEpisode()" class="flex items-center gap-2 px-5 py-2.5 bg-brand hover:bg-brand-dark rounded-xl text-white font-bold transition-all shadow-[0_0_15px_rgba(220,38,38,0.4)] hover:shadow-[0_0_25px_rgba(220,38,38,0.6)]">
 Siguiente <i class="fas fa-step-forward text-xs"></i>
 </button>
 </div>
@@ -189,7 +244,7 @@ Siguiente <i class="fas fa-step-forward text-xs"></i>
 Esperando datos...
 </p>
 <div class="opacity-0 animate-fade-in-up delay-500">
-<button onclick="startScraping()" class="group relative px-10 py-5 bg-brand hover:bg-white rounded-full font-bold text-white hover:text-brand transition-all duration-500 shadow-[0_0_30px_rgba(59,130,246,0.4)] hover:shadow-[0_0_60px_rgba(59,130,246,0.8)] hover:scale-105 flex items-center gap-4 overflow-hidden border border-brand">
+<button onclick="startScraping()" class="group relative px-10 py-5 bg-brand hover:bg-white rounded-full font-bold text-white hover:text-brand transition-all duration-500 shadow-[0_0_30px_rgba(220,38,38,0.4)] hover:shadow-[0_0_60px_rgba(220,38,38,0.8)] hover:scale-105 flex items-center gap-4 overflow-hidden border border-brand">
 <span class="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:animate-[shimmer_1.5s_infinite]"></span>
 <i class="fas fa-play text-xl group-hover:scale-125 transition-transform duration-300"></i>
 <span class="tracking-wider">REPRODUCIR AHORA</span>
@@ -212,8 +267,8 @@ Esperando datos...
 <button onclick="toggleFullscreen()" class="w-10 h-10 rounded-full bg-white/10 hover:bg-brand/20 hover:text-brand border border-white/10 backdrop-blur-md flex items-center justify-center transition-all duration-300 hover:scale-110" title="Modo Cine (Página Completa)">
 <i class="fas fa-expand"></i>
 </button>
-<button onclick="toggleSidebar()" class="w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 border border-white/10 backdrop-blur-md flex items-center justify-center transition-all duration-300 hover:scale-110" title="Alternar Lista">
-<i class="fas fa-list-ul"></i>
+<button onclick="toggleServerDropdown()" class="w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 border border-white/10 backdrop-blur-md flex items-center justify-center transition-all duration-300 hover:scale-110" title="Cambiar Servidor">
+<i class="fas fa-server"></i>
 </button>
 </div>
 </div>
@@ -221,6 +276,10 @@ Esperando datos...
 <video id="player" class="w-full h-full object-contain" playsinline controls crossorigin></video>
 <!-- Iframe Container (Fallback/Unlimplay) -->
 <div id="iframe-container" class="absolute inset-0 w-full h-full hidden-force bg-black"></div>
+<!-- Server Dropdown Menu -->
+<div id="server-dropdown" class="server-dropdown hidden-force">
+<!-- Server items injected here by JS -->
+</div>
 </div>
 <!-- Sidebar / Server List -->
 <div id="server-panel" class="relative w-full md:w-1/4 h-full glass-panel border-l-0 flex flex-col z-10 backdrop-blur-3xl bg-black/60 shadow-2xl transition-transform-smooth duration-500 ease-in-out">
@@ -256,7 +315,7 @@ Esperando datos...
 <div id="loader-overlay" class="fixed inset-0 z-[60] bg-black/95 backdrop-blur-xl hidden flex flex-col items-center justify-center transition-opacity duration-500">
 <div class="relative w-24 h-24">
 <div class="absolute inset-0 border-4 border-white/10 rounded-full"></div>
-<div class="absolute inset-0 border-4 border-t-brand rounded-full animate-spin shadow-[0_0_20px_rgba(59,130,246,0.6)]"></div>
+<div class="absolute inset-0 border-4 border-t-brand rounded-full animate-spin shadow-[0_0_20px_rgba(220,38,38,0.6)]"></div>
 <div class="absolute inset-0 flex items-center justify-center">
 <i class="fas fa-rocket text-brand text-xl animate-pulse"></i>
 </div>
@@ -285,12 +344,15 @@ let playerInstance = null;
 let sourcesList = [];
 let currentLanguage = 'all';
 let isSidebarOpen = true;
+let serverDropdownVisible = false;
+let currentServerIndex = 0;
 // --- DOM ELEMENTS ---
 const statusMsg = document.getElementById('status-msg');
 const iframeContainer = document.getElementById('iframe-container');
 const videoElement = document.getElementById('player');
 const videoWrapper = document.getElementById('video-wrapper');
 const serverPanel = document.getElementById('server-panel');
+const serverDropdown = document.getElementById('server-dropdown');
 // --- HELPER FUNCTIONS ---
 function base64UrlDecode(str) {
 str = str.replace(/-/g, '+').replace(/_/g, '/');
@@ -329,7 +391,7 @@ fetchTMDBData(id);
 }
 } else {
 updateStatus("⚠️ ID no encontrado.");
-document.getElementById('movie-title').innerHTML = "Cine<span class='text-brand'>Max</span>";
+document.getElementById('movie-title').innerHTML = "<span class='text-brand'>JJ</span><span class='text-white'>MOVIES</span>";
 document.getElementById('movie-overview').textContent = "Usa ?id=123 (Cine) o ?id=123&season=1&episode=1 (Series).";
 const bgEl = document.getElementById('backdrop-img');
 bgEl.style.backgroundImage = "url('https://image.tmdb.org/t/p/original/t5zCBSB5xMDKcDqe91qahCOUYVV.jpg')";
@@ -558,6 +620,16 @@ if(btn) btn.classList.add('active');
 }
 updateServerList();
 }
+function toggleServerDropdown() {
+serverDropdownVisible = !serverDropdownVisible;
+if (serverDropdownVisible) {
+serverDropdown.classList.remove('hidden-force');
+serverDropdown.classList.add('block');
+} else {
+serverDropdown.classList.add('hidden-force');
+serverDropdown.classList.remove('block');
+}
+}
 // --- MAIN SCRAPING ORCHESTRATOR ---
 async function startScraping() {
 if (!movieData.tmdbId) return;
@@ -582,7 +654,6 @@ promises.push(scrapeBlogFallback());
 if (movieData.imdbId) promises.push(scrapeEmbed69(movieData.imdbId));
 if (movieData.imdbId) promises.push(scrapeVerHDLink(movieData.imdbId));
 // NEW SERVERS (MOVIE ONLY OR BOTH)
-promises.push(scrapeTMovie());
 promises.push(scrapeVidSrc());
 promises.push(scrapeVidNest());
 }
@@ -602,19 +673,6 @@ else if(l.includes('sub')) setLanguageFilter('subtitulado');
 }
 }
 }
-// --- SCRAPER: TMovie ---
-async function scrapeTMovie() {
-if (!movieData.tmdbId) return;
-const url = `https://tmovie.tv/movie/${movieData.tmdbId}`;
-addSource({
-name: `🎬 TMovie`,
-lang: 'Subtitulado',
-type: 'iframe',
-url: url,
-icon: 'fa-film',
-provider: 'tmovie'
-});
-}
 // --- SCRAPER: VidSrc.cc ---
 async function scrapeVidSrc() {
 if (!movieData.tmdbId) return;
@@ -627,7 +685,8 @@ lang: 'Subtitulado',
 type: 'iframe',
 url: base,
 icon: 'fa-globe',
-provider: 'vidsrc'
+provider: 'vidsrc',
+hasAds: true
 });
 }
 // --- SCRAPER: VidNest.fun ---
@@ -642,7 +701,8 @@ lang: 'Subtitulado',
 type: 'iframe',
 url: base,
 icon: 'fa-dove',
-provider: 'vidnest'
+provider: 'vidnest',
+hasAds: true
 });
 }
 // --- SCRAPER: Embed69 SERIES ---
@@ -699,7 +759,8 @@ lang: lang,
 type: 'iframe',
 url: unlimplayUrl,
 icon: 'fa-film',
-provider: prio
+provider: prio,
+hasAds: false
 });
 } else {
 addSource({
@@ -708,7 +769,8 @@ lang: lang,
 type: 'iframe',
 url: decoded.link,
 icon: 'fa-globe',
-provider: prio
+provider: prio,
+hasAds: false
 });
 }
 }
@@ -742,7 +804,8 @@ lang: lang,
 type: 'iframe',
 url: unlimplayUrl,
 icon: 'fa-bolt',
-provider: 'verhd'
+provider: 'verhd',
+hasAds: false
 });
 }
 }
@@ -782,7 +845,8 @@ lang: 'Latino',
 type: 'direct',
 url: atob(encoded),
 icon: 'fa-star',
-provider: 'blog'
+provider: 'blog',
+hasAds: false
 });
 } catch(e){}
 }
@@ -809,25 +873,29 @@ if(currentLanguage === 'subtitulado') return l.includes('sub');
 return true;
 });
 }
+// Sort: No Ads first, then by provider priority
 displayList.sort((a, b) => {
+// First: No ads vs Ads
+if (a.hasAds !== b.hasAds) return a.hasAds ? 1 : -1;
+// Then: Provider priority
 const getSourcePriority = (p) => {
 if (p === 'blog') return 0;
 if (p === 'embed69') return 1;
 if (p === 'verhd') return 2;
-if (p === 'tmovie') return 3;
-if (p === 'vidsrc') return 4;
-if (p === 'vidnest') return 5;
-return 6;
+if (p === 'vidsrc') return 3;
+if (p === 'vidnest') return 4;
+return 5;
 };
+const prioA = getSourcePriority(a.provider);
+const prioB = getSourcePriority(b.provider);
+if (prioA !== prioB) return prioA - prioB;
+// Then: Language priority
 const getLangPriority = (lang) => {
 const l = lang.toLowerCase();
 if (l.includes('lat')) return 0;
 if (l.includes('cas') || l.includes('esp')) return 1;
 return 2;
 };
-const prioA = getSourcePriority(a.provider);
-const prioB = getSourcePriority(b.provider);
-if (prioA !== prioB) return prioA - prioB;
 return getLangPriority(a.lang) - getLangPriority(b.lang);
 });
 document.getElementById('server-count').innerText = displayList.length;
@@ -851,17 +919,13 @@ borderColor = 'border-cyan-500/20 bg-cyan-500/5';
 iconColor = 'text-cyan-400';
 badge = '<span class="text-[9px] text-cyan-500 font-extrabold tracking-widest flex items-center gap-1"><i class="fas fa-bolt"></i> ULTRA</span>';
 } else if (src.provider === 'vidsrc') {
-borderColor = 'border-green-500/20 bg-green-500/5';
-iconColor = 'text-green-400';
-badge = '<span class="text-[9px] text-green-500 font-extrabold tracking-widest flex items-center gap-1"><i class="fas fa-leaf"></i> FAST</span>';
+borderColor = 'border-red-500/20 bg-red-500/5';
+iconColor = 'text-red-400';
+badge = '<span class="text-[9px] text-red-500 font-extrabold tracking-widest flex items-center gap-1"><i class="fas fa-ad"></i> ADS</span>';
 } else if (src.provider === 'vidnest') {
-borderColor = 'border-purple-500/20 bg-purple-500/5';
-iconColor = 'text-purple-400';
-badge = '<span class="text-[9px] text-purple-500 font-extrabold tracking-widest flex items-center gap-1"><i class="fas fa-dove"></i> NEST</span>';
-} else if (src.provider === 'tmovie') {
-borderColor = 'border-pink-500/20 bg-pink-500/5';
-iconColor = 'text-pink-400';
-badge = '<span class="text-[9px] text-pink-500 font-extrabold tracking-widest flex items-center gap-1"><i class="fas fa-ticket-alt"></i> CINEMA</span>';
+borderColor = 'border-red-500/20 bg-red-500/5';
+iconColor = 'text-red-400';
+badge = '<span class="text-[9px] text-red-500 font-extrabold tracking-widest flex items-center gap-1"><i class="fas fa-ad"></i> ADS</span>';
 }
 const animationDelay = idx * 50;
 div.className = `group relative overflow-hidden flex items-center p-3 rounded-xl cursor-pointer transition-all duration-300 border hover:border-brand/50 hover:bg-white/10 opacity-0 animate-slide-in-right ${borderColor}`;
@@ -881,10 +945,31 @@ ${badge}
 `;
 div.onclick = () => {
 playSource(src);
-Array.from(container.children).forEach(c => c.classList.remove('border-brand', 'bg-white/10', 'shadow-[0_0_15px_rgba(59,130,246,0.2)]'));
-div.classList.add('border-brand', 'bg-white/10', 'shadow-[0_0_15px_rgba(59,130,246,0.2)]');
+Array.from(container.children).forEach(c => c.classList.remove('border-brand', 'bg-white/10', 'shadow-[0_0_15px_rgba(220,38,38,0.2)]'));
+div.classList.add('border-brand', 'bg-white/10', 'shadow-[0_0_15px_rgba(220,38,38,0.2)]');
 };
 container.appendChild(div);
+});
+// Also update dropdown
+updateServerDropdown(displayList);
+}
+function updateServerDropdown(sources) {
+const dropdown = document.getElementById('server-dropdown');
+dropdown.innerHTML = '';
+sources.forEach((src, idx) => {
+const item = document.createElement('div');
+item.className = `server-dropdown-item ${idx === currentServerIndex ? 'active' : ''}`;
+item.dataset.index = idx;
+item.innerHTML = `
+<span class="label">Server ${idx + 1}</span>
+<span class="tag ${src.hasAds ? 'tag-ads' : 'tag-noads'}">${src.hasAds ? 'ADS' : 'NO ADS'}</span>
+`;
+item.onclick = () => {
+playSource(src);
+currentServerIndex = idx;
+updateServerDropdown(sources);
+};
+dropdown.appendChild(item);
 });
 }
 function playSource(source) {
