@@ -5,11 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="referrer" content="no-referrer">
     <meta name="theme-color" content="#000000">
-    <title>JJMOVIES  V6-TUMBADOF</title>
+    <title>JJMOVIES | TITAN V7 - LATINO FORCE</title>
 
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@300;400;500;600;700&family=Rajdhani:wght@300;500;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@300;400;600;700&family=Rajdhani:wght@300;500;700;800&display=swap" rel="stylesheet">
 
     <script>
         tailwind.config = {
@@ -18,129 +18,55 @@
                 extend: {
                     colors: {
                         brand: { DEFAULT: '#E50914', dark: '#8a040b', neon: '#ff1f26' },
-                        sys: { black: '#020202', panel: '#0a0a0a', border: '#1a1a1a', text: '#888' },
+                        sys: { black: '#020202', panel: '#0a0a0a', border: '#1a1a1a' },
                         term: { green: '#00ff41', red: '#ff0033', blue: '#00ccff', amber: '#ffb300' }
                     },
-                    fontFamily: {
-                        sans: ['Rajdhani', 'sans-serif'],
-                        tech: ['Chakra Petch', 'monospace'],
-                    },
+                    fontFamily: { sans: ['Rajdhani', 'sans-serif'], tech: ['Chakra Petch', 'monospace'] },
                     animation: {
                         'pulse-fast': 'pulse 1s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-                        'flash': 'flash 2s infinite',
                         'scanline': 'scanline 8s linear infinite',
-                        'matrix': 'matrix 20s linear infinite',
-                        'blink': 'blink 1s step-end infinite',
                         'shield-pulse': 'shieldPulse 3s infinite',
                     },
                     keyframes: {
-                        flash: { '0%, 100%': { opacity: '1' }, '50%': { opacity: '0.5' } },
                         scanline: { '0%': { transform: 'translateY(-100%)' }, '100%': { transform: 'translateY(100%)' } },
-                        blink: { '0%, 100%': { opacity: '1' }, '50%': { opacity: '0' } },
-                        shieldPulse: { '0%, 100%': { boxShadow: '0 0 10px rgba(0, 255, 65, 0.2)' }, '50%': { boxShadow: '0 0 25px rgba(0, 255, 65, 0.6)' } }
+                        shieldPulse: { '0%, 100%': { boxShadow: '0 0 5px rgba(0, 255, 65, 0.1)' }, '50%': { boxShadow: '0 0 20px rgba(0, 255, 65, 0.4)' } }
                     },
-                    boxShadow: {
-                        'neon': '0 0 20px rgba(229, 9, 20, 0.6)',
-                        'screen': 'inset 0 0 50px rgba(0,0,0,0.9)',
-                        'term': '0 0 10px rgba(0, 255, 65, 0.2)'
-                    }
+                    boxShadow: { 'neon': '0 0 30px rgba(229, 9, 20, 0.5)' }
                 }
             }
         }
     </script>
 
     <style>
-        /* ESTILOS BASE */
-        :root { --app-bg: #000; --grid-color: rgba(255, 255, 255, 0.03); }
-        body { background-color: var(--app-bg); color: #fff; overflow-x: hidden; font-family: 'Rajdhani', sans-serif; }
+        :root { --app-bg: #000; --grid: rgba(255,255,255,0.03); }
+        body { background: var(--app-bg); color: #fff; overflow-x: hidden; font-family: 'Rajdhani', sans-serif; }
         
-        /* FONDO TECNOLÓGICO */
-        .bg-grid {
-            background-size: 40px 40px;
-            background-image: linear-gradient(to right, var(--grid-color) 1px, transparent 1px),
-                              linear-gradient(to bottom, var(--grid-color) 1px, transparent 1px);
-        }
-
-        /* SCROLLBAR TÁCTICO */
-        ::-webkit-scrollbar { width: 4px; height: 4px; }
+        .bg-grid { background-image: linear-gradient(to right, var(--grid) 1px, transparent 1px), linear-gradient(to bottom, var(--grid) 1px, transparent 1px); background-size: 40px 40px; }
+        
+        ::-webkit-scrollbar { width: 4px; }
         ::-webkit-scrollbar-track { background: #000; }
-        ::-webkit-scrollbar-thumb { background: #333; border: 1px solid #000; }
+        ::-webkit-scrollbar-thumb { background: #333; }
         ::-webkit-scrollbar-thumb:hover { background: #E50914; }
 
-        /* EFECTOS DE TEXTO */
-        .text-neon { text-shadow: 0 0 10px rgba(229, 9, 20, 0.8); }
-        .text-term { text-shadow: 0 0 5px rgba(0, 255, 65, 0.5); }
-        
-        /* SERVER LIST ITEM */
-        .server-item {
-            position: relative;
-            background: rgba(255,255,255,0.02);
-            border-left: 2px solid transparent;
-            transition: all 0.2s;
-        }
+        .server-item { position: relative; background: rgba(255,255,255,0.02); border-left: 2px solid transparent; transition: all 0.2s; }
         .server-item:hover { background: rgba(255,255,255,0.05); }
-        .server-item.active {
-            background: linear-gradient(90deg, rgba(229,9,20,0.1) 0%, transparent 100%);
-            border-left-color: #E50914;
-        }
+        .server-item.active { background: linear-gradient(90deg, rgba(229,9,20,0.15) 0%, transparent 100%); border-left-color: #E50914; }
         .server-item.active .status-dot { background: #00ff41; box-shadow: 0 0 8px #00ff41; }
 
-        /* CAST SCROLL */
-        .cast-scroll {
-            display: flex;
-            overflow-x: auto;
-            gap: 1rem;
-            padding-bottom: 1rem;
-            scroll-behavior: smooth;
-        }
-        .cast-card {
-            flex: 0 0 100px;
-            transition: transform 0.3s;
-            cursor: pointer;
-        }
+        .cast-scroll { display: flex; overflow-x: auto; gap: 1rem; padding-bottom: 1rem; }
+        .cast-card { flex: 0 0 90px; cursor: pointer; transition: transform 0.2s; }
         .cast-card:hover { transform: translateY(-5px); }
-        .cast-img {
-            width: 100px; height: 100px;
-            object-fit: cover;
-            border-radius: 50%;
-            border: 2px solid #222;
-            transition: border-color 0.3s;
-        }
+        .cast-img { width: 90px; height: 90px; object-fit: cover; border-radius: 50%; border: 2px solid #222; }
         .cast-card:hover .cast-img { border-color: #E50914; }
 
-        /* FILMOGRAPHY GRID */
-        .film-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-            gap: 1rem;
-        }
-        .film-card {
-            position: relative;
-            aspect-ratio: 2/3;
-            border-radius: 8px;
-            overflow: hidden;
-            cursor: pointer;
-            transition: transform 0.2s;
-        }
+        .film-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 1rem; }
         .film-card:hover { transform: scale(1.05); z-index: 10; box-shadow: 0 0 20px rgba(229,9,20,0.5); }
 
-        /* UTILS */
+        .scanline-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(0,0,0,0.1) 50%); background-size: 100% 4px; pointer-events: none; z-index: 9999; opacity: 0.1; }
         .hidden-force { display: none !important; }
-        .full-width { width: 100% !important; }
-        .no-sidebar { width: 0% !important; padding: 0 !important; overflow: hidden; opacity: 0; }
-
-        /* MONITOR SCANLINE EFFECT */
-        .scanline-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0) 50%, rgba(0,0,0,0.1) 50%, rgba(0,0,0,0.1));
-            background-size: 100% 4px;
-            pointer-events: none;
-            z-index: 9999;
-            opacity: 0.15;
-        }
     </style>
 </head>
-<body class="selection:bg-brand selection:text-white">
+<body>
 
     <div class="scanline-overlay"></div>
 
@@ -148,37 +74,19 @@
         <div class="flex flex-col cursor-pointer group" onclick="window.location.reload()">
             <div class="flex items-center gap-2">
                 <i class="fas fa-biohazard text-brand text-2xl animate-pulse-fast"></i>
-                <span class="text-3xl font-black tracking-tighter text-white italic">
-                    JJ<span class="text-brand text-neon">MOVIES</span>
-                </span>
+                <span class="text-3xl font-black tracking-tighter text-white italic">JJ<span class="text-brand">MOVIES</span></span>
             </div>
             <div class="flex items-center gap-2 text-[10px] font-tech text-gray-500 uppercase tracking-widest pl-8 -mt-1">
-                <span>Sys.Ver 6.0</span>
-                <span class="text-brand">CAST EDITION</span>
+                <span>Sys.Ver 7.0</span> <span class="text-brand">LATINO FORCE</span>
             </div>
         </div>
-
-        <div class="hidden md:flex items-center gap-6">
-            <div class="flex flex-col items-end">
-                <div class="text-[9px] font-tech text-gray-500 uppercase">Database Status</div>
-                <div class="flex items-center gap-2">
-                    <span id="fake-updater" class="text-[10px] text-brand font-bold animate-blink">UPDATING...</span>
-                    <i class="fas fa-database text-xs text-gray-600"></i>
-                </div>
-            </div>
-            <div class="h-6 w-[1px] bg-white/10"></div>
-            <div class="flex items-center gap-2 bg-white/5 px-3 py-1 rounded border border-white/10 shadow-neon">
-                <div class="relative w-2 h-2">
-                    <span class="absolute inline-flex h-full w-full rounded-full bg-term-green opacity-75 animate-ping"></span>
-                    <span class="relative inline-flex rounded-full h-2 w-2 bg-term-green"></span>
-                </div>
-                <span class="text-[10px] font-bold font-tech text-term-green tracking-[0.2em]">SYSTEM SECURE</span>
-            </div>
+        <div class="hidden md:flex items-center gap-2 bg-white/5 px-3 py-1 rounded border border-white/10 shadow-neon">
+            <div class="w-2 h-2 rounded-full bg-term-green animate-pulse"></div>
+            <span class="text-[10px] font-bold font-tech text-term-green tracking-[0.2em]">SERVER READY</span>
         </div>
     </nav>
 
     <main class="relative z-10 w-full min-h-screen flex flex-col justify-center bg-grid pt-20 pb-20">
-        
         <div class="absolute inset-0 z-[-1] overflow-hidden fixed">
             <div id="bg-backdrop" class="absolute inset-0 bg-cover bg-center transition-all duration-1000 opacity-0 scale-110"></div>
             <div class="absolute inset-0 bg-gradient-to-r from-black via-black/95 to-transparent"></div>
@@ -186,14 +94,12 @@
         </div>
 
         <div id="hero-panel" class="container mx-auto px-6 max-w-6xl opacity-0 translate-y-10 transition-all duration-700">
-            
             <div class="flex items-center gap-3 mb-4">
                 <div class="px-2 py-0.5 border border-brand/50 bg-brand/10 text-brand text-[10px] font-bold font-tech uppercase tracking-widest rounded">Titan Core</div>
-                <div class="px-2 py-0.5 border border-white/10 bg-white/5 text-gray-400 text-[10px] font-bold font-tech uppercase tracking-widest rounded">4K HDR</div>
                 <div class="px-2 py-0.5 border border-term-green/30 bg-term-green/10 text-term-green text-[10px] font-bold font-tech uppercase tracking-widest rounded flex items-center gap-1 animate-shield-pulse"><i class="fas fa-shield-alt"></i> Safe</div>
             </div>
 
-            <h1 id="movie-title" class="text-6xl md:text-8xl font-black text-white leading-none uppercase tracking-tighter mb-4 text-shadow-glow">INITIATING...</h1>
+            <h1 id="movie-title" class="text-6xl md:text-8xl font-black text-white leading-none uppercase tracking-tighter mb-4">INITIATING...</h1>
 
             <div class="flex items-center gap-4 text-sm font-bold text-gray-400 mb-6 font-tech">
                 <span id="meta-year" class="text-white">----</span>
@@ -203,111 +109,81 @@
                 <span id="meta-duration">-- min</span>
             </div>
 
-            <div id="series-controls" class="hidden flex flex-wrap gap-4 mb-8 p-4 border border-white/5 bg-white/5 rounded-lg backdrop-blur-sm max-w-2xl">
+            <div id="series-controls" class="hidden flex flex-wrap gap-4 mb-8 p-4 border border-white/5 bg-white/5 rounded-lg max-w-2xl">
                 <div class="w-full text-[10px] text-gray-500 font-tech uppercase tracking-widest mb-1 flex justify-between">
-                    <span>Configuración de Episodio</span>
-                    <span id="ep-name-display" class="text-brand">Loading...</span>
+                    <span>Selector</span> <span id="ep-name-display" class="text-brand">Loading...</span>
                 </div>
                 <div class="relative group flex-1">
-                    <select id="season-select" class="w-full bg-black border border-white/20 text-white font-bold px-4 py-3 outline-none focus:border-brand transition-colors appearance-none font-tech text-sm uppercase"></select>
+                    <select id="season-select" class="w-full bg-black border border-white/20 text-white font-bold px-4 py-3 outline-none focus:border-brand appearance-none font-tech text-sm uppercase"></select>
                     <i class="fas fa-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-600"></i>
                 </div>
                 <div class="relative group flex-1">
-                    <select id="episode-select" class="w-full bg-black border border-white/20 text-white font-bold px-4 py-3 outline-none focus:border-brand transition-colors appearance-none font-tech text-sm uppercase"></select>
+                    <select id="episode-select" class="w-full bg-black border border-white/20 text-white font-bold px-4 py-3 outline-none focus:border-brand appearance-none font-tech text-sm uppercase"></select>
                     <i class="fas fa-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-600"></i>
                 </div>
             </div>
 
             <p id="movie-desc" class="text-gray-400 text-lg max-w-2xl leading-relaxed mb-8 border-l-2 border-brand pl-4 font-light">
-                Esperando datos de entrada. Por favor verifica el ID en la URL.
+                Esperando datos. Verifica el ID.
             </p>
 
             <button onclick="Core.start()" class="group relative px-10 py-5 bg-brand hover:bg-white text-white hover:text-brand font-black text-xl uppercase tracking-widest transition-all duration-300 shadow-neon overflow-hidden skew-x-[-10deg] mb-12">
                 <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent -translate-x-full group-hover:animate-[shimmer_1s_infinite]"></div>
-                <div class="skew-x-[10deg] flex items-center gap-3">
-                    <i class="fas fa-play text-2xl"></i>
-                    <span>EJECUTAR SISTEMA</span>
-                </div>
+                <div class="skew-x-[10deg] flex items-center gap-3"><i class="fas fa-play text-2xl"></i> <span>EJECUTAR SISTEMA</span></div>
             </button>
 
             <div id="cast-container" class="border-t border-white/10 pt-8 opacity-0 transition-opacity duration-1000">
                 <h3 class="text-sm font-bold font-tech uppercase tracking-widest text-gray-400 mb-4 flex items-center gap-2">
                     <i class="fas fa-users text-brand"></i> Reparto Principal
                 </h3>
-                <div id="cast-list" class="cast-scroll custom-scroll">
-                    </div>
+                <div id="cast-list" class="cast-scroll custom-scroll"></div>
             </div>
-
         </div>
     </main>
 
     <div id="actor-modal" class="fixed inset-0 z-[150] bg-black/95 backdrop-blur-xl hidden opacity-0 transition-all duration-500 overflow-y-auto">
         <div class="container mx-auto px-6 py-12 max-w-5xl">
-            
             <div class="flex justify-between items-start mb-8 sticky top-0 bg-black/90 p-4 border-b border-white/10 z-10 backdrop-blur">
                 <div class="flex items-center gap-6">
                     <img id="actor-profile-img" src="" class="w-20 h-20 rounded-full object-cover border-2 border-brand shadow-neon">
                     <div>
-                        <h2 id="actor-name" class="text-3xl font-black text-white uppercase tracking-tighter">Nombre Actor</h2>
-                        <p class="text-xs text-brand font-tech uppercase tracking-widest mt-1">Filmografía Seleccionada</p>
+                        <h2 id="actor-name" class="text-3xl font-black text-white uppercase tracking-tighter">Actor</h2>
+                        <p class="text-xs text-brand font-tech uppercase tracking-widest mt-1">Filmografía</p>
                     </div>
                 </div>
-                <button onclick="Core.closeActorModal()" class="w-10 h-10 rounded-full bg-white/10 hover:bg-white text-white hover:text-black flex items-center justify-center transition-all">
-                    <i class="fas fa-times text-xl"></i>
-                </button>
+                <button onclick="Core.closeActorModal()" class="w-10 h-10 rounded-full bg-white/10 hover:bg-white text-white hover:text-black flex items-center justify-center transition-all"><i class="fas fa-times text-xl"></i></button>
             </div>
-
-            <div id="actor-movies-grid" class="film-grid pb-20">
-                </div>
+            <div id="actor-movies-grid" class="film-grid pb-20"></div>
         </div>
     </div>
 
     <div id="player-overlay" class="fixed inset-0 z-[100] bg-black hidden flex flex-col md:flex-row opacity-0 transition-opacity duration-500">
-        
         <div id="video-area" class="relative w-full md:w-[75%] h-[40vh] md:h-full bg-black flex items-center justify-center border-r border-white/10 transition-all duration-500">
-            
             <div class="absolute top-0 left-0 w-full p-4 flex justify-between items-center z-20 bg-gradient-to-b from-black/90 to-transparent pointer-events-none">
-                <button onclick="Core.close()" class="pointer-events-auto w-10 h-10 rounded bg-white/5 hover:bg-brand border border-white/10 text-white flex items-center justify-center transition-all">
-                    <i class="fas fa-times"></i>
-                </button>
+                <button onclick="Core.close()" class="pointer-events-auto w-10 h-10 rounded bg-white/5 hover:bg-brand border border-white/10 text-white flex items-center justify-center transition-all"><i class="fas fa-times"></i></button>
                 <div class="pointer-events-auto flex gap-2">
-                    <button onclick="Core.toggleSidebar()" class="px-4 py-1.5 bg-brand text-white text-[10px] font-bold uppercase tracking-widest rounded border border-brand hover:bg-white hover:text-brand transition-all flex items-center gap-2">
-                        <i class="fas fa-expand"></i> <span id="toggle-text">PANTALLA COMPLETA</span>
-                    </button>
-                    <div class="px-4 py-1.5 bg-black/80 text-gray-300 text-[10px] font-bold uppercase tracking-widest rounded border border-white/10 flex items-center gap-2">
-                        <span id="playing-server-name">---</span>
-                        <div id="secure-indicator" class="hidden flex items-center gap-1 text-term-green"><i class="fas fa-lock text-[8px]"></i></div>
-                    </div>
+                    <button onclick="Core.toggleSidebar()" class="px-4 py-1.5 bg-brand text-white text-[10px] font-bold uppercase tracking-widest rounded border border-brand hover:bg-white hover:text-brand transition-all flex items-center gap-2"><i class="fas fa-expand"></i> <span id="toggle-text">Expandir</span></button>
+                    <div class="px-4 py-1.5 bg-black/80 text-gray-300 text-[10px] font-bold uppercase tracking-widest rounded border border-white/10 flex items-center gap-2"><span id="playing-server-name">---</span></div>
                 </div>
             </div>
-
+            
             <div class="relative w-full h-full">
                 <iframe id="video-frame" class="w-full h-full border-0" allowfullscreen allow="autoplay; encrypted-media; picture-in-picture"></iframe>
             </div>
 
             <div id="internal-loader" class="absolute inset-0 bg-black z-10 flex flex-col items-center justify-center hidden">
-                <div class="relative mb-4">
-                    <div class="absolute inset-0 bg-brand/20 blur-xl rounded-full animate-pulse"></div>
-                    <i class="fas fa-circle-notch fa-spin text-4xl text-brand relative z-10"></i>
-                </div>
-                <div class="text-[10px] font-tech text-brand uppercase tracking-[0.3em] animate-pulse">Estableciendo Conexión Segura...</div>
-                <div class="text-[9px] text-gray-600 mt-2 font-mono">ENCRYPTING DATA STREAM</div>
+                <div class="w-12 h-12 border-4 border-brand border-t-transparent rounded-full animate-spin mb-4"></div>
+                <div class="text-[10px] font-tech text-brand uppercase tracking-[0.3em] animate-pulse">Conectando...</div>
             </div>
         </div>
 
-        <div id="sidebar-area" class="w-full md:w-[25%] h-[60vh] md:h-full bg-[#050505] flex flex-col transition-all duration-500 overflow-hidden border-l border-white/5 shadow-[-20px_0_50px_rgba(0,0,0,0.5)]">
+        <div id="sidebar-area" class="w-full md:w-[25%] h-[60vh] md:h-full bg-[#050505] flex flex-col transition-all duration-500 overflow-hidden border-l border-white/5">
             <div class="p-4 border-b border-white/5 bg-[#080808] flex justify-between items-center">
-                <div class="flex items-center gap-2">
-                    <i class="fas fa-server text-brand"></i>
-                    <span class="text-xs font-bold font-tech uppercase tracking-widest text-white">Cambiar de Servidor</span>
-                </div>
+                <div class="flex items-center gap-2"><i class="fas fa-server text-brand"></i><span class="text-xs font-bold font-tech uppercase tracking-widest text-white">Cambiar de Servidor</span></div>
                 <span id="total-sources" class="text-[10px] text-gray-500 font-mono">0 NODES</span>
             </div>
             <div id="server-list" class="flex-1 overflow-y-auto custom-scroll relative bg-grid"></div>
-            <div class="p-3 bg-black border-t border-white/5 text-[8px] text-center text-gray-600 font-mono uppercase flex justify-between px-6">
-                <span>JJMovies v6.0</span>
-                <span class="text-term-green flex items-center gap-1"><i class="fas fa-shield-alt"></i> Protected</span>
-            </div>
+            <div class="p-3 bg-black border-t border-white/5 text-[8px] text-center text-gray-600 font-mono uppercase flex justify-between px-6"><span>JJMovies v7.0</span><span class="text-term-green flex items-center gap-1"><i class="fas fa-shield-alt"></i> Protected</span></div>
         </div>
     </div>
 
@@ -316,17 +192,19 @@
         <h2 class="text-2xl font-bold text-white tracking-widest mb-4">ACCESSING MAINFRAME</h2>
         <div class="w-80 h-32 bg-[#0a0a0a] border border-brand/30 rounded p-4 text-[10px] text-term-green overflow-hidden relative shadow-term">
             <div class="absolute inset-0 bg-scanline opacity-10 pointer-events-none"></div>
-            <div id="terminal-logs" class="flex flex-col gap-1">
-                <span>> Initializing protocol v6.0...</span>
-                <span>> Loading Cast Database... <span class="text-brand">OK</span></span>
-            </div>
+            <div id="terminal-logs" class="flex flex-col gap-1"></div>
         </div>
     </div>
 
     <script>
         const CFG = {
             API: '936410eebae74f9895643e085cc4a740', 
-            PROXY: 'https://api.codetabs.com/v1/proxy/?quest=',
+            // PROXY LIST (El Rompehielos)
+            PROXIES: [
+                'https://api.codetabs.com/v1/proxy/?quest=',
+                'https://corsproxy.io/?',
+                'https://api.allorigins.win/raw?url='
+            ],
             BASE_TMDB: 'https://api.themoviedb.org/3'
         };
 
@@ -369,11 +247,7 @@
                         Core.renderSelectors();
                     }
                     Core.updateMeta(meta);
-                    
-                    // Render Cast
-                    if(data.credits && data.credits.cast) {
-                        Core.renderCast(data.credits.cast);
-                    }
+                    if(data.credits && data.credits.cast) Core.renderCast(data.credits.cast);
 
                 } catch(e) { console.error(e); }
             },
@@ -383,7 +257,6 @@
                 document.getElementById('movie-desc').innerText = data.overview || "No data.";
                 document.getElementById('meta-year').innerText = (data.release_date || data.first_air_date || '----').split('-')[0];
                 document.getElementById('meta-rating').innerHTML = `<i class="fas fa-star text-yellow-500 mr-1"></i> ${data.vote_average?.toFixed(1) || '0.0'}`;
-                
                 if(data.backdrop_path) {
                     document.getElementById('bg-backdrop').style.backgroundImage = `url('https://image.tmdb.org/t/p/original${data.backdrop_path}')`;
                     document.getElementById('bg-backdrop').classList.remove('opacity-0');
@@ -399,35 +272,26 @@
                 const s = document.getElementById('season-select');
                 const e = document.getElementById('episode-select');
                 s.innerHTML = ''; e.innerHTML = '';
-                for(let i=1; i<=Core.state.totalSeasons; i++) s.innerHTML += `<option value="${i}" ${i==Core.state.season?'selected':''}>TEMPORADA ${i}</option>`;
-                for(let i=1; i<=50; i++) e.innerHTML += `<option value="${i}" ${i==Core.state.episode?'selected':''}>EPISODIO ${i}</option>`;
+                for(let i=1; i<=Core.state.totalSeasons; i++) s.innerHTML += `<option class="bg-black" value="${i}" ${i==Core.state.season?'selected':''}>T ${i}</option>`;
+                for(let i=1; i<=50; i++) e.innerHTML += `<option class="bg-black" value="${i}" ${i==Core.state.episode?'selected':''}>E ${i}</option>`;
                 
                 const reload = () => window.location.href = `?id=${Core.state.id}&season=${s.value}&episode=${e.value}`;
                 s.onchange = () => { e.value = 1; reload(); };
                 e.onchange = reload;
             },
 
-            // --- CAST SYSTEM ---
             renderCast: (cast) => {
                 const container = document.getElementById('cast-list');
                 const wrapper = document.getElementById('cast-container');
                 container.innerHTML = '';
-                
                 if(!cast || cast.length === 0) return;
-                
                 wrapper.classList.remove('opacity-0');
-
                 cast.slice(0, 15).forEach(actor => {
                     if(!actor.profile_path) return;
-                    
                     const div = document.createElement('div');
                     div.className = 'cast-card text-center';
                     div.onclick = () => Core.openActorProfile(actor.id, actor.name, actor.profile_path);
-                    div.innerHTML = `
-                        <img src="https://image.tmdb.org/t/p/w200${actor.profile_path}" class="cast-img mb-2">
-                        <p class="text-[10px] font-bold text-gray-300 leading-tight">${actor.name}</p>
-                        <p class="text-[9px] text-gray-600 truncate max-w-[100px]">${actor.character}</p>
-                    `;
+                    div.innerHTML = `<img src="https://image.tmdb.org/t/p/w200${actor.profile_path}" class="cast-img mb-2"><p class="text-[10px] font-bold text-gray-300 leading-tight">${actor.name}</p>`;
                     container.appendChild(div);
                 });
             },
@@ -435,40 +299,25 @@
             openActorProfile: async (personId, name, imgPath) => {
                 const modal = document.getElementById('actor-modal');
                 const grid = document.getElementById('actor-movies-grid');
-                
                 document.getElementById('actor-name').innerText = name;
                 document.getElementById('actor-profile-img').src = `https://image.tmdb.org/t/p/w200${imgPath}`;
                 grid.innerHTML = '<div class="col-span-full text-center text-gray-500 py-10">Cargando filmografía...</div>';
-                
                 modal.classList.remove('hidden');
                 setTimeout(() => modal.classList.remove('opacity-0'), 10);
                 document.body.style.overflow = 'hidden';
-
-                // Fetch Credits
                 try {
                     const res = await fetch(`${CFG.BASE_TMDB}/person/${personId}/combined_credits?api_key=${CFG.API}&language=es-MX`);
                     const data = await res.json();
-                    
-                    // Filter popular & poster exists
                     const cast = (data.cast || []).filter(c => c.poster_path && c.vote_count > 10).sort((a,b) => b.popularity - a.popularity);
-                    
                     grid.innerHTML = '';
                     cast.forEach(item => {
                         const card = document.createElement('div');
                         card.className = 'film-card group';
                         card.onclick = () => window.location.href = `?id=${item.id}${item.media_type==='tv'?'&season=1&episode=1':''}`;
-                        card.innerHTML = `
-                            <img src="https://image.tmdb.org/t/p/w300${item.poster_path}" class="w-full h-full object-cover transition-transform group-hover:scale-110">
-                            <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-2">
-                                <span class="text-[10px] font-bold text-white leading-tight">${item.title || item.name}</span>
-                                <span class="text-[9px] text-brand uppercase">${item.character || 'Actor'}</span>
-                            </div>
-                        `;
+                        card.innerHTML = `<img src="https://image.tmdb.org/t/p/w300${item.poster_path}" class="w-full h-full object-cover transition-transform group-hover:scale-110"><div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-2"><span class="text-[10px] font-bold text-white leading-tight">${item.title || item.name}</span></div>`;
                         grid.appendChild(card);
                     });
-                } catch(e) {
-                    grid.innerHTML = '<div class="col-span-full text-center text-red-500">Error cargando datos.</div>';
-                }
+                } catch(e) { grid.innerHTML = '<div class="col-span-full text-center text-red-500">Error.</div>'; }
             },
 
             closeActorModal: () => {
@@ -478,53 +327,50 @@
                 document.body.style.overflow = '';
             },
 
-            // --- ENGINE START ---
             start: async () => {
                 const l = document.getElementById('global-loader');
                 const log = document.getElementById('terminal-logs');
                 l.classList.remove('hidden');
-                
                 const addLog = (txt) => { log.innerHTML += `<span>> ${txt}</span>`; log.scrollTop = log.scrollHeight; };
 
                 Core.state.sources = { 'LAT': [], 'ESP': [], 'ENG': [] };
 
-                addLog("Scanning Embed69 Network...");
-                if(Core.state.imdb) await Scraper.embed69();
+                // LOGICA ROMPEHIELOS (Multi-Proxy)
+                addLog("Attempting connection to Embed69...");
+                if(Core.state.imdb) {
+                    await Scraper.embed69();
+                    // Si falla el primero, no pasa nada, ya intentará el segundo en la funcion interna o se quedará con lo que tenga
+                    if(Core.state.type === 'movie') await Scraper.verHD();
+                }
                 
-                addLog("Checking Backup Nodes...");
-                Core.addSource('ENG', { name: "VidSrc (Backup)", url: Scraper.getVidSrc(), clean: false, forceSandbox: true });
-                Core.addSource('ENG', { name: "UEmbed (Backup)", url: Scraper.getUEmbed(), clean: false, forceSandbox: true });
+                addLog("Loading backup nodes...");
+                Core.addSource('ENG', { name: "VidSrc (Backup)", url: Scraper.getVidSrc(), clean: false });
+                Core.addSource('ENG', { name: "UEmbed (Backup)", url: Scraper.getUEmbed(), clean: false });
 
-                addLog("Encryption Complete.");
+                addLog("Done.");
                 setTimeout(() => {
                     l.classList.add('hidden');
                     Core.openPlayer();
                     Core.renderList();
-                    
                     if(Core.state.sources['LAT'].length > 0) Core.play(0, 'LAT');
                     else if(Core.state.sources['ESP'].length > 0) Core.play(0, 'ESP');
                     else Core.play(0, 'ENG');
-
                 }, 800);
             },
 
             addSource: (lang, src) => {
-                if(!Core.state.sources[lang].some(s => s.url === src.url)) {
-                    Core.state.sources[lang].push(src);
-                }
+                if(!Core.state.sources[lang].some(s => s.url === src.url)) Core.state.sources[lang].push(src);
             },
 
             renderList: () => {
                 const c = document.getElementById('server-list');
                 c.innerHTML = '';
                 let total = 0;
-                
                 const sections = [
                     { id: 'LAT', label: 'LATINO', flag: 'https://flagcdn.com/w40/mx.png' },
                     { id: 'ESP', label: 'CASTELLANO', flag: 'https://flagcdn.com/w40/es.png' },
                     { id: 'ENG', label: 'ENGLISH / SUB', flag: 'https://flagcdn.com/w40/us.png' }
                 ];
-
                 sections.forEach(sec => {
                     const list = Core.state.sources[sec.id];
                     if(list.length > 0) {
@@ -533,18 +379,13 @@
                         header.className = 'sticky top-0 bg-[#050505]/95 backdrop-blur z-10 p-3 border-y border-white/5 flex items-center gap-3';
                         header.innerHTML = `<img src="${sec.flag}" class="w-5 h-3 opacity-80 rounded"><span class="text-[10px] font-bold font-tech text-gray-300 tracking-widest">${sec.label}</span>`;
                         c.appendChild(header);
-
                         list.forEach((src, idx) => {
                             const item = document.createElement('div');
                             item.className = 'server-item p-4 border-b border-white/5 cursor-pointer group flex justify-between items-center';
                             item.onclick = () => Core.play(idx, sec.id);
                             item.dataset.gid = `${sec.id}-${idx}`;
                             const shield = src.clean ? `<i class="fas fa-shield-alt text-term-green text-xs"></i>` : `<i class="fas fa-lock text-gray-600 text-[10px]"></i>`;
-                            item.innerHTML = `
-                                <div class="flex items-center gap-3">
-                                    <div class="status-dot w-1.5 h-1.5 rounded-full bg-gray-700 transition-all"></div>
-                                    <div class="flex flex-col"><span class="text-xs font-bold text-gray-300 group-hover:text-white transition-colors">${src.name}</span></div>
-                                </div>${shield}`;
+                            item.innerHTML = `<div class="flex items-center gap-3"><div class="status-dot w-1.5 h-1.5 rounded-full bg-gray-700 transition-all"></div><div class="flex flex-col"><span class="text-xs font-bold text-gray-300 group-hover:text-white transition-colors">${src.name}</span></div></div>${shield}`;
                             c.appendChild(item);
                         });
                     }
@@ -556,30 +397,21 @@
                 const src = Core.state.sources[lang][idx];
                 const frame = document.getElementById('video-frame');
                 const loader = document.getElementById('internal-loader');
-                
                 document.querySelectorAll('.server-item').forEach(el => el.classList.remove('active'));
                 const activeEl = document.querySelector(`.server-item[data-gid="${lang}-${idx}"]`);
                 if(activeEl) activeEl.classList.add('active');
-
                 document.getElementById('playing-server-name').innerText = `${lang} • ${src.name}`;
                 if(src.clean) document.getElementById('secure-indicator').classList.remove('hidden');
                 else document.getElementById('secure-indicator').classList.add('hidden');
-
                 frame.classList.add('hidden');
                 loader.classList.remove('hidden');
                 
-                if(src.forceSandbox || !src.clean) {
-                    frame.setAttribute('sandbox', 'allow-forms allow-pointer-lock allow-same-origin allow-scripts allow-top-navigation-by-user-activation'); 
-                } else {
-                    frame.removeAttribute('sandbox'); 
-                }
-
+                // SIN SANDBOX PARA EVITAR ERRORES, PERO PRIORIZANDO UNLIMPLAY (Clean)
+                frame.removeAttribute('sandbox'); 
+                
                 setTimeout(() => {
                     frame.src = src.url;
-                    frame.onload = () => {
-                        loader.classList.add('hidden');
-                        frame.classList.remove('hidden');
-                    };
+                    frame.onload = () => { loader.classList.add('hidden'); frame.classList.remove('hidden'); };
                 }, 300);
             },
 
@@ -592,10 +424,7 @@
             close: () => {
                 const ui = document.getElementById('player-overlay');
                 ui.classList.add('opacity-0');
-                setTimeout(() => {
-                    ui.classList.add('hidden');
-                    document.getElementById('video-frame').src = 'about:blank';
-                }, 500);
+                setTimeout(() => { ui.classList.add('hidden'); document.getElementById('video-frame').src = 'about:blank'; }, 500);
             },
 
             toggleSidebar: () => {
@@ -633,12 +462,27 @@
                 if(type==='tv') u+= `&season=${season}&episode=${episode}`;
                 return u;
             },
+            
+            // FETCH CON ROTACIÓN DE PROXIES (ROMPEHIELOS)
+            fetchSafe: async (url) => {
+                for (let proxy of CFG.PROXIES) {
+                    try {
+                        const res = await fetch(proxy + encodeURIComponent(url));
+                        if(res.ok) return await res.text();
+                    } catch(e) { console.log("Proxy failed, trying next..."); }
+                }
+                return null; // Falló todo
+            },
+
             embed69: async () => {
                 try {
                     const { imdb, type, season, episode } = Core.state;
                     const slug = type==='tv' ? `${imdb}-${season}x${String(episode).padStart(2,'0')}` : imdb;
-                    const res = await fetch(CFG.PROXY + encodeURIComponent(`https://embed69.org/f/${slug}/`));
-                    const html = await res.text();
+                    
+                    // Usamos el fetch inteligente
+                    const html = await Scraper.fetchSafe(`https://embed69.org/f/${slug}/`);
+                    if(!html) return;
+
                     const match = html.match(/let dataLink\s*=\s*(\[[\s\S]*?\]);/);
                     if(match) {
                         const data = JSON.parse(match[1]);
@@ -673,10 +517,22 @@
                                             clean = true;
                                         }
                                     }
-                                    if(!clean) Core.addSource(lang, { name: name, url: url, clean: false, forceSandbox: false });
+                                    // Original backup (Sin sandbox)
+                                    if(!clean) Core.addSource(lang, { name: name, url: url, clean: false });
                                 }
                             });
                         });
+                    }
+                } catch(e) {}
+            },
+
+            verHD: async () => {
+                try {
+                    const html = await Scraper.fetchSafe(`https://verhdlink.cam/movie/${Core.state.imdb}`);
+                    if(!html) return;
+                    const matches = html.matchAll(/dropload\.tv\/e\/([a-zA-Z0-9_-]+)/g);
+                    for(const m of matches) {
+                        Core.addSource('LAT', { name: "Thunderbolt (Ultra)", url: `https://unlimplay.com/embed2/?host=dropload&id=${m[1]}`, clean: true });
                     }
                 } catch(e) {}
             }
