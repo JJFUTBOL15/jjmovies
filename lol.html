@@ -5,11 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="referrer" content="no-referrer">
     <meta name="theme-color" content="#000000">
-    <title>JJMOVIES | TITAN SYSTEM V3.0</title>
+    <title>JJMOVIES | TITAN V4 - MILITARY GRADE</title>
 
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@300;400;500;600;700&family=Rajdhani:wght@300;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@300;400;500;600;700&family=Rajdhani:wght@300;500;700;800&display=swap" rel="stylesheet">
 
     <script>
         tailwind.config = {
@@ -19,7 +19,7 @@
                     colors: {
                         brand: { DEFAULT: '#E50914', dark: '#8a040b', neon: '#ff1f26' },
                         sys: { black: '#020202', panel: '#0a0a0a', border: '#1a1a1a', text: '#888' },
-                        term: { green: '#00ff41', red: '#ff0033', blue: '#00ccff' }
+                        term: { green: '#00ff41', red: '#ff0033', blue: '#00ccff', amber: '#ffb300' }
                     },
                     fontFamily: {
                         sans: ['Rajdhani', 'sans-serif'],
@@ -31,11 +31,13 @@
                         'scanline': 'scanline 8s linear infinite',
                         'matrix': 'matrix 20s linear infinite',
                         'blink': 'blink 1s step-end infinite',
+                        'shield-pulse': 'shieldPulse 3s infinite',
                     },
                     keyframes: {
                         flash: { '0%, 100%': { opacity: '1' }, '50%': { opacity: '0.5' } },
                         scanline: { '0%': { transform: 'translateY(-100%)' }, '100%': { transform: 'translateY(100%)' } },
-                        blink: { '0%, 100%': { opacity: '1' }, '50%': { opacity: '0' } }
+                        blink: { '0%, 100%': { opacity: '1' }, '50%': { opacity: '0' } },
+                        shieldPulse: { '0%, 100%': { boxShadow: '0 0 10px rgba(0, 255, 65, 0.2)' }, '50%': { boxShadow: '0 0 25px rgba(0, 255, 65, 0.6)' } }
                     },
                     boxShadow: {
                         'neon': '0 0 20px rgba(229, 9, 20, 0.6)',
@@ -59,7 +61,7 @@
                               linear-gradient(to bottom, var(--grid-color) 1px, transparent 1px);
         }
 
-        /* SCROLLBAR HACKER */
+        /* SCROLLBAR TÁCTICO */
         ::-webkit-scrollbar { width: 4px; height: 4px; }
         ::-webkit-scrollbar-track { background: #000; }
         ::-webkit-scrollbar-thumb { background: #333; border: 1px solid #000; }
@@ -97,13 +99,22 @@
             z-index: 9999;
             opacity: 0.15;
         }
+        
+        /* SHIELD OVERLAY */
+        .click-shield {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 20;
+            cursor: pointer;
+            background: transparent;
+        }
     </style>
 </head>
 <body class="selection:bg-brand selection:text-white">
 
     <div class="scanline-overlay"></div>
 
-    <nav class="fixed top-0 w-full z-50 h-16 border-b border-white/5 bg-black/90 backdrop-blur-md flex justify-between items-center px-6">
+    <nav class="fixed top-0 w-full z-50 h-16 border-b border-white/5 bg-black/95 backdrop-blur-md flex justify-between items-center px-6">
         <div class="flex flex-col cursor-pointer group" onclick="window.location.reload()">
             <div class="flex items-center gap-2">
                 <i class="fas fa-biohazard text-brand text-2xl animate-pulse-fast"></i>
@@ -112,8 +123,8 @@
                 </span>
             </div>
             <div class="flex items-center gap-2 text-[10px] font-tech text-gray-500 uppercase tracking-widest pl-8 -mt-1">
-                <span>Sys.Ver 3.0</span>
-                <span class="text-brand">TITAN CORE</span>
+                <span>Sys.Ver 4.0</span>
+                <span class="text-brand">MILITARY GRADE</span>
             </div>
         </div>
 
@@ -121,7 +132,7 @@
             <div class="flex flex-col items-end">
                 <div class="text-[9px] font-tech text-gray-500 uppercase">Database Status</div>
                 <div class="flex items-center gap-2">
-                    <span id="fake-updater" class="text-[10px] text-brand font-bold animate-blink">UPDATING SOURCES...</span>
+                    <span id="fake-updater" class="text-[10px] text-brand font-bold animate-blink">UPDATING PROTOCOLS...</span>
                     <i class="fas fa-database text-xs text-gray-600"></i>
                 </div>
             </div>
@@ -133,7 +144,7 @@
                     <span class="absolute inline-flex h-full w-full rounded-full bg-term-green opacity-75 animate-ping"></span>
                     <span class="relative inline-flex rounded-full h-2 w-2 bg-term-green"></span>
                 </div>
-                <span class="text-[10px] font-bold font-tech text-term-green tracking-[0.2em]">SERVER READY</span>
+                <span class="text-[10px] font-bold font-tech text-term-green tracking-[0.2em]">SYSTEM SECURE</span>
             </div>
         </div>
     </nav>
@@ -150,13 +161,13 @@
             
             <div class="flex items-center gap-3 mb-4">
                 <div class="px-2 py-0.5 border border-brand/50 bg-brand/10 text-brand text-[10px] font-bold font-tech uppercase tracking-widest rounded">
-                    Ultra Premium
+                    Titan Core
                 </div>
                 <div class="px-2 py-0.5 border border-white/10 bg-white/5 text-gray-400 text-[10px] font-bold font-tech uppercase tracking-widest rounded">
                     4K HDR
                 </div>
-                <div class="px-2 py-0.5 border border-term-green/30 bg-term-green/10 text-term-green text-[10px] font-bold font-tech uppercase tracking-widest rounded flex items-center gap-1">
-                    <i class="fas fa-shield-alt"></i> Secure
+                <div class="px-2 py-0.5 border border-term-green/30 bg-term-green/10 text-term-green text-[10px] font-bold font-tech uppercase tracking-widest rounded flex items-center gap-1 animate-shield-pulse">
+                    <i class="fas fa-shield-alt"></i> Ad-Block Active
                 </div>
             </div>
 
@@ -174,7 +185,7 @@
 
             <div id="series-controls" class="hidden flex flex-wrap gap-4 mb-8 p-4 border border-white/5 bg-white/5 rounded-lg backdrop-blur-sm max-w-2xl">
                 <div class="w-full text-[10px] text-gray-500 font-tech uppercase tracking-widest mb-1 flex justify-between">
-                    <span>Selector de Episodios</span>
+                    <span>Configuración de Episodio</span>
                     <span id="ep-name-display" class="text-brand">Loading...</span>
                 </div>
                 
@@ -197,7 +208,7 @@
                 <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent -translate-x-full group-hover:animate-[shimmer_1s_infinite]"></div>
                 <div class="skew-x-[10deg] flex items-center gap-3">
                     <i class="fas fa-play text-2xl"></i>
-                    <span>INICIAR SISTEMA</span>
+                    <span>EJECUTAR SISTEMA</span>
                 </div>
             </button>
 
@@ -220,21 +231,39 @@
                     
                     <div class="px-4 py-1.5 bg-black/80 text-gray-300 text-[10px] font-bold uppercase tracking-widest rounded border border-white/10 flex items-center gap-2">
                         <span id="playing-server-name">---</span>
-                        <span class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
+                        <div id="secure-indicator" class="hidden flex items-center gap-1 text-term-green">
+                            <i class="fas fa-lock text-[8px]"></i>
+                        </div>
                     </div>
                 </div>
             </div>
 
             <div class="relative w-full h-full">
+                <div id="click-shield" class="hidden click-shield" onclick="Core.removeShield()"></div>
+                
                 <iframe id="video-frame" class="w-full h-full border-0" 
                     allowfullscreen 
                     allow="autoplay; encrypted-media; picture-in-picture">
                 </iframe>
+
+                <div id="sandbox-alert" class="hidden absolute bottom-24 left-1/2 -translate-x-1/2 bg-red-900/90 border border-red-500 text-white px-6 py-3 rounded shadow-lg z-30 flex flex-col items-center gap-2 backdrop-blur-md">
+                    <div class="flex items-center gap-2 font-bold uppercase text-xs tracking-widest">
+                        <i class="fas fa-exclamation-triangle text-yellow-400"></i> Bloqueo Detectado
+                    </div>
+                    <p class="text-[10px] text-gray-300 text-center max-w-xs">El servidor detectó el bloqueador de anuncios y no reproduce el video.</p>
+                    <button onclick="Core.disableSandbox()" class="mt-1 bg-white text-red-900 px-4 py-1.5 text-xs font-black uppercase tracking-widest rounded hover:bg-gray-200 w-full">
+                        DESACTIVAR ESCUDO Y RECARGAR
+                    </button>
+                </div>
             </div>
 
             <div id="internal-loader" class="absolute inset-0 bg-black z-10 flex flex-col items-center justify-center hidden">
-                <i class="fas fa-circle-notch fa-spin text-4xl text-brand mb-4"></i>
+                <div class="relative mb-4">
+                    <div class="absolute inset-0 bg-brand/20 blur-xl rounded-full animate-pulse"></div>
+                    <i class="fas fa-circle-notch fa-spin text-4xl text-brand relative z-10"></i>
+                </div>
                 <div class="text-[10px] font-tech text-brand uppercase tracking-[0.3em] animate-pulse">Estableciendo Conexión Segura...</div>
+                <div class="text-[9px] text-gray-600 mt-2 font-mono">ENCRYPTING DATA STREAM</div>
             </div>
 
         </div>
@@ -244,16 +273,17 @@
             <div class="p-4 border-b border-white/5 bg-[#080808] flex justify-between items-center">
                 <div class="flex items-center gap-2">
                     <i class="fas fa-server text-brand"></i>
-                    <span class="text-xs font-bold font-tech uppercase tracking-widest text-white">Lista de Servidores</span>
+                    <span class="text-xs font-bold font-tech uppercase tracking-widest text-white">Cambiar de Servidor</span>
                 </div>
-                <span id="total-sources" class="text-[10px] text-gray-500 font-mono">0 FOUND</span>
+                <span id="total-sources" class="text-[10px] text-gray-500 font-mono">0 NODES</span>
             </div>
 
             <div id="server-list" class="flex-1 overflow-y-auto custom-scroll relative bg-grid">
                 </div>
 
-            <div class="p-3 bg-black border-t border-white/5 text-[8px] text-center text-gray-600 font-mono uppercase">
-                Secure Connection • JJMovies Node
+            <div class="p-3 bg-black border-t border-white/5 text-[8px] text-center text-gray-600 font-mono uppercase flex justify-between px-6">
+                <span>JJMovies v3.0</span>
+                <span class="text-term-green flex items-center gap-1"><i class="fas fa-shield-alt"></i> Protected</span>
             </div>
         </div>
 
@@ -263,10 +293,10 @@
         <i class="fas fa-fingerprint text-6xl text-brand mb-6 animate-pulse"></i>
         <h2 class="text-2xl font-bold text-white tracking-widest mb-4">ACCESSING MAINFRAME</h2>
         
-        <div class="w-80 h-32 bg-[#0a0a0a] border border-brand/30 rounded p-4 text-[10px] text-term-green overflow-hidden relative">
+        <div class="w-80 h-32 bg-[#0a0a0a] border border-brand/30 rounded p-4 text-[10px] text-term-green overflow-hidden relative shadow-term">
             <div class="absolute inset-0 bg-scanline opacity-10 pointer-events-none"></div>
             <div id="terminal-logs" class="flex flex-col gap-1">
-                <span>> Initializing protocol v3.0...</span>
+                <span>> Initializing protocol v4.0...</span>
                 <span>> Bypassing region lock... <span class="text-brand">OK</span></span>
             </div>
         </div>
@@ -274,7 +304,7 @@
 
     <script>
         const CFG = {
-            API: '936410eebae74f9895643e085cc4a740', // Tu API
+            API: '936410eebae74f9895643e085cc4a740', 
             PROXY: 'https://api.codetabs.com/v1/proxy/?quest='
         };
 
@@ -366,8 +396,9 @@
                 if(Core.state.imdb) await Scraper.embed69();
                 
                 addLog("Checking VidSrc Backup...");
-                Core.addSource('ENG', { name: "VidSrc (Backup)", url: Scraper.getVidSrc(), clean: false });
-                Core.addSource('ENG', { name: "UEmbed (Backup)", url: Scraper.getUEmbed(), clean: false });
+                // Aquí aplicamos el "Military Block" por defecto
+                Core.addSource('ENG', { name: "VidSrc (Backup)", url: Scraper.getVidSrc(), clean: false, forceSandbox: true });
+                Core.addSource('ENG', { name: "UEmbed (Backup)", url: Scraper.getUEmbed(), clean: false, forceSandbox: true });
 
                 addLog("Decryption Complete.");
                 setTimeout(() => {
@@ -395,9 +426,9 @@
                 let total = 0;
                 
                 const sections = [
-                    { id: 'LAT', label: 'LATINO', flag: 'https://flagcdn.com/w40/mx.png', color: 'text-yellow-500' },
-                    { id: 'ESP', label: 'CASTELLANO', flag: 'https://flagcdn.com/w40/es.png', color: 'text-red-500' },
-                    { id: 'ENG', label: 'ENGLISH / SUB', flag: 'https://flagcdn.com/w40/us.png', color: 'text-blue-500' }
+                    { id: 'LAT', label: 'LATINO', flag: 'https://flagcdn.com/w40/mx.png' },
+                    { id: 'ESP', label: 'CASTELLANO', flag: 'https://flagcdn.com/w40/es.png' },
+                    { id: 'ENG', label: 'ENGLISH / SUB', flag: 'https://flagcdn.com/w40/us.png' }
                 ];
 
                 sections.forEach(sec => {
@@ -424,7 +455,7 @@
 
                             const shield = src.clean 
                                 ? `<i class="fas fa-shield-alt text-term-green text-xs" title="Limpio"></i>` 
-                                : `<i class="fas fa-external-link-alt text-gray-600 text-[10px]" title="Ads"></i>`;
+                                : `<i class="fas fa-lock text-gray-600 text-[10px]" title="Sandbox Activo"></i>`;
 
                             item.innerHTML = `
                                 <div class="flex items-center gap-3">
@@ -448,20 +479,37 @@
                 const src = Core.state.sources[lang][idx];
                 const frame = document.getElementById('video-frame');
                 const loader = document.getElementById('internal-loader');
+                const alertBox = document.getElementById('sandbox-alert');
                 
-                // Active UI
+                // UI States
                 document.querySelectorAll('.server-item').forEach(el => el.classList.remove('active'));
                 const activeEl = document.querySelector(`.server-item[data-gid="${lang}-${idx}"]`);
                 if(activeEl) activeEl.classList.add('active');
 
                 document.getElementById('playing-server-name').innerText = `${lang} • ${src.name}`;
+                if(src.clean) document.getElementById('secure-indicator').classList.remove('hidden');
+                else document.getElementById('secure-indicator').classList.add('hidden');
 
-                // Load
+                // Reset
                 frame.classList.add('hidden');
+                alertBox.classList.add('hidden');
                 loader.classList.remove('hidden');
                 
-                // NO SANDBOX = NO ERROR. 
-                // Usamos el link tal cual. Si es limpio (Unlimplay) perfecto. Si no, tendrá ads pero funcionará.
+                // LOGICA MILITAR (SANDBOX)
+                // Si el servidor requiere fuerza bruta (forceSandbox) o NO es limpio, le aplicamos el candado.
+                if(src.forceSandbox || !src.clean) {
+                    frame.setAttribute('sandbox', 'allow-forms allow-pointer-lock allow-same-origin allow-scripts allow-top-navigation-by-user-activation'); // SIN allow-popups
+                    
+                    // Preparamos la alerta por si falla
+                    setTimeout(() => {
+                        if(!frame.classList.contains('hidden')) {
+                             alertBox.classList.remove('hidden');
+                        }
+                    }, 5000); // Aparece a los 5s si el usuario sigue ahí (posiblemente viendo pantalla negra)
+                } else {
+                    frame.removeAttribute('sandbox'); // Servidores limpios van sin restricciones
+                }
+
                 setTimeout(() => {
                     frame.src = src.url;
                     frame.onload = () => {
@@ -469,6 +517,20 @@
                         frame.classList.remove('hidden');
                     };
                 }, 300);
+            },
+
+            disableSandbox: () => {
+                const frame = document.getElementById('video-frame');
+                const currentUrl = frame.src;
+                const loader = document.getElementById('internal-loader');
+                
+                document.getElementById('sandbox-alert').classList.add('hidden');
+                frame.classList.add('hidden');
+                loader.classList.remove('hidden');
+                
+                // Quitamos el candado y recargamos
+                frame.removeAttribute('sandbox');
+                frame.src = currentUrl;
             },
 
             openPlayer: () => {
@@ -504,7 +566,7 @@
                     v.classList.add('full-width');
                     s.classList.remove('w-[25%]');
                     s.classList.add('no-sidebar');
-                    txt.innerText = "Lista";
+                    txt.innerText = "Cambiar de Servidor";
                 }
             }
         };
@@ -554,7 +616,7 @@
                                     let clean = false;
                                     let name = embed.servername;
 
-                                    // UNLIMPLAY CONVERSION (PRIORIDAD ALTA)
+                                    // UNLIMPLAY CONVERSION
                                     if(['voe','streamwish','dood','vidhide','filemoon'].some(h => host.includes(h))) {
                                         const idMatch = url.match(/\/([a-zA-Z0-9]+)$/) || url.match(/\/e\/([a-zA-Z0-9]+)/);
                                         if(idMatch) {
@@ -563,7 +625,6 @@
                                             if(host.includes('dood')) hCode = 'doodstream';
                                             if(host.includes('hide')) hCode = 'vidhide';
                                             
-                                            // Agregar Versión Limpia PRIMERO
                                             Core.addSource(lang, {
                                                 name: `${name} (Limpio)`,
                                                 url: `https://unlimplay.com/embed2/?host=${hCode}&id=${idMatch[1]}`,
@@ -573,9 +634,8 @@
                                         }
                                     }
                                     
-                                    // Agregar original (Backup) si no se limpió, o al final
                                     if(!clean) {
-                                        Core.addSource(lang, { name: name, url: url, clean: false });
+                                        Core.addSource(lang, { name: name, url: url, clean: false, forceSandbox: false });
                                     }
                                 }
                             });
