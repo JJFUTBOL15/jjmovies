@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="referrer" content="no-referrer">
     <meta name="theme-color" content="#000000">
-    <title>JJMOVIES | TITAN V4 - MILITARY GRADE</title>
+    <title>JJMOVIES | TITAN V5 - SILENT</title>
 
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
@@ -123,8 +123,8 @@
                 </span>
             </div>
             <div class="flex items-center gap-2 text-[10px] font-tech text-gray-500 uppercase tracking-widest pl-8 -mt-1">
-                <span>Sys.Ver 4.0</span>
-                <span class="text-brand">MILITARY GRADE</span>
+                <span>Sys.Ver 5.0</span>
+                <span class="text-brand">SILENT MODE</span>
             </div>
         </div>
 
@@ -245,17 +245,7 @@
                     allowfullscreen 
                     allow="autoplay; encrypted-media; picture-in-picture">
                 </iframe>
-
-                <div id="sandbox-alert" class="hidden absolute bottom-24 left-1/2 -translate-x-1/2 bg-red-900/90 border border-red-500 text-white px-6 py-3 rounded shadow-lg z-30 flex flex-col items-center gap-2 backdrop-blur-md">
-                    <div class="flex items-center gap-2 font-bold uppercase text-xs tracking-widest">
-                        <i class="fas fa-exclamation-triangle text-yellow-400"></i> Bloqueo Detectado
-                    </div>
-                    <p class="text-[10px] text-gray-300 text-center max-w-xs">El servidor detectó el bloqueador de anuncios y no reproduce el video.</p>
-                    <button onclick="Core.disableSandbox()" class="mt-1 bg-white text-red-900 px-4 py-1.5 text-xs font-black uppercase tracking-widest rounded hover:bg-gray-200 w-full">
-                        DESACTIVAR ESCUDO Y RECARGAR
-                    </button>
                 </div>
-            </div>
 
             <div id="internal-loader" class="absolute inset-0 bg-black z-10 flex flex-col items-center justify-center hidden">
                 <div class="relative mb-4">
@@ -282,7 +272,7 @@
                 </div>
 
             <div class="p-3 bg-black border-t border-white/5 text-[8px] text-center text-gray-600 font-mono uppercase flex justify-between px-6">
-                <span>JJMovies v3.0</span>
+                <span>JJMovies v5.0</span>
                 <span class="text-term-green flex items-center gap-1"><i class="fas fa-shield-alt"></i> Protected</span>
             </div>
         </div>
@@ -296,7 +286,7 @@
         <div class="w-80 h-32 bg-[#0a0a0a] border border-brand/30 rounded p-4 text-[10px] text-term-green overflow-hidden relative shadow-term">
             <div class="absolute inset-0 bg-scanline opacity-10 pointer-events-none"></div>
             <div id="terminal-logs" class="flex flex-col gap-1">
-                <span>> Initializing protocol v4.0...</span>
+                <span>> Initializing protocol v5.0...</span>
                 <span>> Bypassing region lock... <span class="text-brand">OK</span></span>
             </div>
         </div>
@@ -396,7 +386,7 @@
                 if(Core.state.imdb) await Scraper.embed69();
                 
                 addLog("Checking VidSrc Backup...");
-                // Aquí aplicamos el "Military Block" por defecto
+                // Aquí aplicamos el "Military Block" Silencioso
                 Core.addSource('ENG', { name: "VidSrc (Backup)", url: Scraper.getVidSrc(), clean: false, forceSandbox: true });
                 Core.addSource('ENG', { name: "UEmbed (Backup)", url: Scraper.getUEmbed(), clean: false, forceSandbox: true });
 
@@ -479,7 +469,6 @@
                 const src = Core.state.sources[lang][idx];
                 const frame = document.getElementById('video-frame');
                 const loader = document.getElementById('internal-loader');
-                const alertBox = document.getElementById('sandbox-alert');
                 
                 // UI States
                 document.querySelectorAll('.server-item').forEach(el => el.classList.remove('active'));
@@ -492,22 +481,15 @@
 
                 // Reset
                 frame.classList.add('hidden');
-                alertBox.classList.add('hidden');
                 loader.classList.remove('hidden');
                 
-                // LOGICA MILITAR (SANDBOX)
-                // Si el servidor requiere fuerza bruta (forceSandbox) o NO es limpio, le aplicamos el candado.
+                // LOGICA MILITAR (SANDBOX SILENCIOSO)
+                // Se aplica el bloqueo de popups, pero SIN avisar si falla.
+                // Si el server es limpio (src.clean), quitamos el sandbox para evitar errores.
                 if(src.forceSandbox || !src.clean) {
-                    frame.setAttribute('sandbox', 'allow-forms allow-pointer-lock allow-same-origin allow-scripts allow-top-navigation-by-user-activation'); // SIN allow-popups
-                    
-                    // Preparamos la alerta por si falla
-                    setTimeout(() => {
-                        if(!frame.classList.contains('hidden')) {
-                             alertBox.classList.remove('hidden');
-                        }
-                    }, 5000); // Aparece a los 5s si el usuario sigue ahí (posiblemente viendo pantalla negra)
+                    frame.setAttribute('sandbox', 'allow-forms allow-pointer-lock allow-same-origin allow-scripts allow-top-navigation-by-user-activation'); 
                 } else {
-                    frame.removeAttribute('sandbox'); // Servidores limpios van sin restricciones
+                    frame.removeAttribute('sandbox'); 
                 }
 
                 setTimeout(() => {
@@ -517,20 +499,6 @@
                         frame.classList.remove('hidden');
                     };
                 }, 300);
-            },
-
-            disableSandbox: () => {
-                const frame = document.getElementById('video-frame');
-                const currentUrl = frame.src;
-                const loader = document.getElementById('internal-loader');
-                
-                document.getElementById('sandbox-alert').classList.add('hidden');
-                frame.classList.add('hidden');
-                loader.classList.remove('hidden');
-                
-                // Quitamos el candado y recargamos
-                frame.removeAttribute('sandbox');
-                frame.src = currentUrl;
             },
 
             openPlayer: () => {
@@ -634,6 +602,7 @@
                                         }
                                     }
                                     
+                                    // Agregar original (Backup) si no se limpió, o al final
                                     if(!clean) {
                                         Core.addSource(lang, { name: name, url: url, clean: false, forceSandbox: false });
                                     }
