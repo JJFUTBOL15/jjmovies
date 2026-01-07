@@ -5,11 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="referrer" content="no-referrer">
     <meta name="theme-color" content="#000000">
-    <title>JJMOVIES | TITAN V8 - STABLE</title>
+    <title>JJMOVIES | TITAN V9 - IRON DOME</title>
 
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@300;400;600;700&family=Rajdhani:wght@300;500;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@300;400;500;600;700&family=Rajdhani:wght@300;500;600;700;800&display=swap" rel="stylesheet">
 
     <script>
         tailwind.config = {
@@ -18,50 +18,114 @@
                 extend: {
                     colors: {
                         brand: { DEFAULT: '#E50914', dark: '#8a040b', neon: '#ff1f26' },
-                        sys: { black: '#020202', panel: '#0a0a0a' },
-                        term: { green: '#00ff41', red: '#ff0033' }
+                        sys: { black: '#020202', panel: '#0a0a0a', border: '#1a1a1a' },
+                        term: { green: '#00ff41', red: '#ff0033', blue: '#00ccff', amber: '#ffb300' }
                     },
-                    fontFamily: { sans: ['Rajdhani', 'sans-serif'], tech: ['Chakra Petch', 'monospace'] },
+                    fontFamily: {
+                        sans: ['Rajdhani', 'sans-serif'],
+                        tech: ['Chakra Petch', 'monospace'],
+                    },
                     animation: {
                         'pulse-fast': 'pulse 1s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'flash': 'flash 2s infinite',
                         'scanline': 'scanline 8s linear infinite',
+                        'shield-pulse': 'shieldPulse 3s infinite',
                     },
                     keyframes: {
-                        scanline: { '0%': { transform: 'translateY(-100%)' }, '100%': { transform: 'translateY(100%)' } }
+                        flash: { '0%, 100%': { opacity: '1' }, '50%': { opacity: '0.5' } },
+                        scanline: { '0%': { transform: 'translateY(-100%)' }, '100%': { transform: 'translateY(100%)' } },
+                        shieldPulse: { '0%, 100%': { boxShadow: '0 0 10px rgba(0, 255, 65, 0.2)' }, '50%': { boxShadow: '0 0 25px rgba(0, 255, 65, 0.5)' } }
                     },
-                    boxShadow: { 'neon': '0 0 30px rgba(229, 9, 20, 0.5)' }
+                    boxShadow: {
+                        'neon': '0 0 30px rgba(229, 9, 20, 0.5)',
+                        'screen': 'inset 0 0 50px rgba(0,0,0,0.9)',
+                        'term': '0 0 10px rgba(0, 255, 65, 0.2)'
+                    }
                 }
             }
         }
     </script>
 
     <style>
-        :root { --app-bg: #000; }
+        /* BASE */
+        :root { --app-bg: #000; --grid: rgba(255,255,255,0.03); }
         body { background: var(--app-bg); color: #fff; overflow-x: hidden; font-family: 'Rajdhani', sans-serif; }
         
-        .bg-grid { background-image: linear-gradient(to right, rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.03) 1px, transparent 1px); background-size: 40px 40px; }
-        
-        ::-webkit-scrollbar { width: 4px; }
+        /* GRID BACKGROUND */
+        .bg-grid {
+            background-image: linear-gradient(to right, var(--grid) 1px, transparent 1px),
+                              linear-gradient(to bottom, var(--grid) 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+
+        /* SCROLLBAR */
+        ::-webkit-scrollbar { width: 4px; height: 4px; }
         ::-webkit-scrollbar-track { background: #000; }
-        ::-webkit-scrollbar-thumb { background: #333; }
-        
-        .server-item { background: rgba(255,255,255,0.02); border-left: 2px solid transparent; transition: all 0.2s; }
+        ::-webkit-scrollbar-thumb { background: #333; border: 1px solid #000; }
+        ::-webkit-scrollbar-thumb:hover { background: #E50914; }
+
+        /* SERVER ITEMS */
+        .server-item {
+            position: relative;
+            background: rgba(255,255,255,0.02);
+            border-left: 2px solid transparent;
+            transition: all 0.2s;
+        }
         .server-item:hover { background: rgba(255,255,255,0.05); }
-        .server-item.active { background: linear-gradient(90deg, rgba(229,9,20,0.15) 0%, transparent 100%); border-left-color: #E50914; }
+        .server-item.active {
+            background: linear-gradient(90deg, rgba(229,9,20,0.15) 0%, transparent 100%);
+            border-left-color: #E50914;
+        }
         .server-item.active .status-dot { background: #00ff41; box-shadow: 0 0 8px #00ff41; }
 
-        .cast-scroll { display: flex; overflow-x: auto; gap: 1rem; padding-bottom: 1rem; }
-        .cast-card { flex: 0 0 90px; cursor: pointer; transition: transform 0.2s; }
+        /* CAST SCROLL */
+        .cast-scroll {
+            display: flex;
+            overflow-x: auto;
+            gap: 1rem;
+            padding-bottom: 1rem;
+            scroll-behavior: smooth;
+        }
+        .cast-card {
+            flex: 0 0 90px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
         .cast-card:hover { transform: translateY(-5px); }
-        .cast-img { width: 90px; height: 90px; object-fit: cover; border-radius: 50%; border: 2px solid #222; }
-        
-        .film-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 1rem; }
-        .film-card:hover { transform: scale(1.05); z-index: 10; }
+        .cast-img {
+            width: 90px; height: 90px;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 2px solid #222;
+            transition: border-color 0.3s;
+        }
+        .cast-card:hover .cast-img { border-color: #E50914; }
 
-        .scanline-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(0,0,0,0.1) 50%); background-size: 100% 4px; pointer-events: none; z-index: 9999; opacity: 0.1; }
+        /* UTILS */
+        .hidden-force { display: none !important; }
+        .full-width { width: 100% !important; }
+        .no-sidebar { width: 0% !important; padding: 0 !important; overflow: hidden; opacity: 0; }
+
+        /* IRON DOME (INTERCEPTOR DE CLICS) */
+        .iron-dome-shield {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 50; /* Encima del iframe */
+            background: rgba(0,0,0,0); /* Invisible */
+            cursor: pointer;
+        }
+        
+        .scanline-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(0,0,0,0.1) 50%);
+            background-size: 100% 4px;
+            pointer-events: none;
+            z-index: 9999;
+            opacity: 0.1;
+        }
     </style>
 </head>
-<body>
+<body class="selection:bg-brand selection:text-white">
 
     <div class="scanline-overlay"></div>
 
@@ -69,19 +133,37 @@
         <div class="flex flex-col cursor-pointer group" onclick="window.location.reload()">
             <div class="flex items-center gap-2">
                 <i class="fas fa-biohazard text-brand text-2xl animate-pulse-fast"></i>
-                <span class="text-3xl font-black tracking-tighter text-white italic">JJ<span class="text-brand">MOVIES</span></span>
+                <span class="text-3xl font-black tracking-tighter text-white italic">
+                    JJ<span class="text-brand text-neon">MOVIES</span>
+                </span>
             </div>
             <div class="flex items-center gap-2 text-[10px] font-tech text-gray-500 uppercase tracking-widest pl-8 -mt-1">
-                <span>Sys.Ver 8.0</span> <span class="text-brand">STABLE CORE</span>
+                <span>Sys.Ver 9.0</span>
+                <span class="text-brand">IRON DOME</span>
             </div>
         </div>
-        <div class="hidden md:flex items-center gap-2 bg-white/5 px-3 py-1 rounded border border-white/10 shadow-neon">
-            <div class="w-2 h-2 rounded-full bg-term-green animate-pulse"></div>
-            <span class="text-[10px] font-bold font-tech text-term-green tracking-[0.2em]">ONLINE</span>
+
+        <div class="hidden md:flex items-center gap-6">
+            <div class="flex flex-col items-end">
+                <div class="text-[9px] font-tech text-gray-500 uppercase">System Status</div>
+                <div class="flex items-center gap-2">
+                    <span id="proxy-status" class="text-[10px] text-brand font-bold animate-blink">SCANNING PROXIES...</span>
+                    <i class="fas fa-network-wired text-xs text-gray-600"></i>
+                </div>
+            </div>
+            <div class="h-6 w-[1px] bg-white/10"></div>
+            <div class="flex items-center gap-2 bg-white/5 px-3 py-1 rounded border border-white/10 shadow-neon">
+                <div class="relative w-2 h-2">
+                    <span class="absolute inline-flex h-full w-full rounded-full bg-term-green opacity-75 animate-ping"></span>
+                    <span class="relative inline-flex rounded-full h-2 w-2 bg-term-green"></span>
+                </div>
+                <span class="text-[10px] font-bold font-tech text-term-green tracking-[0.2em]">ONLINE</span>
+            </div>
         </div>
     </nav>
 
     <main class="relative z-10 w-full min-h-screen flex flex-col justify-center bg-grid pt-20 pb-20">
+        
         <div class="absolute inset-0 z-[-1] overflow-hidden fixed">
             <div id="bg-backdrop" class="absolute inset-0 bg-cover bg-center transition-all duration-1000 opacity-0 scale-110"></div>
             <div class="absolute inset-0 bg-gradient-to-r from-black via-black/95 to-transparent"></div>
@@ -89,12 +171,22 @@
         </div>
 
         <div id="hero-panel" class="container mx-auto px-6 max-w-6xl opacity-0 translate-y-10 transition-all duration-700">
+            
             <div class="flex items-center gap-3 mb-4">
-                <div class="px-2 py-0.5 border border-brand/50 bg-brand/10 text-brand text-[10px] font-bold font-tech uppercase tracking-widest rounded">Titan V8</div>
-                <div class="px-2 py-0.5 border border-white/10 bg-white/5 text-gray-400 text-[10px] font-bold font-tech uppercase tracking-widest rounded">4K HDR</div>
+                <div class="px-2 py-0.5 border border-brand/50 bg-brand/10 text-brand text-[10px] font-bold font-tech uppercase tracking-widest rounded">
+                    Titan V9
+                </div>
+                <div class="px-2 py-0.5 border border-white/10 bg-white/5 text-gray-400 text-[10px] font-bold font-tech uppercase tracking-widest rounded">
+                    4K HDR
+                </div>
+                <div class="px-2 py-0.5 border border-term-green/30 bg-term-green/10 text-term-green text-[10px] font-bold font-tech uppercase tracking-widest rounded flex items-center gap-1 animate-shield-pulse">
+                    <i class="fas fa-shield-alt"></i> Iron Dome Active
+                </div>
             </div>
 
-            <h1 id="movie-title" class="text-5xl md:text-8xl font-black text-white leading-none uppercase tracking-tighter mb-4">INITIATING...</h1>
+            <h1 id="movie-title" class="text-6xl md:text-8xl font-black text-white leading-none uppercase tracking-tighter mb-4 text-shadow-glow">
+                INITIATING...
+            </h1>
 
             <div class="flex items-center gap-4 text-sm font-bold text-gray-400 mb-6 font-tech">
                 <span id="meta-year" class="text-white">----</span>
@@ -104,35 +196,41 @@
                 <span id="meta-duration">-- min</span>
             </div>
 
-            <div id="series-controls" class="hidden flex flex-wrap gap-4 mb-8 p-4 border border-white/5 bg-white/5 rounded-lg max-w-2xl">
+            <div id="series-controls" class="hidden flex flex-wrap gap-4 mb-8 p-4 border border-white/5 bg-white/5 rounded-lg backdrop-blur-sm max-w-2xl">
                 <div class="w-full text-[10px] text-gray-500 font-tech uppercase tracking-widest mb-1 flex justify-between">
-                    <span>Selector</span> <span id="ep-name-display" class="text-brand">Loading...</span>
+                    <span>Configuración de Episodio</span>
+                    <span id="ep-name-display" class="text-brand">Loading...</span>
                 </div>
                 <div class="relative group flex-1">
-                    <select id="season-select" class="w-full bg-black border border-white/20 text-white font-bold px-4 py-3 outline-none focus:border-brand appearance-none font-tech text-sm uppercase"></select>
+                    <select id="season-select" class="w-full bg-black border border-white/20 text-white font-bold px-4 py-3 outline-none focus:border-brand transition-colors appearance-none font-tech text-sm uppercase"></select>
                     <i class="fas fa-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-600"></i>
                 </div>
                 <div class="relative group flex-1">
-                    <select id="episode-select" class="w-full bg-black border border-white/20 text-white font-bold px-4 py-3 outline-none focus:border-brand appearance-none font-tech text-sm uppercase"></select>
+                    <select id="episode-select" class="w-full bg-black border border-white/20 text-white font-bold px-4 py-3 outline-none focus:border-brand transition-colors appearance-none font-tech text-sm uppercase"></select>
                     <i class="fas fa-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-600"></i>
                 </div>
             </div>
 
             <p id="movie-desc" class="text-gray-400 text-lg max-w-2xl leading-relaxed mb-8 border-l-2 border-brand pl-4 font-light">
-                Esperando datos. Verifica el ID.
+                Esperando datos de entrada. Por favor verifica el ID en la URL.
             </p>
 
             <button onclick="Core.start()" class="group relative px-10 py-5 bg-brand hover:bg-white text-white hover:text-brand font-black text-xl uppercase tracking-widest transition-all duration-300 shadow-neon overflow-hidden skew-x-[-10deg] mb-12">
                 <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent -translate-x-full group-hover:animate-[shimmer_1s_infinite]"></div>
-                <div class="skew-x-[10deg] flex items-center gap-3"><i class="fas fa-play text-2xl"></i> <span>VER AHORA</span></div>
+                <div class="skew-x-[10deg] flex items-center gap-3">
+                    <i class="fas fa-play text-2xl"></i>
+                    <span>EJECUTAR SISTEMA</span>
+                </div>
             </button>
 
             <div id="cast-container" class="border-t border-white/10 pt-8 opacity-0 transition-opacity duration-1000">
                 <h3 class="text-sm font-bold font-tech uppercase tracking-widest text-gray-400 mb-4 flex items-center gap-2">
-                    <i class="fas fa-users text-brand"></i> Reparto
+                    <i class="fas fa-users text-brand"></i> Reparto Principal
                 </h3>
-                <div id="cast-list" class="cast-scroll custom-scroll"></div>
+                <div id="cast-list" class="cast-scroll custom-scroll">
+                    </div>
             </div>
+
         </div>
     </main>
 
@@ -143,56 +241,99 @@
                     <img id="actor-profile-img" src="" class="w-20 h-20 rounded-full object-cover border-2 border-brand shadow-neon">
                     <div>
                         <h2 id="actor-name" class="text-3xl font-black text-white uppercase tracking-tighter">Actor</h2>
-                        <p class="text-xs text-brand font-tech uppercase tracking-widest mt-1">Filmografía</p>
+                        <p class="text-xs text-brand font-tech uppercase tracking-widest mt-1">Filmografía Seleccionada</p>
                     </div>
                 </div>
-                <button onclick="Core.closeActorModal()" class="w-10 h-10 rounded-full bg-white/10 hover:bg-white text-white hover:text-black flex items-center justify-center transition-all"><i class="fas fa-times text-xl"></i></button>
+                <button onclick="Core.closeActorModal()" class="w-10 h-10 rounded-full bg-white/10 hover:bg-white text-white hover:text-black flex items-center justify-center transition-all">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
             </div>
-            <div id="actor-movies-grid" class="film-grid pb-20"></div>
+            <div id="actor-movies-grid" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 pb-20"></div>
         </div>
     </div>
 
     <div id="player-overlay" class="fixed inset-0 z-[100] bg-black hidden flex flex-col md:flex-row opacity-0 transition-opacity duration-500">
+        
         <div id="video-area" class="relative w-full md:w-[75%] h-[40vh] md:h-full bg-black flex items-center justify-center border-r border-white/10 transition-all duration-500">
+            
             <div class="absolute top-0 left-0 w-full p-4 flex justify-between items-center z-20 bg-gradient-to-b from-black/90 to-transparent pointer-events-none">
-                <button onclick="Core.close()" class="pointer-events-auto w-10 h-10 rounded bg-white/5 hover:bg-brand border border-white/10 text-white flex items-center justify-center transition-all"><i class="fas fa-times"></i></button>
+                <button onclick="Core.close()" class="pointer-events-auto w-10 h-10 rounded bg-white/5 hover:bg-brand border border-white/10 text-white flex items-center justify-center transition-all">
+                    <i class="fas fa-times"></i>
+                </button>
+
                 <div class="pointer-events-auto flex gap-2">
-                    <button onclick="Core.toggleSidebar()" class="px-4 py-1.5 bg-brand text-white text-[10px] font-bold uppercase tracking-widest rounded border border-brand hover:bg-white hover:text-brand transition-all flex items-center gap-2"><i class="fas fa-expand"></i> <span id="toggle-text">Expandir</span></button>
-                    <div class="px-4 py-1.5 bg-black/80 text-gray-300 text-[10px] font-bold uppercase tracking-widest rounded border border-white/10 flex items-center gap-2"><span id="playing-server-name">---</span></div>
+                    <button onclick="Core.toggleSidebar()" class="px-4 py-1.5 bg-brand text-white text-[10px] font-bold uppercase tracking-widest rounded border border-brand hover:bg-white hover:text-brand transition-all flex items-center gap-2">
+                        <i class="fas fa-expand"></i> <span id="toggle-text">Expandir</span>
+                    </button>
+                    
+                    <div class="px-4 py-1.5 bg-black/80 text-gray-300 text-[10px] font-bold uppercase tracking-widest rounded border border-white/10 flex items-center gap-2">
+                        <span id="playing-server-name">---</span>
+                        <div id="secure-indicator" class="hidden flex items-center gap-1 text-term-green">
+                            <i class="fas fa-lock text-[8px]"></i>
+                        </div>
+                    </div>
                 </div>
             </div>
+
+            <div class="relative w-full h-full">
+                <div id="iron-dome" class="iron-dome-shield hidden" onclick="Core.handleShieldClick()"></div>
+                
+                <iframe id="video-frame" class="w-full h-full border-0" 
+                    allowfullscreen 
+                    allow="autoplay; encrypted-media; picture-in-picture">
+                </iframe>
+            </div>
+
+            <div id="internal-loader" class="absolute inset-0 bg-black z-10 flex flex-col items-center justify-center hidden">
+                <div class="w-12 h-12 border-4 border-brand border-t-transparent rounded-full animate-spin mb-4"></div>
+                <div class="text-[10px] font-tech text-brand uppercase tracking-[0.3em] animate-pulse">Estableciendo Conexión Segura...</div>
+            </div>
+
+        </div>
+
+        <div id="sidebar-area" class="w-full md:w-[25%] h-[60vh] md:h-full bg-[#050505] flex flex-col transition-all duration-500 overflow-hidden border-l border-white/5 shadow-[-20px_0_50px_rgba(0,0,0,0.5)]">
             
-            <div class="relative w-full h-full bg-black">
-                <iframe id="video-frame" class="w-full h-full border-0 absolute inset-0 z-10" allowfullscreen allow="autoplay; encrypted-media; picture-in-picture"></iframe>
+            <div class="p-4 border-b border-white/5 bg-[#080808] flex justify-between items-center">
+                <div class="flex items-center gap-2">
+                    <i class="fas fa-server text-brand"></i>
+                    <span class="text-xs font-bold font-tech uppercase tracking-widest text-white">Cambiar de Servidor</span>
+                </div>
+                <span id="total-sources" class="text-[10px] text-gray-500 font-mono">0 NODES</span>
+            </div>
+
+            <div id="server-list" class="flex-1 overflow-y-auto custom-scroll relative bg-grid">
+                </div>
+
+            <div class="p-3 bg-black border-t border-white/5 text-[8px] text-center text-gray-600 font-mono uppercase flex justify-between px-6">
+                <span>JJMovies v9.0</span>
+                <span class="text-term-green flex items-center gap-1"><i class="fas fa-shield-alt"></i> Protected</span>
             </div>
         </div>
 
-        <div id="sidebar-area" class="w-full md:w-[25%] h-[60vh] md:h-full bg-[#050505] flex flex-col transition-all duration-500 overflow-hidden border-l border-white/5">
-            <div class="p-4 border-b border-white/5 bg-[#080808] flex justify-between items-center">
-                <div class="flex items-center gap-2"><i class="fas fa-server text-brand"></i><span class="text-xs font-bold font-tech uppercase tracking-widest text-white">Cambiar de Servidor</span></div>
-                <span id="total-sources" class="text-[10px] text-gray-500 font-mono">0 NODES</span>
-            </div>
-            <div id="server-list" class="flex-1 overflow-y-auto custom-scroll relative bg-grid"></div>
-            <div class="p-3 bg-black border-t border-white/5 text-[8px] text-center text-gray-600 font-mono uppercase flex justify-between px-6"><span>JJMovies v8.0</span><span class="text-term-green flex items-center gap-1"><i class="fas fa-shield-alt"></i> Protected</span></div>
-        </div>
     </div>
 
     <div id="global-loader" class="fixed inset-0 z-[200] bg-black hidden flex flex-col items-center justify-center font-mono">
         <i class="fas fa-satellite-dish text-6xl text-brand mb-6 animate-pulse"></i>
-        <h2 class="text-2xl font-bold text-white tracking-widest mb-4">SEARCHING...</h2>
-        <div class="w-80 h-32 bg-[#0a0a0a] border border-brand/30 rounded p-4 text-[10px] text-term-green overflow-hidden relative shadow-neon">
-            <div class="flex flex-col gap-1" id="terminal-logs"></div>
+        <h2 class="text-2xl font-bold text-white tracking-widest mb-4">SCANNING NETWORKS</h2>
+        
+        <div class="w-80 h-32 bg-[#0a0a0a] border border-brand/30 rounded p-4 text-[10px] text-term-green overflow-hidden relative shadow-term">
+            <div class="absolute inset-0 bg-scanline opacity-10 pointer-events-none"></div>
+            <div id="terminal-logs" class="flex flex-col gap-1">
+                <span>> Initializing Iron Dome v9...</span>
+            </div>
         </div>
     </div>
 
     <script>
         const CFG = {
             API: '936410eebae74f9895643e085cc4a740', 
-            // PROXIES ROTATIVOS
+            // LISTA DE PROXIES ROTATIVOS (Rompehielos V2)
             PROXIES: [
-                'https://corsproxy.io/?',
                 'https://api.codetabs.com/v1/proxy/?quest=',
-                'https://api.allorigins.win/raw?url='
+                'https://corsproxy.io/?',
+                'https://api.allorigins.win/raw?url=',
+                'https://thingproxy.freeboard.io/fetch/',
+                'https://cors-anywhere.herokuapp.com/' // Fallback final
             ],
             BASE_TMDB: 'https://api.themoviedb.org/3'
         };
@@ -204,7 +345,7 @@
                 const p = new URLSearchParams(location.search);
                 const id = p.get('id');
                 if(!id) {
-                    Core.updateMeta({ title: "JJMOVIES", overview: "Bienvenido. Añade ?id=123 a la URL." });
+                    Core.updateMeta({ title: "SYSTEM IDLE", overview: "Esperando comando de entrada. Inserta ID." });
                     document.getElementById('hero-panel').classList.remove('opacity-0', 'translate-y-10');
                     return;
                 }
@@ -243,16 +384,17 @@
 
             updateMeta: (data) => {
                 document.getElementById('movie-title').innerText = data.title || data.name;
-                document.getElementById('movie-desc').innerText = data.overview || "Sin descripción.";
+                document.getElementById('movie-desc').innerText = data.overview || "No data.";
                 document.getElementById('meta-year').innerText = (data.release_date || data.first_air_date || '----').split('-')[0];
                 document.getElementById('meta-rating').innerHTML = `<i class="fas fa-star text-yellow-500 mr-1"></i> ${data.vote_average?.toFixed(1) || '0.0'}`;
+                
                 if(data.backdrop_path) {
                     document.getElementById('bg-backdrop').style.backgroundImage = `url('https://image.tmdb.org/t/p/original${data.backdrop_path}')`;
                     document.getElementById('bg-backdrop').classList.remove('opacity-0');
                 }
                 if(Core.state.type === 'tv') {
                     document.getElementById('series-controls').classList.remove('hidden');
-                    document.getElementById('ep-name-display').innerText = `${data.epName || 'Ep ' + Core.state.episode}`;
+                    document.getElementById('ep-name-display').innerText = `${data.epName || 'Episode ' + Core.state.episode}`;
                 }
                 document.getElementById('hero-panel').classList.remove('opacity-0', 'translate-y-10');
             },
@@ -261,8 +403,8 @@
                 const s = document.getElementById('season-select');
                 const e = document.getElementById('episode-select');
                 s.innerHTML = ''; e.innerHTML = '';
-                for(let i=1; i<=Core.state.totalSeasons; i++) s.innerHTML += `<option class="bg-black" value="${i}" ${i==Core.state.season?'selected':''}>T ${i}</option>`;
-                for(let i=1; i<=50; i++) e.innerHTML += `<option class="bg-black" value="${i}" ${i==Core.state.episode?'selected':''}>E ${i}</option>`;
+                for(let i=1; i<=Core.state.totalSeasons; i++) s.innerHTML += `<option class="bg-black" value="${i}" ${i==Core.state.season?'selected':''}>TEMPORADA ${i}</option>`;
+                for(let i=1; i<=50; i++) e.innerHTML += `<option class="bg-black" value="${i}" ${i==Core.state.episode?'selected':''}>EPISODIO ${i}</option>`;
                 
                 const reload = () => window.location.href = `?id=${Core.state.id}&season=${s.value}&episode=${e.value}`;
                 s.onchange = () => { e.value = 1; reload(); };
@@ -316,82 +458,144 @@
                 document.body.style.overflow = '';
             },
 
+            // --- MOTOR DE ARRANQUE ---
             start: async () => {
                 const l = document.getElementById('global-loader');
                 const log = document.getElementById('terminal-logs');
                 l.classList.remove('hidden');
+                
                 const addLog = (txt) => { log.innerHTML += `<span>> ${txt}</span>`; log.scrollTop = log.scrollHeight; };
 
                 Core.state.sources = { 'LAT': [], 'ESP': [], 'ENG': [] };
 
+                addLog("Scanning Embed69 (Deep Search)...");
                 if(Core.state.imdb) {
-                    addLog("Scanning Embed69...");
                     await Scraper.embed69();
-                    if(Core.state.type === 'movie') await Scraper.verHD();
+                    await Scraper.verHD();
                 }
                 
-                addLog("Loading global nodes...");
-                Core.addSource('ENG', { name: "VidSrc", url: Scraper.getVidSrc(), clean: false });
-                Core.addSource('ENG', { name: "UEmbed", url: Scraper.getUEmbed(), clean: false });
-                Core.addSource('ENG', { name: "SuperEmbed", url: Scraper.getSuperEmbed(), clean: false });
+                addLog("Loading backup nodes...");
+                // IRON DOME ACTIVADO POR DEFECTO PARA BACKUPS (English)
+                Core.addSource('ENG', { name: "VidSrc Cloud", url: Scraper.getVidSrc(), clean: false, shield: true });
+                Core.addSource('ENG', { name: "UEmbed API", url: Scraper.getUEmbed(), clean: false, shield: true });
 
-                addLog("Done.");
+                addLog("Ready.");
                 setTimeout(() => {
                     l.classList.add('hidden');
                     Core.openPlayer();
                     Core.renderList();
-                    // AutoPlay Logic
+                    
                     if(Core.state.sources['LAT'].length > 0) Core.play(0, 'LAT');
                     else if(Core.state.sources['ESP'].length > 0) Core.play(0, 'ESP');
                     else Core.play(0, 'ENG');
+
                 }, 800);
             },
 
             addSource: (lang, src) => {
-                if(!Core.state.sources[lang].some(s => s.url === src.url)) Core.state.sources[lang].push(src);
+                if(!Core.state.sources[lang].some(s => s.url === src.url)) {
+                    Core.state.sources[lang].push(src);
+                }
             },
 
             renderList: () => {
                 const c = document.getElementById('server-list');
                 c.innerHTML = '';
                 let total = 0;
+                
                 const sections = [
                     { id: 'LAT', label: 'LATINO', flag: 'https://flagcdn.com/w40/mx.png' },
                     { id: 'ESP', label: 'CASTELLANO', flag: 'https://flagcdn.com/w40/es.png' },
                     { id: 'ENG', label: 'ENGLISH / SUB', flag: 'https://flagcdn.com/w40/us.png' }
                 ];
+
                 sections.forEach(sec => {
                     const list = Core.state.sources[sec.id];
                     if(list.length > 0) {
                         total += list.length;
                         const header = document.createElement('div');
                         header.className = 'sticky top-0 bg-[#050505]/95 backdrop-blur z-10 p-3 border-y border-white/5 flex items-center gap-3';
-                        header.innerHTML = `<img src="${sec.flag}" class="w-5 h-3 opacity-80 rounded"><span class="text-[10px] font-bold font-tech text-gray-300 tracking-widest">${sec.label}</span>`;
+                        header.innerHTML = `<img src="${sec.flag}" class="w-5 h-3 rounded shadow-sm opacity-80"><span class="text-[10px] font-bold font-tech text-gray-300 tracking-widest">${sec.label}</span>`;
                         c.appendChild(header);
+
                         list.forEach((src, idx) => {
                             const item = document.createElement('div');
                             item.className = 'server-item p-4 border-b border-white/5 cursor-pointer group flex justify-between items-center';
                             item.onclick = () => Core.play(idx, sec.id);
                             item.dataset.gid = `${sec.id}-${idx}`;
-                            const shield = src.clean ? `<i class="fas fa-shield-alt text-term-green text-xs"></i>` : `<i class="fas fa-external-link-alt text-gray-600 text-[10px]"></i>`;
-                            item.innerHTML = `<div class="flex items-center gap-3"><div class="status-dot w-1.5 h-1.5 rounded-full bg-gray-700 transition-all"></div><div class="flex flex-col"><span class="text-xs font-bold text-gray-300 group-hover:text-white transition-colors">${src.name}</span></div></div>${shield}`;
+
+                            const shield = src.clean 
+                                ? `<i class="fas fa-shield-alt text-term-green text-xs" title="Limpio"></i>` 
+                                : `<i class="fas fa-lock text-gray-600 text-[10px]" title="Iron Dome Active"></i>`;
+
+                            item.innerHTML = `
+                                <div class="flex items-center gap-3">
+                                    <div class="status-dot w-1.5 h-1.5 rounded-full bg-gray-700 transition-all"></div>
+                                    <div class="flex flex-col">
+                                        <span class="text-xs font-bold text-gray-300 group-hover:text-white transition-colors">${src.name}</span>
+                                    </div>
+                                </div>
+                                ${shield}
+                            `;
                             c.appendChild(item);
                         });
                     }
                 });
+                
                 document.getElementById('total-sources').innerText = `${total} NODES`;
             },
 
             play: (idx, lang) => {
                 const src = Core.state.sources[lang][idx];
                 const frame = document.getElementById('video-frame');
+                const loader = document.getElementById('internal-loader');
+                const shield = document.getElementById('iron-dome');
+                
                 document.querySelectorAll('.server-item').forEach(el => el.classList.remove('active'));
                 const activeEl = document.querySelector(`.server-item[data-gid="${lang}-${idx}"]`);
                 if(activeEl) activeEl.classList.add('active');
+
                 document.getElementById('playing-server-name').innerText = `${lang} • ${src.name}`;
+                if(src.clean) document.getElementById('secure-indicator').classList.remove('hidden');
+                else document.getElementById('secure-indicator').classList.add('hidden');
+
+                frame.classList.add('hidden');
+                loader.classList.remove('hidden');
                 
-                // NO HIDING THE IFRAME. IT LOADS IMMEDIATELY.
-                frame.src = src.url;
+                // IRON DOME LOGIC (CLICK INTERCEPTOR)
+                // Si el servidor es sucio, activamos el escudo invisible
+                if(src.shield || !src.clean) {
+                    shield.classList.remove('hidden');
+                } else {
+                    shield.classList.add('hidden');
+                }
+
+                // Sin sandbox para evitar "Pantalla Negra" / Error
+                frame.removeAttribute('sandbox');
+
+                setTimeout(() => {
+                    frame.src = src.url;
+                    frame.onload = () => {
+                        loader.classList.add('hidden');
+                        frame.classList.remove('hidden');
+                    };
+                    // Force show after 2s even if onload is blocked
+                    setTimeout(() => {
+                        loader.classList.add('hidden');
+                        frame.classList.remove('hidden');
+                    }, 2000);
+                }, 300);
+            },
+
+            // --- IRON DOME HANDLER ---
+            handleShieldClick: () => {
+                // Esta función se ejecuta cuando el usuario hace el PRIMER CLIC en un servidor sucio.
+                // El escudo invisible captura el clic (que hubiera disparado un popup) y lo mata.
+                const shield = document.getElementById('iron-dome');
+                console.log("Iron Dome: Threat neutralized.");
+                
+                // Desactivamos el escudo para permitir interactuar con el video
+                shield.classList.add('hidden');
             },
 
             openPlayer: () => {
@@ -403,7 +607,10 @@
             close: () => {
                 const ui = document.getElementById('player-overlay');
                 ui.classList.add('opacity-0');
-                setTimeout(() => { ui.classList.add('hidden'); document.getElementById('video-frame').src = 'about:blank'; }, 500);
+                setTimeout(() => {
+                    ui.classList.add('hidden');
+                    document.getElementById('video-frame').src = 'about:blank';
+                }, 500);
             },
 
             toggleSidebar: () => {
@@ -424,7 +631,7 @@
         };
 
         const Scraper = {
-            // MULTI-PROXY FETCH (ROMPEHIELOS)
+            // ROTACIÓN DE PROXIES (ROMPEHIELOS)
             fetchSafe: async (url) => {
                 for (let proxy of CFG.PROXIES) {
                     try {
@@ -443,7 +650,6 @@
             },
             getVidSrc: () => { const { id, type, season, episode } = Core.state; return type==='movie' ? `https://vidsrc.cc/v2/embed/movie/${id}` : `https://vidsrc.cc/v2/embed/tv/${id}/${season}/${episode}`; },
             getUEmbed: () => { const { id, type, season, episode } = Core.state; let u = `https://uembed.xyz/?id=${id}`; if(type==='tv') u+= `&season=${season}&episode=${episode}`; return u; },
-            getSuperEmbed: () => { const { id, type, season, episode } = Core.state; return type==='movie' ? `https://multiembed.mov/?video_id=${id}&tmdb=1` : `https://multiembed.mov/?video_id=${id}&tmdb=1&s=${season}&e=${episode}`; },
 
             embed69: async () => {
                 try {
@@ -487,7 +693,8 @@
                                             clean = true;
                                         }
                                     }
-                                    if(!clean) Core.addSource(lang, { name: name, url: url, clean: false });
+                                    // Backup Original
+                                    if(!clean) Core.addSource(lang, { name: name, url: url, clean: false, shield: true });
                                 }
                             });
                         });
