@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="referrer" content="no-referrer">
     <meta name="theme-color" content="#000000">
-    <title>JJMOVIES | TITAN V7 - LATINO FORCE</title>
+    <title>JJMOVIES | TITAN V8 - STABLE</title>
 
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
@@ -18,18 +18,16 @@
                 extend: {
                     colors: {
                         brand: { DEFAULT: '#E50914', dark: '#8a040b', neon: '#ff1f26' },
-                        sys: { black: '#020202', panel: '#0a0a0a', border: '#1a1a1a' },
-                        term: { green: '#00ff41', red: '#ff0033', blue: '#00ccff', amber: '#ffb300' }
+                        sys: { black: '#020202', panel: '#0a0a0a' },
+                        term: { green: '#00ff41', red: '#ff0033' }
                     },
                     fontFamily: { sans: ['Rajdhani', 'sans-serif'], tech: ['Chakra Petch', 'monospace'] },
                     animation: {
                         'pulse-fast': 'pulse 1s cubic-bezier(0.4, 0, 0.6, 1) infinite',
                         'scanline': 'scanline 8s linear infinite',
-                        'shield-pulse': 'shieldPulse 3s infinite',
                     },
                     keyframes: {
-                        scanline: { '0%': { transform: 'translateY(-100%)' }, '100%': { transform: 'translateY(100%)' } },
-                        shieldPulse: { '0%, 100%': { boxShadow: '0 0 5px rgba(0, 255, 65, 0.1)' }, '50%': { boxShadow: '0 0 20px rgba(0, 255, 65, 0.4)' } }
+                        scanline: { '0%': { transform: 'translateY(-100%)' }, '100%': { transform: 'translateY(100%)' } }
                     },
                     boxShadow: { 'neon': '0 0 30px rgba(229, 9, 20, 0.5)' }
                 }
@@ -38,17 +36,16 @@
     </script>
 
     <style>
-        :root { --app-bg: #000; --grid: rgba(255,255,255,0.03); }
+        :root { --app-bg: #000; }
         body { background: var(--app-bg); color: #fff; overflow-x: hidden; font-family: 'Rajdhani', sans-serif; }
         
-        .bg-grid { background-image: linear-gradient(to right, var(--grid) 1px, transparent 1px), linear-gradient(to bottom, var(--grid) 1px, transparent 1px); background-size: 40px 40px; }
+        .bg-grid { background-image: linear-gradient(to right, rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.03) 1px, transparent 1px); background-size: 40px 40px; }
         
         ::-webkit-scrollbar { width: 4px; }
         ::-webkit-scrollbar-track { background: #000; }
         ::-webkit-scrollbar-thumb { background: #333; }
-        ::-webkit-scrollbar-thumb:hover { background: #E50914; }
-
-        .server-item { position: relative; background: rgba(255,255,255,0.02); border-left: 2px solid transparent; transition: all 0.2s; }
+        
+        .server-item { background: rgba(255,255,255,0.02); border-left: 2px solid transparent; transition: all 0.2s; }
         .server-item:hover { background: rgba(255,255,255,0.05); }
         .server-item.active { background: linear-gradient(90deg, rgba(229,9,20,0.15) 0%, transparent 100%); border-left-color: #E50914; }
         .server-item.active .status-dot { background: #00ff41; box-shadow: 0 0 8px #00ff41; }
@@ -57,13 +54,11 @@
         .cast-card { flex: 0 0 90px; cursor: pointer; transition: transform 0.2s; }
         .cast-card:hover { transform: translateY(-5px); }
         .cast-img { width: 90px; height: 90px; object-fit: cover; border-radius: 50%; border: 2px solid #222; }
-        .cast-card:hover .cast-img { border-color: #E50914; }
-
+        
         .film-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 1rem; }
-        .film-card:hover { transform: scale(1.05); z-index: 10; box-shadow: 0 0 20px rgba(229,9,20,0.5); }
+        .film-card:hover { transform: scale(1.05); z-index: 10; }
 
         .scanline-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(0,0,0,0.1) 50%); background-size: 100% 4px; pointer-events: none; z-index: 9999; opacity: 0.1; }
-        .hidden-force { display: none !important; }
     </style>
 </head>
 <body>
@@ -77,12 +72,12 @@
                 <span class="text-3xl font-black tracking-tighter text-white italic">JJ<span class="text-brand">MOVIES</span></span>
             </div>
             <div class="flex items-center gap-2 text-[10px] font-tech text-gray-500 uppercase tracking-widest pl-8 -mt-1">
-                <span>Sys.Ver 7.0</span> <span class="text-brand">LATINO FORCE</span>
+                <span>Sys.Ver 8.0</span> <span class="text-brand">STABLE CORE</span>
             </div>
         </div>
         <div class="hidden md:flex items-center gap-2 bg-white/5 px-3 py-1 rounded border border-white/10 shadow-neon">
             <div class="w-2 h-2 rounded-full bg-term-green animate-pulse"></div>
-            <span class="text-[10px] font-bold font-tech text-term-green tracking-[0.2em]">SERVER READY</span>
+            <span class="text-[10px] font-bold font-tech text-term-green tracking-[0.2em]">ONLINE</span>
         </div>
     </nav>
 
@@ -95,11 +90,11 @@
 
         <div id="hero-panel" class="container mx-auto px-6 max-w-6xl opacity-0 translate-y-10 transition-all duration-700">
             <div class="flex items-center gap-3 mb-4">
-                <div class="px-2 py-0.5 border border-brand/50 bg-brand/10 text-brand text-[10px] font-bold font-tech uppercase tracking-widest rounded">Titan Core</div>
-                <div class="px-2 py-0.5 border border-term-green/30 bg-term-green/10 text-term-green text-[10px] font-bold font-tech uppercase tracking-widest rounded flex items-center gap-1 animate-shield-pulse"><i class="fas fa-shield-alt"></i> Safe</div>
+                <div class="px-2 py-0.5 border border-brand/50 bg-brand/10 text-brand text-[10px] font-bold font-tech uppercase tracking-widest rounded">Titan V8</div>
+                <div class="px-2 py-0.5 border border-white/10 bg-white/5 text-gray-400 text-[10px] font-bold font-tech uppercase tracking-widest rounded">4K HDR</div>
             </div>
 
-            <h1 id="movie-title" class="text-6xl md:text-8xl font-black text-white leading-none uppercase tracking-tighter mb-4">INITIATING...</h1>
+            <h1 id="movie-title" class="text-5xl md:text-8xl font-black text-white leading-none uppercase tracking-tighter mb-4">INITIATING...</h1>
 
             <div class="flex items-center gap-4 text-sm font-bold text-gray-400 mb-6 font-tech">
                 <span id="meta-year" class="text-white">----</span>
@@ -129,12 +124,12 @@
 
             <button onclick="Core.start()" class="group relative px-10 py-5 bg-brand hover:bg-white text-white hover:text-brand font-black text-xl uppercase tracking-widest transition-all duration-300 shadow-neon overflow-hidden skew-x-[-10deg] mb-12">
                 <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent -translate-x-full group-hover:animate-[shimmer_1s_infinite]"></div>
-                <div class="skew-x-[10deg] flex items-center gap-3"><i class="fas fa-play text-2xl"></i> <span>EJECUTAR SISTEMA</span></div>
+                <div class="skew-x-[10deg] flex items-center gap-3"><i class="fas fa-play text-2xl"></i> <span>VER AHORA</span></div>
             </button>
 
             <div id="cast-container" class="border-t border-white/10 pt-8 opacity-0 transition-opacity duration-1000">
                 <h3 class="text-sm font-bold font-tech uppercase tracking-widest text-gray-400 mb-4 flex items-center gap-2">
-                    <i class="fas fa-users text-brand"></i> Reparto Principal
+                    <i class="fas fa-users text-brand"></i> Reparto
                 </h3>
                 <div id="cast-list" class="cast-scroll custom-scroll"></div>
             </div>
@@ -167,13 +162,8 @@
                 </div>
             </div>
             
-            <div class="relative w-full h-full">
-                <iframe id="video-frame" class="w-full h-full border-0" allowfullscreen allow="autoplay; encrypted-media; picture-in-picture"></iframe>
-            </div>
-
-            <div id="internal-loader" class="absolute inset-0 bg-black z-10 flex flex-col items-center justify-center hidden">
-                <div class="w-12 h-12 border-4 border-brand border-t-transparent rounded-full animate-spin mb-4"></div>
-                <div class="text-[10px] font-tech text-brand uppercase tracking-[0.3em] animate-pulse">Conectando...</div>
+            <div class="relative w-full h-full bg-black">
+                <iframe id="video-frame" class="w-full h-full border-0 absolute inset-0 z-10" allowfullscreen allow="autoplay; encrypted-media; picture-in-picture"></iframe>
             </div>
         </div>
 
@@ -183,26 +173,25 @@
                 <span id="total-sources" class="text-[10px] text-gray-500 font-mono">0 NODES</span>
             </div>
             <div id="server-list" class="flex-1 overflow-y-auto custom-scroll relative bg-grid"></div>
-            <div class="p-3 bg-black border-t border-white/5 text-[8px] text-center text-gray-600 font-mono uppercase flex justify-between px-6"><span>JJMovies v7.0</span><span class="text-term-green flex items-center gap-1"><i class="fas fa-shield-alt"></i> Protected</span></div>
+            <div class="p-3 bg-black border-t border-white/5 text-[8px] text-center text-gray-600 font-mono uppercase flex justify-between px-6"><span>JJMovies v8.0</span><span class="text-term-green flex items-center gap-1"><i class="fas fa-shield-alt"></i> Protected</span></div>
         </div>
     </div>
 
     <div id="global-loader" class="fixed inset-0 z-[200] bg-black hidden flex flex-col items-center justify-center font-mono">
-        <i class="fas fa-fingerprint text-6xl text-brand mb-6 animate-pulse"></i>
-        <h2 class="text-2xl font-bold text-white tracking-widest mb-4">ACCESSING MAINFRAME</h2>
-        <div class="w-80 h-32 bg-[#0a0a0a] border border-brand/30 rounded p-4 text-[10px] text-term-green overflow-hidden relative shadow-term">
-            <div class="absolute inset-0 bg-scanline opacity-10 pointer-events-none"></div>
-            <div id="terminal-logs" class="flex flex-col gap-1"></div>
+        <i class="fas fa-satellite-dish text-6xl text-brand mb-6 animate-pulse"></i>
+        <h2 class="text-2xl font-bold text-white tracking-widest mb-4">SEARCHING...</h2>
+        <div class="w-80 h-32 bg-[#0a0a0a] border border-brand/30 rounded p-4 text-[10px] text-term-green overflow-hidden relative shadow-neon">
+            <div class="flex flex-col gap-1" id="terminal-logs"></div>
         </div>
     </div>
 
     <script>
         const CFG = {
             API: '936410eebae74f9895643e085cc4a740', 
-            // PROXY LIST (El Rompehielos)
+            // PROXIES ROTATIVOS
             PROXIES: [
-                'https://api.codetabs.com/v1/proxy/?quest=',
                 'https://corsproxy.io/?',
+                'https://api.codetabs.com/v1/proxy/?quest=',
                 'https://api.allorigins.win/raw?url='
             ],
             BASE_TMDB: 'https://api.themoviedb.org/3'
@@ -215,7 +204,7 @@
                 const p = new URLSearchParams(location.search);
                 const id = p.get('id');
                 if(!id) {
-                    Core.updateMeta({ title: "SYSTEM IDLE", overview: "Esperando comando. Inserta ID." });
+                    Core.updateMeta({ title: "JJMOVIES", overview: "Bienvenido. Añade ?id=123 a la URL." });
                     document.getElementById('hero-panel').classList.remove('opacity-0', 'translate-y-10');
                     return;
                 }
@@ -254,7 +243,7 @@
 
             updateMeta: (data) => {
                 document.getElementById('movie-title').innerText = data.title || data.name;
-                document.getElementById('movie-desc').innerText = data.overview || "No data.";
+                document.getElementById('movie-desc').innerText = data.overview || "Sin descripción.";
                 document.getElementById('meta-year').innerText = (data.release_date || data.first_air_date || '----').split('-')[0];
                 document.getElementById('meta-rating').innerHTML = `<i class="fas fa-star text-yellow-500 mr-1"></i> ${data.vote_average?.toFixed(1) || '0.0'}`;
                 if(data.backdrop_path) {
@@ -335,23 +324,23 @@
 
                 Core.state.sources = { 'LAT': [], 'ESP': [], 'ENG': [] };
 
-                // LOGICA ROMPEHIELOS (Multi-Proxy)
-                addLog("Attempting connection to Embed69...");
                 if(Core.state.imdb) {
+                    addLog("Scanning Embed69...");
                     await Scraper.embed69();
-                    // Si falla el primero, no pasa nada, ya intentará el segundo en la funcion interna o se quedará con lo que tenga
                     if(Core.state.type === 'movie') await Scraper.verHD();
                 }
                 
-                addLog("Loading backup nodes...");
-                Core.addSource('ENG', { name: "VidSrc (Backup)", url: Scraper.getVidSrc(), clean: false });
-                Core.addSource('ENG', { name: "UEmbed (Backup)", url: Scraper.getUEmbed(), clean: false });
+                addLog("Loading global nodes...");
+                Core.addSource('ENG', { name: "VidSrc", url: Scraper.getVidSrc(), clean: false });
+                Core.addSource('ENG', { name: "UEmbed", url: Scraper.getUEmbed(), clean: false });
+                Core.addSource('ENG', { name: "SuperEmbed", url: Scraper.getSuperEmbed(), clean: false });
 
                 addLog("Done.");
                 setTimeout(() => {
                     l.classList.add('hidden');
                     Core.openPlayer();
                     Core.renderList();
+                    // AutoPlay Logic
                     if(Core.state.sources['LAT'].length > 0) Core.play(0, 'LAT');
                     else if(Core.state.sources['ESP'].length > 0) Core.play(0, 'ESP');
                     else Core.play(0, 'ENG');
@@ -384,7 +373,7 @@
                             item.className = 'server-item p-4 border-b border-white/5 cursor-pointer group flex justify-between items-center';
                             item.onclick = () => Core.play(idx, sec.id);
                             item.dataset.gid = `${sec.id}-${idx}`;
-                            const shield = src.clean ? `<i class="fas fa-shield-alt text-term-green text-xs"></i>` : `<i class="fas fa-lock text-gray-600 text-[10px]"></i>`;
+                            const shield = src.clean ? `<i class="fas fa-shield-alt text-term-green text-xs"></i>` : `<i class="fas fa-external-link-alt text-gray-600 text-[10px]"></i>`;
                             item.innerHTML = `<div class="flex items-center gap-3"><div class="status-dot w-1.5 h-1.5 rounded-full bg-gray-700 transition-all"></div><div class="flex flex-col"><span class="text-xs font-bold text-gray-300 group-hover:text-white transition-colors">${src.name}</span></div></div>${shield}`;
                             c.appendChild(item);
                         });
@@ -396,23 +385,13 @@
             play: (idx, lang) => {
                 const src = Core.state.sources[lang][idx];
                 const frame = document.getElementById('video-frame');
-                const loader = document.getElementById('internal-loader');
                 document.querySelectorAll('.server-item').forEach(el => el.classList.remove('active'));
                 const activeEl = document.querySelector(`.server-item[data-gid="${lang}-${idx}"]`);
                 if(activeEl) activeEl.classList.add('active');
                 document.getElementById('playing-server-name').innerText = `${lang} • ${src.name}`;
-                if(src.clean) document.getElementById('secure-indicator').classList.remove('hidden');
-                else document.getElementById('secure-indicator').classList.add('hidden');
-                frame.classList.add('hidden');
-                loader.classList.remove('hidden');
                 
-                // SIN SANDBOX PARA EVITAR ERRORES, PERO PRIORIZANDO UNLIMPLAY (Clean)
-                frame.removeAttribute('sandbox'); 
-                
-                setTimeout(() => {
-                    frame.src = src.url;
-                    frame.onload = () => { loader.classList.add('hidden'); frame.classList.remove('hidden'); };
-                }, 300);
+                // NO HIDING THE IFRAME. IT LOADS IMMEDIATELY.
+                frame.src = src.url;
             },
 
             openPlayer: () => {
@@ -445,6 +424,16 @@
         };
 
         const Scraper = {
+            // MULTI-PROXY FETCH (ROMPEHIELOS)
+            fetchSafe: async (url) => {
+                for (let proxy of CFG.PROXIES) {
+                    try {
+                        const res = await fetch(proxy + encodeURIComponent(url));
+                        if(res.ok) return await res.text();
+                    } catch(e) {}
+                }
+                return null; 
+            },
             base64UrlDecode: (str) => {
                 str = str.replace(/-/g, '+').replace(/_/g, '/');
                 return decodeURIComponent(atob(str).split('').map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)).join(''));
@@ -452,34 +441,15 @@
             decodeJWT: (token) => {
                 try { return JSON.parse(Scraper.base64UrlDecode(token.split('.')[1])); } catch { return null; }
             },
-            getVidSrc: () => {
-                const { id, type, season, episode } = Core.state;
-                return type==='movie' ? `https://vidsrc.cc/v2/embed/movie/${id}` : `https://vidsrc.cc/v2/embed/tv/${id}/${season}/${episode}`;
-            },
-            getUEmbed: () => {
-                const { id, type, season, episode } = Core.state;
-                let u = `https://uembed.xyz/?id=${id}`;
-                if(type==='tv') u+= `&season=${season}&episode=${episode}`;
-                return u;
-            },
-            
-            // FETCH CON ROTACIÓN DE PROXIES (ROMPEHIELOS)
-            fetchSafe: async (url) => {
-                for (let proxy of CFG.PROXIES) {
-                    try {
-                        const res = await fetch(proxy + encodeURIComponent(url));
-                        if(res.ok) return await res.text();
-                    } catch(e) { console.log("Proxy failed, trying next..."); }
-                }
-                return null; // Falló todo
-            },
+            getVidSrc: () => { const { id, type, season, episode } = Core.state; return type==='movie' ? `https://vidsrc.cc/v2/embed/movie/${id}` : `https://vidsrc.cc/v2/embed/tv/${id}/${season}/${episode}`; },
+            getUEmbed: () => { const { id, type, season, episode } = Core.state; let u = `https://uembed.xyz/?id=${id}`; if(type==='tv') u+= `&season=${season}&episode=${episode}`; return u; },
+            getSuperEmbed: () => { const { id, type, season, episode } = Core.state; return type==='movie' ? `https://multiembed.mov/?video_id=${id}&tmdb=1` : `https://multiembed.mov/?video_id=${id}&tmdb=1&s=${season}&e=${episode}`; },
 
             embed69: async () => {
                 try {
                     const { imdb, type, season, episode } = Core.state;
                     const slug = type==='tv' ? `${imdb}-${season}x${String(episode).padStart(2,'0')}` : imdb;
                     
-                    // Usamos el fetch inteligente
                     const html = await Scraper.fetchSafe(`https://embed69.org/f/${slug}/`);
                     if(!html) return;
 
@@ -517,7 +487,6 @@
                                             clean = true;
                                         }
                                     }
-                                    // Original backup (Sin sandbox)
                                     if(!clean) Core.addSource(lang, { name: name, url: url, clean: false });
                                 }
                             });
@@ -532,7 +501,7 @@
                     if(!html) return;
                     const matches = html.matchAll(/dropload\.tv\/e\/([a-zA-Z0-9_-]+)/g);
                     for(const m of matches) {
-                        Core.addSource('LAT', { name: "Thunderbolt (Ultra)", url: `https://unlimplay.com/embed2/?host=dropload&id=${m[1]}`, clean: true });
+                        Core.addSource('LAT', { name: "Thunderbolt (Limpio)", url: `https://unlimplay.com/embed2/?host=dropload&id=${m[1]}`, clean: true });
                     }
                 } catch(e) {}
             }
