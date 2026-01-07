@@ -4,162 +4,406 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="referrer" content="no-referrer">
-    <title>JJMOVIES | FULL UNLOCKED</title>
+    <meta name="theme-color" content="#E50914">
+    <title>JJMOVIES | Premium Ad-Block Player</title>
 
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.plyr.io/3.7.8/plyr.js"></script>
     <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@200;400;600;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100;300;400;500;700;900&family=Space+Grotesk:wght@300;500;700&display=swap" rel="stylesheet">
 
     <script>
         tailwind.config = {
+            darkMode: 'class',
             theme: {
                 extend: {
                     colors: {
-                        brand: { DEFAULT: '#E50914', dark: '#b20710' },
-                        dark: { bg: '#080808', card: '#121212' }
+                        brand: {
+                            DEFAULT: '#E50914',
+                            dark: '#b91c1c',
+                            light: '#ef4444',
+                            glow: 'rgba(229, 9, 20, 0.6)'
+                        },
+                        dark: {
+                            bg: '#050505',
+                            surface: '#0a0a0a',
+                            border: '#262626',
+                            hover: '#1a1a1a'
+                        },
+                        lang: {
+                            latino: '#fbbf24',    /* Amber 400 */
+                            spanish: '#60a5fa',   /* Blue 400 */
+                            sub: '#a78bfa',       /* Violet 400 */
+                            english: '#9ca3af'    /* Gray 400 */
+                        }
                     },
-                    fontFamily: { sans: ['Outfit', 'sans-serif'] }
+                    fontFamily: {
+                        sans: ['Outfit', 'sans-serif'],
+                        mono: ['Space Grotesk', 'monospace'],
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+                        'slide-up': 'slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+                        'slide-in-right': 'slideInRight 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+                        'pulse-glow': 'pulseGlow 3s infinite',
+                        'float': 'float 6s ease-in-out infinite',
+                        'spin-slow': 'spin 3s linear infinite',
+                    },
+                    keyframes: {
+                        fadeIn: { '0%': { opacity: '0' }, '100%': { opacity: '1' } },
+                        slideUp: { '0%': { opacity: '0', transform: 'translateY(40px)' }, '100%': { opacity: '1', transform: 'translateY(0)' } },
+                        slideInRight: { '0%': { opacity: '0', transform: 'translateX(20px)' }, '100%': { opacity: '1', transform: 'translateX(0)' } },
+                        pulseGlow: { '0%, 100%': { boxShadow: '0 0 15px rgba(229, 9, 20, 0.1)' }, '50%': { boxShadow: '0 0 30px rgba(229, 9, 20, 0.4)' } },
+                        float: { '0%, 100%': { transform: 'translateY(0)' }, '50%': { transform: 'translateY(-10px)' } }
+                    },
+                    boxShadow: {
+                        'neon': '0 0 40px rgba(229, 9, 20, 0.5)',
+                        'glass': '0 8px 32px 0 rgba(0, 0, 0, 0.5)',
+                        'inner-light': 'inset 0 1px 0 0 rgba(255, 255, 255, 0.1)'
+                    }
                 }
             }
         }
     </script>
 
     <style>
-        body { background-color: #080808; color: #fff; overflow-x: hidden; }
-        
-        /* Lista de Servidores */
-        .server-item {
-            transition: all 0.2s;
-            border-left: 3px solid transparent;
+        /* RESET & BASE */
+        :root {
+            --app-bg: #050505;
+            --sidebar-width: 350px;
         }
-        .server-item:hover { background: rgba(255,255,255,0.05); }
-        .server-item.active { background: rgba(229,9,20,0.15); border-left-color: #E50914; }
 
-        /* Etiquetas de Idioma */
-        .badge-lat { color: #facc15; border: 1px solid rgba(250, 204, 21, 0.2); background: rgba(250, 204, 21, 0.05); }
-        .badge-esp { color: #60a5fa; border: 1px solid rgba(96, 165, 250, 0.2); background: rgba(96, 165, 250, 0.05); }
-        .badge-sub { color: #c084fc; border: 1px solid rgba(192, 132, 252, 0.2); background: rgba(192, 132, 252, 0.05); }
+        body {
+            background-color: var(--app-bg);
+            color: #fff;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* EFECTO CRISTAL (GLASSMORPHISM) */
+        .glass-panel {
+            background: rgba(20, 20, 20, 0.7);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .glass-strong {
+            background: rgba(10, 10, 10, 0.95);
+            backdrop-filter: blur(40px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        /* LISTA DE SERVIDORES (ESTILO NETFLIX/MODERNO) */
+        .server-item {
+            position: relative;
+            transition: all 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+            border-left: 3px solid transparent;
+            overflow: hidden;
+        }
+
+        .server-item::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 0%; height: 100%;
+            background: linear-gradient(90deg, rgba(229,9,20,0.1), transparent);
+            transition: width 0.3s ease;
+            z-index: 0;
+        }
+
+        .server-item:hover {
+            background: rgba(255, 255, 255, 0.03);
+            border-left-color: rgba(255, 255, 255, 0.2);
+        }
         
-        /* Scrollbar */
+        .server-item:hover::before {
+            width: 50%;
+        }
+
+        .server-item.active {
+            background: rgba(20, 20, 20, 1);
+            border-left-color: #E50914;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
+        }
+        
+        .server-item.active::before {
+            width: 100%;
+            background: linear-gradient(90deg, rgba(229,9,20,0.2), transparent);
+        }
+
+        /* BADGES (ETIQUETAS) */
+        .badge {
+            font-size: 9px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: 3px 6px;
+            border-radius: 4px;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        /* SCROLLBAR PERSONALIZADO */
         ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: #111; }
-        ::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
+        ::-webkit-scrollbar-track { background: #0a0a0a; }
+        ::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; transition: 0.2s; }
         ::-webkit-scrollbar-thumb:hover { background: #E50914; }
+
+        /* IFRAME PROTECTOR (ANTI-AD CORE) */
+        .iframe-wrapper {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            background: #000;
+        }
+        
+        /* Capa invisible para detectar clicks (Opcional, desactivada por defecto para permitir controles) */
+        .iframe-shield {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        /* UTILITIES */
+        .text-shadow { text-shadow: 0 2px 10px rgba(0,0,0,0.8); }
+        .hidden-force { display: none !important; }
+        .bg-noise { background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E"); }
     </style>
 </head>
-<body>
+<body class="selection:bg-brand selection:text-white">
 
-    <nav class="fixed top-0 w-full z-40 px-6 py-4 flex justify-between items-center bg-gradient-to-b from-black/95 to-transparent">
-        <div class="text-2xl font-black tracking-tighter text-white cursor-pointer" onclick="window.location.reload()">
-            JJ<span class="text-brand">MOVIES</span>
+    <nav class="fixed top-0 w-full z-40 px-6 py-5 flex justify-between items-center transition-all duration-500 bg-gradient-to-b from-black/90 to-transparent" id="main-nav">
+        <div class="flex items-center gap-3 cursor-pointer group" onclick="window.location.reload()">
+            <div class="relative">
+                <div class="text-3xl font-black tracking-tighter text-white relative z-10 drop-shadow-lg">
+                    JJ<span class="text-brand group-hover:text-white transition-colors duration-300">MOVIES</span>
+                </div>
+                <div class="absolute inset-0 bg-brand/20 blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-full"></div>
+            </div>
+            
+            <div class="hidden md:flex flex-col">
+                <span class="text-[8px] font-bold text-gray-400 uppercase tracking-[0.2em] leading-none">Premium</span>
+                <span class="text-[8px] font-bold text-brand uppercase tracking-[0.2em] leading-none">Ad-Blocker</span>
+            </div>
         </div>
-        <div id="status-indicator" class="flex items-center gap-2 opacity-0 transition-opacity">
-            <div class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
-            <span class="text-[10px] font-bold text-green-500 tracking-widest">ONLINE</span>
+
+        <div id="status-indicator" class="flex items-center gap-2 opacity-0 transition-opacity duration-500 bg-white/5 border border-white/10 px-3 py-1.5 rounded-full backdrop-blur-md">
+            <div class="relative flex h-2 w-2">
+                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                <span class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+            </div>
+            <span class="text-[10px] font-bold text-green-400 tracking-widest">SYSTEM ONLINE</span>
         </div>
     </nav>
 
-    <div class="fixed inset-0 z-0 pointer-events-none">
-        <div id="bg-image" class="absolute inset-0 bg-cover bg-center opacity-30 transition-opacity duration-1000 scale-105"></div>
-        <div class="absolute inset-0 bg-gradient-to-t from-[#080808] via-[#080808]/90 to-transparent"></div>
+    <div class="fixed inset-0 z-0 pointer-events-none bg-black">
+        <div id="bg-image" class="absolute inset-0 bg-cover bg-center transition-all duration-1000 opacity-0 scale-110"></div>
+        
+        <div class="absolute inset-0 bg-gradient-to-t from-[#050505] via-[#050505]/80 to-transparent"></div>
+        <div class="absolute inset-0 bg-gradient-to-r from-[#050505] via-[#050505]/60 to-transparent"></div>
+        
+        <div class="absolute inset-0 bg-noise opacity-40 mix-blend-overlay"></div>
     </div>
 
-    <div class="relative z-10 container mx-auto px-6 h-screen flex items-center">
-        <div id="hero-content" class="max-w-4xl w-full opacity-0 transform translate-y-10 transition-all duration-700">
+    <main class="relative z-10 container mx-auto px-6 h-screen flex items-center">
+        <div id="hero-content" class="max-w-4xl w-full flex flex-col items-start gap-6 opacity-0 transform translate-y-10 transition-all duration-700">
             
-            <div class="flex items-center gap-3 text-xs font-bold text-gray-400 mb-4 tracking-[0.2em] uppercase">
-                <span id="meta-year" class="bg-white/10 px-2 py-1 rounded">----</span>
-                <span id="meta-rating" class="text-yellow-400"><i class="fas fa-star"></i> --</span>
+            <div class="flex flex-wrap items-center gap-3 animate-fade-in delay-100">
+                <span id="meta-year" class="px-3 py-1 bg-white/10 border border-white/10 rounded text-xs font-bold text-gray-300 backdrop-blur-md">----</span>
+                <div class="flex items-center gap-1 text-yellow-400 bg-yellow-400/10 border border-yellow-400/20 px-3 py-1 rounded backdrop-blur-md">
+                    <i class="fas fa-star text-xs"></i>
+                    <span id="meta-rating" class="text-xs font-bold">--</span>
+                </div>
+                <span class="px-3 py-1 bg-green-500/10 border border-green-500/20 text-green-400 rounded text-[10px] font-bold uppercase tracking-wider backdrop-blur-md">
+                    <i class="fas fa-check-circle mr-1"></i> Sin Publicidad
+                </span>
+                <span class="px-3 py-1 bg-brand/10 border border-brand/20 text-brand rounded text-[10px] font-bold uppercase tracking-wider backdrop-blur-md">
+                    4K Ultra HD
+                </span>
             </div>
 
-            <h1 id="movie-title" class="text-4xl md:text-7xl font-black leading-none text-white mb-2">Cargando...</h1>
-            <h2 id="ep-title" class="hidden text-xl md:text-3xl font-light text-brand mb-6"></h2>
-
-            <div id="series-ui" class="hidden flex flex-wrap gap-3 mb-6">
-                <select id="season-sel" class="bg-black/40 border border-white/20 text-white font-bold px-4 py-3 rounded-lg outline-none focus:border-brand cursor-pointer hover:bg-white/10"></select>
-                <select id="episode-sel" class="bg-black/40 border border-white/20 text-white font-bold px-4 py-3 rounded-lg outline-none focus:border-brand cursor-pointer hover:bg-white/10"></select>
+            <div class="relative w-full">
+                <h1 id="movie-title" class="text-5xl md:text-7xl lg:text-8xl font-black leading-[0.9] text-white tracking-tighter drop-shadow-2xl text-shadow animate-fade-in delay-200">
+                    Cargando...
+                </h1>
+                
+                <h2 id="ep-title" class="hidden text-xl md:text-3xl font-light text-brand mt-4 flex items-center gap-3 animate-slide-up">
+                    <span class="w-8 h-[1px] bg-brand/50"></span>
+                    <span id="ep-text"></span>
+                </h2>
             </div>
 
-            <p id="movie-desc" class="text-gray-300 text-lg leading-relaxed max-w-2xl mb-8 line-clamp-3 font-light">
-                Agrega ?id=... a la URL.
+            <div id="series-ui" class="hidden flex flex-wrap gap-4 animate-fade-in delay-300 w-full md:w-auto">
+                <div class="relative group w-full md:w-48">
+                    <div class="absolute inset-0 bg-brand/20 blur-lg rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                    <select id="season-sel" class="relative w-full appearance-none bg-black/40 border border-white/10 text-white font-bold px-5 py-4 rounded-xl outline-none focus:border-brand cursor-pointer hover:bg-white/5 transition-all backdrop-blur-xl">
+                        </select>
+                    <i class="fas fa-chevron-down absolute right-5 top-1/2 -translate-y-1/2 text-xs text-gray-500 pointer-events-none"></i>
+                </div>
+
+                <div class="relative group w-full md:w-64">
+                    <div class="absolute inset-0 bg-brand/20 blur-lg rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                    <select id="episode-sel" class="relative w-full appearance-none bg-black/40 border border-white/10 text-white font-bold px-5 py-4 rounded-xl outline-none focus:border-brand cursor-pointer hover:bg-white/5 transition-all backdrop-blur-xl">
+                        </select>
+                    <i class="fas fa-chevron-down absolute right-5 top-1/2 -translate-y-1/2 text-xs text-gray-500 pointer-events-none"></i>
+                </div>
+            </div>
+
+            <p id="movie-desc" class="text-gray-300 text-lg md:text-xl leading-relaxed max-w-2xl font-light drop-shadow-md line-clamp-3 animate-fade-in delay-300 border-l-2 border-brand/50 pl-4">
+                Por favor, asegúrate de que la URL contenga el ID correcto de TMDB (ej: ?id=123).
             </p>
 
-            <button onclick="App.play()" class="px-8 py-4 bg-brand hover:bg-white text-white hover:text-brand font-black rounded-full transition-all hover:scale-105 shadow-[0_0_30px_rgba(229,9,20,0.4)] flex items-center gap-3">
-                <i class="fas fa-play"></i> VER OPCIONES
-            </button>
-        </div>
-    </div>
-
-    <div id="player-ui" class="fixed inset-0 z-50 bg-[#080808] hidden opacity-0 transition-opacity duration-500 flex flex-col md:flex-row">
-        
-        <div class="relative w-full md:w-[75%] h-[40vh] md:h-full bg-black flex items-center justify-center">
-            <div class="absolute top-0 left-0 w-full p-4 flex justify-between z-20 bg-gradient-to-b from-black/80 to-transparent pointer-events-none">
-                <button onclick="App.close()" class="pointer-events-auto w-10 h-10 rounded-full bg-white/10 hover:bg-brand flex items-center justify-center text-white backdrop-blur transition-all">
-                    <i class="fas fa-arrow-left"></i>
+            <div class="animate-fade-in delay-500 mt-2">
+                <button onclick="App.play()" class="group relative px-10 py-5 bg-brand hover:bg-brand-dark text-white font-black rounded-full overflow-hidden transition-all duration-300 hover:scale-105 shadow-neon border border-transparent hover:border-white/20">
+                    <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent -translate-x-full group-hover:animate-[shimmer_1.5s_infinite]"></div>
+                    
+                    <div class="flex items-center gap-4 relative z-10">
+                        <div class="w-10 h-10 rounded-full bg-white text-brand flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                            <i class="fas fa-play ml-1"></i>
+                        </div>
+                        <div class="flex flex-col items-start leading-none">
+                            <span class="text-[10px] uppercase tracking-widest opacity-80 mb-1">Iniciar Motor</span>
+                            <span class="text-lg tracking-widest">VER CONTENIDO</span>
+                        </div>
+                    </div>
                 </button>
-                <div class="pointer-events-auto bg-black/60 px-3 py-1 rounded-full border border-white/10 backdrop-blur">
-                    <span id="playing-info" class="text-xs font-bold text-gray-300">Selecciona Servidor</span>
+            </div>
+        </div>
+    </main>
+
+    <div id="player-ui" class="fixed inset-0 z-50 bg-[#050505] hidden opacity-0 transition-all duration-500 flex flex-col md:flex-row">
+        
+        <div class="relative w-full md:w-[75%] h-[45vh] md:h-full bg-black flex items-center justify-center shadow-2xl z-20 overflow-hidden">
+            
+            <div class="absolute top-0 left-0 w-full p-6 flex justify-between items-start z-30 pointer-events-none bg-gradient-to-b from-black/90 to-transparent">
+                <button onclick="App.close()" class="pointer-events-auto w-12 h-12 rounded-full bg-white/10 hover:bg-brand border border-white/10 backdrop-blur-md flex items-center justify-center text-white transition-all hover:scale-110 shadow-lg group" title="Cerrar Reproductor">
+                    <i class="fas fa-arrow-left group-hover:-translate-x-1 transition-transform"></i>
+                </button>
+                
+                <div class="flex flex-col items-end pointer-events-auto">
+                    <div class="bg-black/60 px-4 py-2 rounded-full border border-white/10 backdrop-blur-md flex items-center gap-3 shadow-lg">
+                        <div class="flex items-center gap-2">
+                            <div class="w-2 h-2 rounded-full bg-red-500 animate-pulse"></div>
+                            <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">En Vivo</span>
+                        </div>
+                        <div class="w-[1px] h-3 bg-white/20"></div>
+                        <span id="playing-info" class="text-xs font-bold text-white uppercase tracking-wider">Esperando...</span>
+                    </div>
                 </div>
             </div>
 
-            <iframe id="main-iframe" class="w-full h-full border-0 hidden z-10" allowfullscreen allow="autoplay; encrypted-media"></iframe>
+            <iframe id="main-iframe" class="w-full h-full border-0 hidden z-10" 
+                allowfullscreen 
+                sandbox="allow-forms allow-pointer-lock allow-same-origin allow-scripts allow-top-navigation"
+                referrerpolicy="no-referrer">
+            </iframe>
 
-            <div id="player-loader" class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none hidden z-0">
-                <div class="w-12 h-12 border-4 border-brand border-t-transparent rounded-full animate-spin mb-4"></div>
-                <p class="text-xs font-bold text-brand tracking-widest animate-pulse">CARGANDO...</p>
+            <div id="player-loader" class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none hidden z-0 bg-[#050505]">
+                <div class="relative mb-6">
+                    <div class="absolute inset-0 bg-brand/20 blur-xl rounded-full animate-pulse"></div>
+                    <div class="w-16 h-16 border-4 border-brand border-t-transparent rounded-full animate-spin relative z-10"></div>
+                </div>
+                <h3 class="text-sm font-bold text-white tracking-[0.3em] mb-2">ESTABLECIENDO CONEXIÓN</h3>
+                <p class="text-[10px] text-gray-500 font-mono">Encriptación SSL • Bloqueo de Ads Activo</p>
+            </div>
+            
+            <div id="player-placeholder" class="absolute inset-0 flex flex-col items-center justify-center z-0 bg-[#050505]">
+                <i class="fas fa-server text-6xl text-white/10 mb-6"></i>
+                <h3 class="text-lg font-bold text-gray-500">SELECCIONA UN SERVIDOR</h3>
+                <p class="text-sm text-gray-600">Usa el menú de la derecha</p>
             </div>
         </div>
 
-        <div class="w-full md:w-[25%] h-[60vh] md:h-full bg-[#0f0f0f] border-l border-white/5 flex flex-col z-30">
-            <div class="p-5 border-b border-white/5 bg-[#141414]">
-                <h3 class="text-sm font-bold text-white uppercase tracking-widest mb-1">Fuentes</h3>
-                <div class="flex justify-between text-xs text-gray-500">
-                    <span>Lista Completa</span>
-                    <span id="total-servers" class="text-brand font-bold">0</span>
+        <div class="w-full md:w-[25%] h-[55vh] md:h-full bg-[#0a0a0a] border-l border-white/5 flex flex-col z-30 shadow-[0_0_50px_rgba(0,0,0,0.5)]">
+            
+            <div class="p-6 border-b border-white/5 bg-[#0f0f0f] relative overflow-hidden">
+                <div class="absolute top-0 right-0 p-4 opacity-10">
+                    <i class="fas fa-database text-6xl"></i>
+                </div>
+                <h3 class="text-sm font-black text-white uppercase tracking-[0.2em] mb-2 flex items-center gap-2 relative z-10">
+                    <i class="fas fa-globe text-brand"></i> Fuentes Globales
+                </h3>
+                <div class="flex justify-between items-center text-[10px] text-gray-500 font-mono relative z-10">
+                    <span>Resultados Totales:</span>
+                    <span id="total-servers" class="bg-white/10 text-white px-2 py-0.5 rounded font-bold border border-white/5">0</span>
                 </div>
             </div>
             
-            <div id="server-list" class="flex-1 overflow-y-auto p-2 space-y-1 custom-scrollbar"></div>
+            <div id="server-list" class="flex-1 overflow-y-auto p-3 space-y-2 custom-scrollbar bg-[#0a0a0a]">
+                </div>
+
+            <div class="p-4 bg-[#050505] border-t border-white/5 text-[9px] text-gray-600 text-center uppercase tracking-widest font-mono flex justify-between items-center">
+                <span>JJMovies v5.0</span>
+                <span class="flex items-center gap-1"><i class="fas fa-shield-alt"></i> Protected</span>
+            </div>
         </div>
     </div>
 
-    <div id="search-loader" class="fixed inset-0 z-[60] bg-black/95 backdrop-blur hidden flex flex-col items-center justify-center">
-        <i class="fas fa-satellite-dish text-5xl text-brand mb-6 animate-pulse"></i>
-        <h3 class="text-2xl font-black text-white">ESCANEANDO</h3>
-        <p class="text-sm text-gray-400 font-mono mt-2">Buscando enlaces Latinos...</p>
+    <div id="search-loader" class="fixed inset-0 z-[60] bg-black/95 backdrop-blur-xl hidden flex flex-col items-center justify-center transition-opacity">
+        <div class="relative mb-8">
+            <div class="absolute inset-0 bg-brand/30 blur-[60px] rounded-full animate-pulse"></div>
+            <i class="fas fa-satellite-dish text-6xl text-brand relative z-10 animate-bounce"></i>
+        </div>
+        <h3 class="text-3xl font-black text-white tracking-tighter mb-2">ESCANEANDO RED</h3>
+        <div class="flex items-center gap-2 mb-8">
+            <div class="w-1 h-1 bg-white rounded-full animate-bounce" style="animation-delay: 0s"></div>
+            <div class="w-1 h-1 bg-white rounded-full animate-bounce" style="animation-delay: 0.2s"></div>
+            <div class="w-1 h-1 bg-white rounded-full animate-bounce" style="animation-delay: 0.4s"></div>
+        </div>
+        
+        <div class="w-64 bg-white/5 border border-white/10 rounded-lg p-3 font-mono text-[10px] text-gray-400">
+            <div class="flex justify-between mb-1"><span>Init Scan...</span><span class="text-green-500">OK</span></div>
+            <div class="flex justify-between mb-1"><span>Proxy Check...</span><span class="text-green-500">OK</span></div>
+            <div class="flex justify-between mb-1"><span>Latino Sources...</span><span id="log-lat" class="text-yellow-500 animate-pulse">Scanning</span></div>
+            <div class="flex justify-between"><span>English Backup...</span><span class="text-gray-500">Waiting</span></div>
+        </div>
     </div>
 
     <script>
+        // CONFIGURACIÓN PRINCIPAL
         const CFG = {
-            API: '936410eebae74f9895643e085cc4a740',
-            PROXY: 'https://api.codetabs.com/v1/proxy/?quest='
+            API_KEY: '936410eebae74f9895643e085cc4a740', // Tu API Key
+            PROXY_URL: 'https://api.codetabs.com/v1/proxy/?quest=',
+            BASE_TMDB: 'https://api.themoviedb.org/3',
+            IMG_URL: 'https://image.tmdb.org/t/p/original'
         };
 
         const App = {
             data: { id: null, type: 'movie', season: 1, episode: 1, sources: [] },
             
+            // --- INICIALIZACIÓN ---
             init: async () => {
                 const params = new URLSearchParams(location.search);
                 const id = params.get('id');
+                
+                // Si no hay ID, mostrar estado de reposo
                 if(!id) {
-                    App.updateUI({ title: "JJMOVIES", overview: "Modo Standby.", backdrop_path: "/t5zCBSB5xMDKcDqe91qahCOUYVV.jpg" });
+                    App.updateUI({ title: "JJMOVIES", overview: "Sistema en espera.", backdrop_path: "/t5zCBSB5xMDKcDqe91qahCOUYVV.jpg" });
                     document.getElementById('hero-content').classList.remove('opacity-0', 'translate-y-10');
                     return;
                 }
+
                 App.data.id = id;
                 App.data.season = params.get('season') || 1;
                 App.data.episode = params.get('episode') || 1;
+                
+                // Detectar si es serie por la presencia de 'season'
                 if(params.get('season')) App.data.type = 'tv';
+
                 await App.fetchTMDB();
             },
 
+            // --- CONEXIÓN CON TMDB (METADATA) ---
             fetchTMDB: async () => {
                 try {
                     const { id, type, season, episode } = App.data;
                     const endpoint = type === 'movie' ? `/movie/${id}` : `/tv/${id}`;
-                    const res = await fetch(`https://api.themoviedb.org/3${endpoint}?api_key=${CFG.API}&language=es-MX&append_to_response=external_ids`);
+                    
+                    const res = await fetch(`${CFG.BASE_TMDB}${endpoint}?api_key=${CFG.API_KEY}&language=es-MX&append_to_response=external_ids`);
                     const data = await res.json();
                     
                     App.data.imdb = data.external_ids?.imdb_id;
@@ -167,80 +411,108 @@
 
                     let displayData = { ...data };
 
+                    // Si es serie, buscar datos específicos del episodio
                     if(type === 'tv') {
-                        const sRes = await fetch(`https://api.themoviedb.org/3/tv/${id}/season/${season}?api_key=${CFG.API}&language=es-MX`);
+                        const sRes = await fetch(`${CFG.BASE_TMDB}/tv/${id}/season/${season}?api_key=${CFG.API_KEY}&language=es-MX`);
                         const sData = await sRes.json();
                         const epData = sData.episodes?.find(e => e.episode_number == episode) || {};
+                        
                         displayData.backdrop_path = epData.still_path || data.backdrop_path;
                         displayData.overview = epData.overview || data.overview;
-                        displayData.epTitle = `T${season}:E${episode} - "${epData.name || ''}"`;
+                        displayData.epTitle = `Temporada ${season} <span class="text-white/30 mx-2">|</span> Episodio ${episode}`;
+                        displayData.epName = epData.name;
+                        
                         App.setupSeriesControls();
                     }
+
                     App.updateUI(displayData);
-                } catch(e) { console.error(e); }
+
+                } catch(e) { console.error("Error TMDB:", e); }
             },
 
+            // --- RENDERIZADO DE LA UI (INFO) ---
             updateUI: (data) => {
                 document.getElementById('movie-title').innerText = data.title || data.name;
-                document.getElementById('movie-desc').innerText = data.overview || "Sin descripción.";
+                document.getElementById('movie-desc').innerText = data.overview || "Sin descripción disponible.";
                 document.getElementById('meta-year').innerText = (data.release_date || data.first_air_date || '----').split('-')[0];
-                document.getElementById('meta-rating').innerHTML = `<i class="fas fa-star text-brand"></i> ${data.vote_average?.toFixed(1) || 'N/A'}`;
+                document.getElementById('meta-rating').innerText = data.vote_average?.toFixed(1) || 'N/A';
                 
                 if(data.epTitle) {
                     const et = document.getElementById('ep-title');
-                    et.innerText = data.epTitle;
+                    document.getElementById('ep-text').innerHTML = `${data.epTitle}: "${data.epName || ''}"`;
                     et.classList.remove('hidden');
                 }
 
                 const bg = document.getElementById('bg-image');
-                bg.style.backgroundImage = `url('https://image.tmdb.org/t/p/original${data.backdrop_path}')`;
+                bg.style.backgroundImage = `url('${CFG.IMG_URL}${data.backdrop_path}')`;
                 bg.classList.remove('opacity-0');
                 
                 document.getElementById('hero-content').classList.remove('opacity-0', 'translate-y-10');
                 document.getElementById('status-indicator').classList.remove('opacity-0');
             },
 
+            // --- CONTROLES DE SERIE ---
             setupSeriesControls: () => {
                 const ui = document.getElementById('series-ui');
                 ui.classList.remove('hidden');
                 ui.classList.add('flex');
                 
                 const sSel = document.getElementById('season-sel');
-                for(let i=1; i<=App.data.totalSeasons; i++) sSel.innerHTML += `<option class="bg-black" value="${i}" ${i==App.data.season?'selected':''}>Temporada ${i}</option>`;
-                sSel.onchange = (e) => window.location.href = `?id=${App.data.id}&season=${e.target.value}&episode=1`;
-
                 const eSel = document.getElementById('episode-sel');
-                for(let i=1; i<=50; i++) eSel.innerHTML += `<option class="bg-black" value="${i}" ${i==App.data.episode?'selected':''}>Episodio ${i}</option>`;
+                
+                sSel.innerHTML = '';
+                for(let i=1; i<=App.data.totalSeasons; i++) {
+                    sSel.innerHTML += `<option class="bg-black text-gray-300" value="${i}" ${i==App.data.season?'selected':''}>Temporada ${i}</option>`;
+                }
+                
+                eSel.innerHTML = '';
+                for(let i=1; i<=50; i++) {
+                    eSel.innerHTML += `<option class="bg-black text-gray-300" value="${i}" ${i==App.data.episode?'selected':''}>Episodio ${i}</option>`;
+                }
+
+                sSel.onchange = (e) => window.location.href = `?id=${App.data.id}&season=${e.target.value}&episode=1`;
                 eSel.onchange = (e) => window.location.href = `?id=${App.data.id}&season=${App.data.season}&episode=${e.target.value}`;
             },
 
+            // --- MOTOR DE BÚSQUEDA (TRIGGER) ---
             play: async () => {
-                document.getElementById('search-loader').classList.remove('hidden');
-                App.data.sources = [];
+                const loader = document.getElementById('search-loader');
+                loader.classList.remove('hidden');
+                App.data.sources = []; 
 
-                // 1. Ejecutar Scraper Latino (Embed69)
+                // 1. Scraper Latino (Embed69) - PRIORIDAD
                 if(App.data.imdb) {
+                    document.getElementById('log-lat').innerText = "Analyzing...";
                     await App.scrapeEmbed69();
-                    if(App.data.type === 'movie') await App.scrapeVerHD();
+                    
+                    if(App.data.type === 'movie') {
+                        await App.scrapeVerHD();
+                    }
+                    document.getElementById('log-lat').innerText = "Done";
+                    document.getElementById('log-lat').classList.replace('text-yellow-500', 'text-green-500');
+                    document.getElementById('log-lat').classList.remove('animate-pulse');
                 }
 
-                // 2. Respaldo (Solo si no hay nada, o para rellenar)
-                App.addSource({ name: "VidSrc", lang: "Multi", url: App.getVidSrcUrl(), safe: false });
-                App.addSource({ name: "UEmbed", lang: "Multi", url: App.getUEmbedUrl(), safe: false });
+                // 2. Fuentes de Respaldo (Multi-Idioma / Ingles)
+                // Se añaden SIEMPRE para garantizar opciones
+                App.addSource({ name: "VidSrc", lang: "Multi", url: App.getVidSrcUrl(), isClean: false, provider: "Backup" });
+                App.addSource({ name: "UEmbed", lang: "Multi", url: App.getUEmbedUrl(), isClean: false, provider: "Backup" });
 
-                document.getElementById('search-loader').classList.add('hidden');
+                loader.classList.add('hidden');
                 
                 const ui = document.getElementById('player-ui');
                 ui.classList.remove('hidden');
                 setTimeout(() => ui.classList.remove('opacity-0'), 50);
 
                 App.renderList();
-                if(App.data.sources.length > 0) App.loadSource(0);
+                
+                // Mensaje si no hay nada (raro)
+                if(App.data.sources.length === 0) alert("No se encontraron servidores. Intenta recargar.");
             },
 
-            // --- DECODIFICADOR EXACTO DE TU ARCHIVO ORIGINAL ---
+            // --- FUNCIONES DE DECODIFICACIÓN (CRÍTICO PARA EMBED69) ---
+            // Estas funciones son del archivo original index2.html
             base64UrlDecode: (str) => {
-                // Esta es la clave: reemplazar caracteres especiales antes de decodificar
                 str = str.replace(/-/g, '+').replace(/_/g, '/');
                 return decodeURIComponent(atob(str).split('').map(c =>
                     '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)
@@ -254,59 +526,99 @@
                 } catch { return null; }
             },
 
-            // --- SCRAPER ORIGINAL ---
+            // --- SCRAPER PRINCIPAL (EMBED69) ---
             scrapeEmbed69: async () => {
                 try {
                     const { imdb, type, season, episode } = App.data;
                     const slug = type === 'tv' ? `${imdb}-${season}x${String(episode).padStart(2,'0')}` : imdb;
                     
-                    const res = await fetch(CFG.PROXY + encodeURIComponent(`https://embed69.org/f/${slug}/`));
+                    const res = await fetch(CFG.PROXY_URL + encodeURIComponent(`https://embed69.org/f/${slug}/`));
                     const html = await res.text();
                     
+                    // Regex para encontrar la variable de datos
                     const match = html.match(/let dataLink\s*=\s*(\[[\s\S]*?\]);/);
                     if(match) {
                         const data = JSON.parse(match[1]);
+                        
+                        // Iterar sobre TODOS los idiomas encontrados
                         data.forEach(item => {
                             let langLabel = "Inglés";
                             const rawLang = item.video_language || "";
+                            
                             if(rawLang.includes('LAT')) langLabel = "Latino";
                             else if(rawLang.includes('ESP') || rawLang.includes('CAS')) langLabel = "Castellano";
                             else if(rawLang.includes('SUB')) langLabel = "Subtitulado";
 
+                            // Iterar sobre TODOS los servidores de ese idioma
                             item.sortedEmbeds.forEach(embed => {
-                                // Aquí usamos el decodificador corregido
                                 const decoded = App.decodeJWT(embed.link);
                                 if(decoded && decoded.link) {
-                                    // Agregamos todo sin filtrar
+                                    const host = embed.servername.toLowerCase();
+                                    let finalUrl = decoded.link;
+                                    let cleanable = false;
+                                    let serverName = embed.servername;
+
+                                    // LÓGICA ANTI-AD: Intentar limpiar el link
+                                    // Si es un host conocido, tratamos de convertirlo a Unlimplay (clean wrapper)
+                                    if(['voe', 'streamwish', 'dood', 'vidhide', 'filemoon'].some(h => host.includes(h))) {
+                                        const idMatch = finalUrl.match(/\/([a-zA-Z0-9]+)$/) || finalUrl.match(/\/e\/([a-zA-Z0-9]+)/);
+                                        if(idMatch) {
+                                            let hCode = 'voe';
+                                            if(host.includes('wish')) hCode = 'streamwish';
+                                            if(host.includes('dood')) hCode = 'doodstream';
+                                            if(host.includes('hide')) hCode = 'vidhide';
+                                            
+                                            // Creamos la versión limpia
+                                            const cleanUrl = `https://unlimplay.com/embed2/?host=${hCode}&id=${idMatch[1]}`;
+                                            
+                                            // Agregamos la versión limpia PRIMERO
+                                            App.addSource({ 
+                                                name: `${serverName} (Limpio)`, 
+                                                lang: langLabel, 
+                                                url: cleanUrl, 
+                                                isClean: true, // Marcado como seguro
+                                                provider: "Embed69"
+                                            });
+                                            cleanable = true;
+                                        }
+                                    }
+                                    
+                                    // SIEMPRE agregamos la versión original también (por si la limpia falla)
+                                    // Pero marcada como "Ads"
                                     App.addSource({ 
-                                        name: embed.servername, 
+                                        name: serverName, 
                                         lang: langLabel, 
-                                        url: decoded.link, 
-                                        safe: false // Asumimos standard
+                                        url: finalUrl, 
+                                        isClean: cleanable ? false : false, // Si era limpiable, la original tiene ads seguro
+                                        provider: "Embed69"
                                     });
                                 }
                             });
                         });
                     }
-                } catch(e) { console.error("E69 Fail", e); }
+                } catch(e) { console.error("E69 Error", e); }
             },
 
+            // --- SCRAPER SECUNDARIO (VERHD) ---
             scrapeVerHD: async () => {
                 try {
-                    const res = await fetch(CFG.PROXY + encodeURIComponent(`https://verhdlink.cam/movie/${App.data.imdb}`));
+                    const res = await fetch(CFG.PROXY_URL + encodeURIComponent(`https://verhdlink.cam/movie/${App.data.imdb}`));
                     const html = await res.text();
                     const matches = html.matchAll(/dropload\.tv\/e\/([a-zA-Z0-9_-]+)/g);
                     for(const m of matches) {
+                        // Thunderbolt suele ser limpio
                         App.addSource({
                             name: "Thunderbolt",
                             lang: "Latino",
                             url: `https://unlimplay.com/embed2/?host=dropload&id=${m[1]}`,
-                            safe: true
+                            isClean: true,
+                            provider: "VerHD"
                         });
                     }
                 } catch(e) {}
             },
 
+            // --- GENERADORES DE URL DIRECTAS ---
             getVidSrcUrl: () => {
                 const { id, type, season, episode } = App.data;
                 return type === 'movie' ? `https://vidsrc.cc/v2/embed/movie/${id}` : `https://vidsrc.cc/v2/embed/tv/${id}/${season}/${episode}`;
@@ -318,72 +630,98 @@
                 return u;
             },
 
+            // --- GESTIÓN DE FUENTES ---
             addSource: (src) => {
+                // Evitar duplicados de URL exactas
                 if(!App.data.sources.some(s => s.url === src.url)) {
                     App.data.sources.push(src);
                 }
             },
 
+            // --- RENDERIZADO DE LA LISTA (CON ORDEN INTELIGENTE) ---
             renderList: () => {
                 const list = document.getElementById('server-list');
                 const count = document.getElementById('total-servers');
                 
-                // Ordenar: Latino > Castellano > Sub > Multi
+                // 1. Ordenar por Idioma: Latino > Castellano > Sub > Multi > Ingles
                 const langOrder = { "Latino": 1, "Castellano": 2, "Subtitulado": 3, "Multi": 4, "Inglés": 5 };
                 
+                // 2. Ordenar por Limpieza: Clean > Dirty
                 App.data.sources.sort((a,b) => {
                     const la = langOrder[a.lang] || 9;
                     const lb = langOrder[b.lang] || 9;
-                    return la - lb;
+                    
+                    if(la !== lb) return la - lb; // Primero idioma
+                    
+                    // Si idioma igual, poner los limpios arriba
+                    if(a.isClean && !b.isClean) return -1;
+                    if(!a.isClean && b.isClean) return 1;
+                    return 0;
                 });
 
                 count.innerText = App.data.sources.length;
                 list.innerHTML = '';
 
                 App.data.sources.forEach((src, idx) => {
-                    let badgeClass = "";
-                    if(src.lang === "Latino") badgeClass = "badge-lat";
-                    else if(src.lang === "Castellano") badgeClass = "badge-esp";
-                    else if(src.lang === "Subtitulado") badgeClass = "badge-sub";
-                    else badgeClass = "text-gray-500 border border-gray-700";
+                    // Colores de Badge según idioma
+                    let langStyle = "bg-gray-800 text-gray-400 border-gray-700";
+                    if(src.lang === "Latino") langStyle = "bg-yellow-500/10 text-yellow-500 border-yellow-500/20";
+                    else if(src.lang === "Castellano") langStyle = "bg-blue-500/10 text-blue-500 border-blue-500/20";
+                    else if(src.lang === "Subtitulado") langStyle = "bg-purple-500/10 text-purple-500 border-purple-500/20";
+
+                    // Icono de seguridad
+                    const shield = src.isClean 
+                        ? `<i class="fas fa-shield-alt text-green-500 ml-2" title="Sin Publicidad"></i>` 
+                        : `<i class="fas fa-exclamation-triangle text-orange-500/50 ml-2 text-[10px]" title="Posibles Ads"></i>`;
 
                     const item = document.createElement('div');
-                    item.className = 'server-item p-3 mb-1 bg-[#161616] rounded cursor-pointer flex justify-between items-center group border border-white/5';
+                    item.className = 'server-item p-4 mb-2 bg-[#121212] rounded-lg cursor-pointer flex justify-between items-center group border border-white/5 shadow-sm';
                     item.innerHTML = `
-                        <div class="flex items-center gap-3">
-                            <span class="text-xs font-mono text-gray-500 w-5">${idx + 1}</span>
+                        <div class="flex items-center gap-4">
+                            <div class="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center text-xs font-bold text-gray-500 group-hover:bg-brand group-hover:text-white transition-colors font-mono">
+                                ${idx + 1}
+                            </div>
                             <div class="flex flex-col">
-                                <span class="font-bold text-sm text-gray-200 group-hover:text-white">${src.name}</span>
-                                <span class="text-[9px] text-gray-500 uppercase">${src.lang}</span>
+                                <span class="font-bold text-sm text-gray-200 group-hover:text-white flex items-center transition-colors">
+                                    ${src.name} ${shield}
+                                </span>
+                                <span class="text-[10px] text-gray-500 uppercase tracking-widest font-mono">${src.provider}</span>
                             </div>
                         </div>
-                        <span class="text-[9px] font-bold px-2 py-0.5 rounded ${badgeClass}">${src.lang.substring(0,3)}</span>
+                        <span class="text-[9px] font-bold px-2 py-1 rounded border uppercase tracking-wider ${langStyle}">${src.lang}</span>
                     `;
                     item.onclick = () => App.loadSource(idx);
                     list.appendChild(item);
                 });
             },
 
+            // --- CARGAR FUENTE (LOGICA DE REPRODUCCIÓN) ---
             loadSource: (idx) => {
                 const src = App.data.sources[idx];
                 const iframe = document.getElementById('main-iframe');
                 const info = document.getElementById('playing-info');
                 const loader = document.getElementById('player-loader');
+                const placeholder = document.getElementById('player-placeholder');
 
-                document.querySelectorAll('.server-item').forEach(el => el.classList.remove('active'));
-                document.getElementById('server-list').children[idx]?.classList.add('active');
+                // UI Activa
+                document.querySelectorAll('.server-item').forEach(el => el.classList.remove('active', 'border-brand'));
+                document.getElementById('server-list').children[idx]?.classList.add('active', 'border-l-4', 'border-brand');
 
-                info.innerText = `${src.name} | ${src.lang}`;
+                // Info
+                info.innerText = `${src.lang} • ${src.name}`;
+                placeholder.classList.add('hidden');
 
+                // Load
                 iframe.classList.add('hidden');
                 loader.classList.remove('hidden');
+                
                 setTimeout(() => {
                     iframe.src = src.url;
                     iframe.onload = () => {
                         loader.classList.add('hidden');
                         iframe.classList.remove('hidden');
                     };
-                }, 200);
+                }, 300);
             },
 
             close: () => {
@@ -391,10 +729,12 @@
                 setTimeout(() => {
                     document.getElementById('player-ui').classList.add('hidden');
                     document.getElementById('main-iframe').src = "about:blank";
-                }, 300);
+                    document.getElementById('player-placeholder').classList.remove('hidden');
+                }, 500);
             }
         };
 
+        // Iniciar
         window.onload = App.init;
     </script>
 </body>
