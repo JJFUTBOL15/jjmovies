@@ -3,75 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="theme-color" content="#E50914">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>JJMOVIES | Ultimate Player Experience</title>
+    <meta name="referrer" content="no-referrer">
+    <title>JJMOVIES | Ad-Free Player</title>
 
     <script src="https://cdn.tailwindcss.com"></script>
-    
-    <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
     <script src="https://cdn.plyr.io/3.7.8/plyr.js"></script>
-    
-    <script src="https://cdn.jsdelivr.net/npm/hls.js@1"></script>
-
+    <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100;300;400;500;700;900&family=Space+Grotesk:wght@300;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@200;400;700;900&display=swap" rel="stylesheet">
 
     <script>
         tailwind.config = {
-            darkMode: 'class',
             theme: {
                 extend: {
                     colors: {
-                        brand: {
-                            DEFAULT: '#E50914', /* Rojo JJMovies */
-                            50: '#fef2f2',
-                            100: '#fee2e2',
-                            200: '#fecaca',
-                            300: '#fca5a5',
-                            400: '#f87171',
-                            500: '#ef4444',
-                            600: '#dc2626',
-                            700: '#b91c1c',
-                            800: '#991b1b',
-                            900: '#7f1d1d',
-                            glow: 'rgba(229, 9, 20, 0.6)'
-                        },
-                        dark: {
-                            bg: '#0a0a0a',
-                            surface: '#121212',
-                            card: '#1a1a1a',
-                            border: '#2a2a2a'
-                        }
+                        brand: { DEFAULT: '#E50914', dark: '#b20710', glow: 'rgba(229, 9, 20, 0.6)' },
+                        dark: { bg: '#080808', card: '#121212', border: '#222' }
                     },
-                    fontFamily: {
-                        sans: ['Outfit', 'sans-serif'],
-                        mono: ['Space Grotesk', 'monospace'],
-                    },
+                    fontFamily: { sans: ['Outfit', 'sans-serif'] },
                     animation: {
-                        'fade-in': 'fadeIn 0.5s ease-out forwards',
-                        'slide-up': 'slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards',
-                        'slide-down': 'slideDown 0.4s ease-out forwards',
-                        'scale-in': 'scaleIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards',
-                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-                        'float': 'float 6s ease-in-out infinite',
-                        'shimmer': 'shimmer 2.5s infinite linear',
-                        'spin-slow': 'spin 3s linear infinite',
+                        'fade-in': 'fadeIn 0.6s ease-out forwards',
+                        'slide-up': 'slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+                        'pulse-slow': 'pulse 3s infinite',
                     },
                     keyframes: {
                         fadeIn: { '0%': { opacity: '0' }, '100%': { opacity: '1' } },
-                        slideUp: { '0%': { opacity: '0', transform: 'translateY(40px)' }, '100%': { opacity: '1', transform: 'translateY(0)' } },
-                        slideDown: { '0%': { opacity: '0', transform: 'translateY(-20px)' }, '100%': { opacity: '1', transform: 'translateY(0)' } },
-                        scaleIn: { '0%': { opacity: '0', transform: 'scale(0.9)' }, '100%': { opacity: '1', transform: 'scale(1)' } },
-                        float: { '0%, 100%': { transform: 'translateY(0)' }, '50%': { transform: 'translateY(-10px)' } },
-                        shimmer: { '0%': { transform: 'translateX(-100%)' }, '100%': { transform: 'translateX(100%)' } }
+                        slideUp: { '0%': { opacity: '0', transform: 'translateY(40px)' }, '100%': { opacity: '1', transform: 'translateY(0)' } }
                     },
                     boxShadow: {
-                        'neon': '0 0 20px rgba(229, 9, 20, 0.4), 0 0 40px rgba(229, 9, 20, 0.2)',
-                        'glass': '0 8px 32px 0 rgba(0, 0, 0, 0.37)',
+                        'neon': '0 0 25px rgba(229, 9, 20, 0.5)',
+                        'clean': '0 0 25px rgba(16, 185, 129, 0.4)'
                     }
                 }
             }
@@ -79,862 +40,439 @@
     </script>
 
     <style>
-        /* RESET & BASE */
-        :root {
-            --app-height: 100vh;
-            --glass-border: 1px solid rgba(255, 255, 255, 0.08);
-            --glass-bg: rgba(20, 20, 20, 0.7);
-            --glass-blur: blur(20px);
+        body { background-color: #080808; color: #fff; overflow-x: hidden; }
+        
+        /* Glassmorphism */
+        .glass-panel {
+            background: rgba(20, 20, 20, 0.8);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
         }
 
-        body {
-            background-color: #050505;
-            color: #ffffff;
-            overflow-x: hidden;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
+        /* IOS Dropdown */
+        .ios-dropdown {
+            background: rgba(30, 30, 30, 0.95);
+            backdrop-filter: blur(30px);
+            border: 1px solid rgba(255,255,255,0.1);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.8);
+            transform-origin: top right;
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
         }
+        .server-item:hover { background: rgba(255,255,255,0.1); }
+        .server-item.active { background: rgba(229,9,20,0.15); border-left: 3px solid #E50914; }
 
-        /* SCROLLBAR PERSONALIZADO */
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: #0a0a0a; }
-        ::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; transition: background 0.3s; }
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-track { background: #000; }
+        ::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
         ::-webkit-scrollbar-thumb:hover { background: #E50914; }
 
-        /* UTILIDADES DE VIDRIO (GLASSMORPHISM PRO) */
-        .glass-panel {
-            background: var(--glass-bg);
-            backdrop-filter: var(--glass-blur);
-            -webkit-backdrop-filter: var(--glass-blur);
-            border: var(--glass-border);
-            box-shadow: var(--glass-shadow);
-        }
-
-        .glass-strong {
-            background: rgba(10, 10, 10, 0.95);
-            backdrop-filter: blur(30px);
-            -webkit-backdrop-filter: blur(30px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-        }
-
-        /* MENÚ DROPDOWN ESTILO IOS/MACOS */
-        .ios-dropdown-menu {
-            transform-origin: top right;
-            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-            background: rgba(30, 30, 30, 0.9);
-            backdrop-filter: blur(40px);
-            -webkit-backdrop-filter: blur(40px);
-            border: 1px solid rgba(255,255,255,0.1);
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.9);
-        }
-        
-        .ios-dropdown-menu.hidden-state {
-            opacity: 0;
-            transform: scale(0.95) translateY(-10px);
-            pointer-events: none;
-            visibility: hidden;
-        }
-
-        .ios-dropdown-menu.visible-state {
-            opacity: 1;
-            transform: scale(1) translateY(0);
-            pointer-events: auto;
-            visibility: visible;
-        }
-
-        .menu-item {
-            transition: all 0.2s;
-            border-left: 3px solid transparent;
-        }
-        .menu-item:hover {
-            background: rgba(255,255,255,0.05);
-        }
-        .menu-item.active {
-            background: linear-gradient(90deg, rgba(229,9,20,0.15) 0%, transparent 100%);
-            border-left-color: #E50914;
-        }
-
-        /* TEXTO GRADIENTE */
-        .text-gradient-main {
-            background: linear-gradient(135deg, #ffffff 0%, #e2e2e2 50%, #9ca3af 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        /* BADGES */
-        .badge-quality {
-            font-size: 0.65rem;
-            font-weight: 800;
-            letter-spacing: 0.05em;
-            padding: 2px 6px;
-            border-radius: 4px;
-            text-transform: uppercase;
-        }
-        .badge-clean { background: #10b981; color: #000; box-shadow: 0 0 8px rgba(16, 185, 129, 0.3); }
-        .badge-ads { background: #ef4444; color: #fff; box-shadow: 0 0 8px rgba(239, 68, 68, 0.3); }
-
-        /* PLYR OVERRIDES */
-        .plyr {
-            border-radius: 0;
-            font-family: 'Outfit', sans-serif;
-        }
-        .plyr--full-ui input[type=range] { color: #E50914; }
-        .plyr__control--overlaid { background: rgba(229, 9, 20, 0.9); transition: transform 0.3s; }
-        .plyr__control--overlaid:hover { background: #b91c1c; transform: scale(1.1); }
-        .plyr__menu__container { background: rgba(20,20,20,0.95); backdrop-filter: blur(10px); color: white; }
-        .plyr__menu__container .plyr__control:hover { background: #E50914; }
-
-        /* ANIMACIONES DE CARGA */
-        .loader-ring {
-            display: inline-block;
-            position: relative;
-            width: 80px;
-            height: 80px;
-        }
-        .loader-ring div {
-            box-sizing: border-box;
-            display: block;
-            position: absolute;
-            width: 64px;
-            height: 64px;
-            margin: 8px;
-            border: 4px solid #fff;
-            border-radius: 50%;
-            animation: loader-ring 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
-            border-color: #E50914 transparent transparent transparent;
-        }
-        .loader-ring div:nth-child(1) { animation-delay: -0.45s; }
-        .loader-ring div:nth-child(2) { animation-delay: -0.3s; }
-        .loader-ring div:nth-child(3) { animation-delay: -0.15s; }
-        @keyframes loader-ring {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        /* UTILITIES */
+        /* Utilidades */
         .hidden-force { display: none !important; }
-        .debug-console {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 200px;
-            background: rgba(0,0,0,0.9);
-            color: #0f0;
-            font-family: monospace;
-            font-size: 12px;
-            padding: 10px;
-            overflow-y: auto;
-            z-index: 9999;
-            display: none;
-            border-top: 2px solid #E50914;
+        .text-shadow { text-shadow: 0 2px 10px rgba(0,0,0,0.8); }
+        
+        /* Iframe Protection Layer */
+        .iframe-container {
+            position: relative;
+            background: #000;
         }
-        .line-clamp-custom {
-            display: -webkit-box;
-            -webkit-line-clamp: 3;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
+        .iframe-shield {
+            /* Capa invisible para interceptar clics si fuera necesario, 
+               aunque el sandbox hace el trabajo pesado */
+            pointer-events: none; 
         }
     </style>
 </head>
-<body class="selection:bg-brand selection:text-white">
+<body>
 
-    <div id="debug-console" class="debug-console">
-        <div><strong>JJMOVIES SYSTEM LOG [v3.5.0 ULTRA]</strong></div>
-        <div id="debug-content"></div>
-    </div>
-
-    <nav id="main-nav" class="fixed top-0 w-full z-40 transition-all duration-500 px-6 py-5 flex justify-between items-center opacity-0 animate-fade-in">
-        <div class="flex items-center gap-2 group cursor-pointer" onclick="window.location.reload()">
-            <div class="text-3xl font-black tracking-tighter relative">
-                <span class="text-white relative z-10">JJ</span>
-                <span class="text-brand relative z-10 group-hover:text-white transition-colors">MOVIES</span>
-                <div class="absolute -bottom-1 left-0 w-0 h-1 bg-brand transition-all duration-300 group-hover:w-full"></div>
-                <div class="absolute inset-0 bg-brand/20 blur-xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-            </div>
-            <span class="text-[10px] bg-white/10 px-2 py-0.5 rounded text-gray-400 font-mono border border-white/5">BETA</span>
+    <nav class="fixed top-0 w-full z-40 px-6 py-4 flex justify-between items-center bg-gradient-to-b from-black/90 to-transparent">
+        <div class="text-3xl font-black tracking-tighter text-white drop-shadow-lg cursor-pointer" onclick="window.location.reload()">
+            JJ<span class="text-brand">MOVIES</span> <span class="text-[9px] bg-brand text-white px-1.5 rounded uppercase align-top ml-1">No-Ads</span>
         </div>
-
-        <div class="flex items-center gap-4">
-            <button onclick="toggleDebug()" class="hidden md:flex text-xs text-gray-500 hover:text-white font-mono transition-colors" title="Toggle Debug (F9)">
-                <i class="fas fa-terminal mr-2"></i> Console
-            </button>
-            <div id="api-status" class="flex items-center gap-2 text-xs font-bold text-green-500 opacity-0 transition-opacity duration-300">
-                <span class="relative flex h-2 w-2">
-                  <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                  <span class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
-                </span>
-                API ONLINE
-            </div>
+        <div id="status-indicator" class="flex items-center gap-2 opacity-0 transition-opacity">
+            <div class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
+            <span class="text-[10px] font-bold text-green-500 tracking-widest">ONLINE</span>
         </div>
     </nav>
 
-    <div class="fixed inset-0 overflow-hidden z-0 pointer-events-none">
-        <div id="backdrop-img" class="absolute inset-0 bg-cover bg-center bg-no-repeat transition-all duration-1000 scale-105 opacity-0"></div>
-        
-        <div class="absolute inset-0 bg-gradient-to-t from-[#050505] via-[#050505]/90 to-transparent"></div>
-        <div class="absolute inset-0 bg-gradient-to-r from-[#050505] via-[#050505]/70 to-transparent"></div>
-        
-        <div class="absolute inset-0 opacity-[0.04] mix-blend-overlay" style="background-image: url('data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noise%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.85%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noise)%22 opacity=%221%22/%3E%3C/svg%3E');"></div>
+    <div class="fixed inset-0 z-0 pointer-events-none">
+        <div id="bg-image" class="absolute inset-0 bg-cover bg-center opacity-0 transition-opacity duration-1000 scale-105"></div>
+        <div class="absolute inset-0 bg-gradient-to-t from-[#080808] via-[#080808]/80 to-transparent"></div>
+        <div class="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 brightness-100 contrast-150"></div>
     </div>
 
-    <main class="relative z-10 container mx-auto px-6 h-screen flex items-center justify-start">
-        <div id="content-wrapper" class="max-w-4xl w-full flex flex-col items-start gap-6 md:gap-8 transform transition-all duration-700 translate-y-10 opacity-0">
+    <div class="relative z-10 container mx-auto px-6 h-screen flex items-center">
+        <div id="hero-content" class="max-w-4xl w-full opacity-0 transform translate-y-10 transition-all duration-700">
             
-            <div class="flex flex-wrap items-center gap-3 text-xs md:text-sm font-bold tracking-[0.15em] text-gray-400 uppercase">
-                <span id="meta-year" class="bg-white/5 border border-white/10 px-3 py-1 rounded backdrop-blur-md">----</span>
-                <span class="w-1 h-1 rounded-full bg-gray-600"></span>
-                <span id="meta-runtime" class="flex items-center gap-2"><i class="far fa-clock text-brand"></i> -- min</span>
-                <span class="w-1 h-1 rounded-full bg-gray-600"></span>
-                <span id="meta-rating" class="text-white flex items-center gap-2 bg-yellow-500/10 px-2 py-1 rounded border border-yellow-500/20 text-yellow-500">
-                    <i class="fas fa-star"></i> <span>0.0</span>
-                </span>
-                <span class="w-1 h-1 rounded-full bg-gray-600"></span>
-                <span class="border border-white/20 px-1 rounded text-[10px]">HD</span>
-                <span class="border border-white/20 px-1 rounded text-[10px]">CC</span>
+            <div class="flex items-center gap-3 text-xs font-bold text-gray-400 mb-4 tracking-[0.2em] uppercase">
+                <span id="meta-year" class="bg-white/5 border border-white/10 px-2 py-1 rounded">----</span>
+                <span id="meta-rating" class="text-yellow-400"><i class="fas fa-star"></i> --</span>
+                <span id="meta-type" class="border border-white/20 px-2 py-1 rounded">PELÍCULA</span>
             </div>
 
-            <div class="w-full relative group">
-                <h1 id="movie-title" class="text-5xl md:text-7xl lg:text-8xl font-black leading-[0.9] tracking-tighter text-gradient-main drop-shadow-2xl">
-                    Cargando...
-                </h1>
-                <h2 id="episode-subtitle" class="hidden text-xl md:text-3xl font-light text-brand mt-4 animate-pulse-slow">
-                    Temporada 1 <span class="mx-2 text-white/20">|</span> Episodio 1
-                </h2>
+            <h1 id="movie-title" class="text-5xl md:text-8xl font-black leading-none text-white mb-2 text-shadow">
+                Cargando...
+            </h1>
+            <h2 id="ep-title" class="hidden text-2xl md:text-3xl font-light text-brand mb-6"></h2>
+
+            <div id="series-ui" class="hidden flex flex-wrap gap-3 mb-6 animate-fade-in">
+                <select id="season-sel" class="bg-black/50 border border-white/20 text-white font-bold px-4 py-3 rounded-xl outline-none focus:border-brand cursor-pointer hover:bg-white/10 transition-colors appearance-none"></select>
+                <select id="episode-sel" class="bg-black/50 border border-white/20 text-white font-bold px-4 py-3 rounded-xl outline-none focus:border-brand cursor-pointer hover:bg-white/10 transition-colors appearance-none"></select>
             </div>
 
-            <div id="genres-list" class="flex flex-wrap gap-2"></div>
-
-            <div id="series-controls-container" class="hidden w-full max-w-2xl bg-white/5 border border-white/10 rounded-2xl p-4 backdrop-blur-md flex flex-wrap gap-4 items-center animate-slide-up">
-                <div class="flex-1 min-w-[150px]">
-                    <label class="text-[10px] uppercase text-gray-500 font-bold mb-1 block tracking-wider">Temporada</label>
-                    <div class="relative">
-                        <select id="season-select" class="w-full bg-black/50 border border-white/10 rounded-lg px-4 py-3 text-white appearance-none focus:border-brand focus:outline-none transition-colors font-bold cursor-pointer hover:bg-white/5">
-                            </select>
-                        <i class="fas fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none"></i>
-                    </div>
-                </div>
-                <div class="flex-1 min-w-[200px]">
-                    <label class="text-[10px] uppercase text-gray-500 font-bold mb-1 block tracking-wider">Episodio</label>
-                    <div class="relative">
-                        <select id="episode-select" class="w-full bg-black/50 border border-white/10 rounded-lg px-4 py-3 text-white appearance-none focus:border-brand focus:outline-none transition-colors font-bold cursor-pointer hover:bg-white/5">
-                            </select>
-                        <i class="fas fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none"></i>
-                    </div>
-                </div>
-                <div class="flex items-end pb-1">
-                    <button id="btn-next-ep" class="w-12 h-12 rounded-lg bg-white/10 hover:bg-brand flex items-center justify-center transition-all border border-white/10 hover:border-brand text-white" title="Siguiente Episodio">
-                        <i class="fas fa-step-forward"></i>
-                    </button>
-                </div>
-            </div>
-
-            <p id="movie-overview" class="text-gray-300 text-lg md:text-xl leading-relaxed line-clamp-custom max-w-2xl drop-shadow-md font-light">
-                Bienvenido a JJMOVIES. Para ver contenido, asegúrate de que la URL contenga el ID correcto (ej: ?id=550).
+            <p id="movie-desc" class="text-gray-300 text-lg md:text-xl leading-relaxed max-w-2xl mb-8 line-clamp-3 text-shadow font-light">
+                Por favor, agrega el ID de TMDB en la URL (ej: ?id=550) para ver el contenido.
             </p>
 
-            <div class="flex flex-wrap gap-4 mt-4">
-                <button onclick="Core.startPlayback()" class="group relative px-10 py-5 bg-brand hover:bg-red-700 rounded-xl font-black text-white transition-all duration-300 shadow-neon hover:scale-105 flex items-center gap-4 overflow-hidden border border-white/10">
-                    <div class="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/30 to-transparent -translate-x-full group-hover:animate-shimmer"></div>
-                    <i class="fas fa-play text-2xl group-hover:scale-110 transition-transform"></i> 
-                    <span class="tracking-widest text-lg">REPRODUCIR</span>
-                </button>
-                
-                <button onclick="UI.toggleTrailer()" class="px-8 py-5 bg-white/10 hover:bg-white/20 rounded-xl font-bold text-white transition-all border border-white/10 backdrop-blur-md flex items-center gap-3">
-                    <i class="fas fa-film"></i>
-                    <span class="tracking-wide">TRAILER</span>
-                </button>
-            </div>
+            <button onclick="App.play()" class="group relative px-10 py-5 bg-brand hover:bg-brand-dark text-white font-black rounded-xl overflow-hidden transition-all hover:scale-105 shadow-neon">
+                <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:animate-[shimmer_1.5s_infinite]"></div>
+                <div class="flex items-center gap-3 relative z-10">
+                    <i class="fas fa-play text-xl"></i>
+                    <span class="tracking-widest">REPRODUCIR AHORA</span>
+                </div>
+            </button>
         </div>
-    </main>
+    </div>
 
-    <div id="player-overlay" class="fixed inset-0 z-50 hidden opacity-0 transition-all duration-500 bg-black">
+    <div id="player-ui" class="fixed inset-0 z-50 bg-black hidden opacity-0 transition-opacity duration-500">
         
-        <div id="player-blur-bg" class="absolute inset-0 bg-cover bg-center opacity-30 blur-3xl scale-125 pointer-events-none"></div>
-
-        <div class="absolute top-0 left-0 w-full p-6 z-[60] flex justify-between items-start bg-gradient-to-b from-black/90 to-transparent pointer-events-none">
-            
-            <button onclick="Core.closePlayer()" class="pointer-events-auto w-12 h-12 rounded-full bg-white/10 hover:bg-red-600/80 border border-white/10 backdrop-blur-xl flex items-center justify-center text-white transition-all hover:scale-110 hover:rotate-90 group shadow-lg">
-                <i class="fas fa-times text-xl"></i>
+        <div class="absolute top-0 left-0 w-full p-6 z-20 flex justify-between items-start bg-gradient-to-b from-black via-black/80 to-transparent pointer-events-none">
+            <button onclick="App.close()" class="pointer-events-auto w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur border border-white/10 text-white flex items-center justify-center transition-all hover:rotate-90">
+                <i class="fas fa-times"></i>
             </button>
 
             <div class="relative pointer-events-auto">
-                <button onclick="UI.toggleServerMenu()" class="flex items-center gap-3 bg-black/60 hover:bg-white/10 border border-white/10 backdrop-blur-xl px-6 py-3 rounded-full text-white font-bold transition-all shadow-2xl group hover:border-brand/50">
-                    <div class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
-                    <i class="fas fa-server text-gray-400 group-hover:text-brand transition-colors"></i>
-                    <span id="current-server-label" class="uppercase tracking-wider text-xs md:text-sm">Seleccionar Fuente</span>
-                    <i id="menu-arrow" class="fas fa-chevron-down text-xs ml-2 transition-transform duration-300 text-gray-500"></i>
+                <button onclick="App.toggleMenu()" class="flex items-center gap-3 bg-black/60 hover:bg-brand/20 backdrop-blur border border-white/10 px-6 py-3 rounded-full text-white font-bold transition-all shadow-lg group">
+                    <i class="fas fa-shield-alt text-green-400"></i>
+                    <span id="current-server" class="uppercase text-sm tracking-wider">Seleccionar Fuente</span>
+                    <i class="fas fa-chevron-down text-xs ml-2 group-hover:translate-y-1 transition-transform"></i>
                 </button>
 
-                <div id="server-dropdown" class="ios-dropdown-menu absolute right-0 top-16 w-80 max-h-[60vh] overflow-y-auto rounded-2xl hidden-state z-[70] custom-scrollbar">
-                    <div class="sticky top-0 bg-[#121212]/95 backdrop-blur-md border-b border-white/10 p-4 flex justify-between items-center z-10">
-                        <span class="text-xs font-bold text-gray-400 uppercase tracking-[0.2em]">Fuentes</span>
-                        <span id="server-count-badge" class="bg-brand text-white text-[10px] font-black px-2 py-0.5 rounded-md shadow-neon">0</span>
+                <div id="server-dropdown" class="ios-dropdown absolute right-0 top-16 w-80 rounded-2xl hidden opacity-0 scale-95 origin-top-right overflow-hidden">
+                    <div class="bg-white/5 p-3 border-b border-white/5 flex justify-between items-center">
+                        <span class="text-xs font-bold text-gray-400 uppercase">Servidores Seguros</span>
+                        <span id="server-count" class="bg-green-500 text-black text-[10px] font-bold px-1.5 py-0.5 rounded">0</span>
                     </div>
-                    <div id="server-list-container" class="flex flex-col"></div>
-                    
-                    <div class="p-3 text-[10px] text-center text-gray-600 border-t border-white/5 uppercase tracking-widest font-mono">
-                        JJMovies Scraper v3.0
-                    </div>
+                    <div id="server-list" class="max-h-[60vh] overflow-y-auto"></div>
                 </div>
             </div>
         </div>
 
-        <div class="relative w-full h-full flex items-center justify-center z-40 px-0 md:px-12 md:py-12">
-            <div class="w-full h-full md:rounded-2xl overflow-hidden bg-black shadow-2xl relative border border-white/5 ring-1 ring-white/5">
-                
-                <video id="player-html5" class="w-full h-full object-contain hidden" playsinline controls crossorigin></video>
-                
-                <iframe id="player-iframe" class="w-full h-full border-0 hidden bg-black" allow="autoplay; encrypted-media; fullscreen; picture-in-picture" allowfullscreen></iframe>
-                
-                <div id="player-placeholder" class="absolute inset-0 flex flex-col items-center justify-center bg-black z-0">
-                    <i class="fas fa-film text-6xl text-white/10 mb-4"></i>
-                    <p class="text-gray-500 font-mono text-sm">Selecciona un servidor para comenzar</p>
-                </div>
+        <div class="w-full h-full flex items-center justify-center bg-black">
+            <iframe id="main-iframe" class="w-full h-full border-0 hidden" 
+                allowfullscreen 
+                sandbox="allow-forms allow-pointer-lock allow-same-origin allow-scripts allow-top-navigation"
+                referrerpolicy="no-referrer">
+            </iframe>
+            <div id="player-loader" class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+                <div class="w-12 h-12 border-4 border-brand border-t-transparent rounded-full animate-spin mb-4"></div>
+                <p class="text-brand font-bold tracking-widest text-xs animate-pulse">ESTABLECIENDO CONEXIÓN SEGURA...</p>
             </div>
         </div>
     </div>
 
-    <div id="loader-overlay" class="fixed inset-0 z-[100] bg-[#050505] flex flex-col items-center justify-center transition-opacity duration-500 pointer-events-none opacity-0">
-        <div class="loader-ring"><div></div><div></div><div></div><div></div></div>
-        <div class="mt-8 text-center">
-            <h3 class="text-xl font-black tracking-tighter text-white mb-1">JJ<span class="text-brand">MOVIES</span></h3>
-            <p id="loader-status" class="text-xs font-mono text-brand uppercase tracking-[0.3em] animate-pulse">Iniciando...</p>
-        </div>
+    <div id="global-loader" class="fixed inset-0 z-[100] bg-black flex flex-col items-center justify-center transition-opacity duration-500 pointer-events-none opacity-0">
+        <i class="fas fa-shield-alt text-5xl text-brand mb-4 animate-bounce"></i>
+        <p class="text-white font-bold tracking-[0.5em]">JJMOVIES SECURE</p>
     </div>
 
     <script>
-        /**
-         * JJMOVIES ULTIMATE SCRIPT
-         * Version: 3.5.0 "Phoenix"
-         * Author: Gemini AI
-         * Logic: TMDB API + Multi-Source Scraping + Anti-Ad Middleware
-         */
-
-        // ==========================================
-        // 1. CONFIGURATION & STATE
-        // ==========================================
-        const CONFIG = {
-            API_KEY: '936410eebae74f9895643e085cc4a740', // API Key Propia
-            BASE_URL: 'https://api.themoviedb.org/3',
-            PROXY: 'https://api.codetabs.com/v1/proxy/?quest=',
-            IMG_BASE: 'https://image.tmdb.org/t/p/original',
-            DEFAULT_LANG: 'es-MX',
-            SOURCES: {
-                VIDSRC: 'https://vidsrc.cc/v2/embed',
-                UEMBED: 'https://uembed.xyz',
-                EMBEDMASTER: 'https://embedmaster.com/embed',
-                EMBED69: 'https://embed69.org/f',
-                VERHD: 'https://verhdlink.cam/movie'
-            }
+        const CFG = {
+            API: '936410eebae74f9895643e085cc4a740', // Tu API Key
+            PROXY: 'https://api.codetabs.com/v1/proxy/?quest='
         };
 
-        const STATE = {
-            tmdbId: null,
-            imdbId: null,
-            type: 'movie', // 'movie' | 'tv'
-            season: 1,
-            episode: 1,
-            totalSeasons: 0,
-            episodes: [],
-            sources: [],
-            currentSourceIdx: -1,
-            isMenuOpen: false,
-            player: null
-        };
+        const App = {
+            data: { id: null, type: 'movie', season: 1, episode: 1, sources: [] },
+            
+            init: async () => {
+                const params = new URLSearchParams(location.search);
+                const id = params.get('id');
+                
+                if(!id) {
+                    App.updateUI({ title: "JJMOVIES", overview: "Bienvenido. Añade ?id=123 a la URL.", backdrop_path: "/t5zCBSB5xMDKcDqe91qahCOUYVV.jpg" });
+                    document.getElementById('hero-content').classList.remove('opacity-0', 'translate-y-10');
+                    return;
+                }
 
-        // ==========================================
-        // 2. DEBUGGING SYSTEM
-        // ==========================================
-        const Logger = {
-            log: (msg, type = 'INFO') => {
-                const consoleEl = document.getElementById('debug-content');
-                const time = new Date().toLocaleTimeString();
-                const color = type === 'ERROR' ? '#ef4444' : (type === 'SUCCESS' ? '#10b981' : '#3b82f6');
-                const html = `<div style="margin-bottom:4px;"><span style="color:#666">[${time}]</span> <strong style="color:${color}">[${type}]</strong> ${msg}</div>`;
-                consoleEl.insertAdjacentHTML('beforeend', html);
-                consoleEl.scrollTop = consoleEl.scrollHeight;
-                console.log(`[JJMOVIES] ${msg}`);
+                App.data.id = id;
+                App.data.season = params.get('season') || 1;
+                App.data.episode = params.get('episode') || 1;
+                
+                // Determinar tipo (Si hay season/episode es TV)
+                if(params.get('season')) App.data.type = 'tv';
+
+                await App.fetchTMDB();
             },
-            error: (msg) => Logger.log(msg, 'ERROR'),
-            success: (msg) => Logger.log(msg, 'SUCCESS')
-        };
 
-        function toggleDebug() {
-            const el = document.getElementById('debug-console');
-            el.style.display = el.style.display === 'none' || el.style.display === '' ? 'block' : 'none';
-        }
+            fetchTMDB: async () => {
+                try {
+                    const { id, type, season, episode } = App.data;
+                    const endpoint = type === 'movie' ? `/movie/${id}` : `/tv/${id}`;
+                    
+                    const res = await fetch(`https://api.themoviedb.org/3${endpoint}?api_key=${CFG.API}&language=es-MX&append_to_response=external_ids`);
+                    const data = await res.json();
+                    
+                    App.data.imdb = data.external_ids?.imdb_id;
+                    App.data.totalSeasons = data.number_of_seasons || 0;
 
-        window.addEventListener('keydown', (e) => {
-            if(e.key === 'F9') toggleDebug();
-        });
+                    let displayData = { ...data };
 
-        // ==========================================
-        // 3. UI CONTROLLER
-        // ==========================================
-        const UI = {
-            init: () => {
-                // Scroll effect for navbar
-                window.addEventListener('scroll', () => {
-                    const nav = document.getElementById('main-nav');
-                    if(window.scrollY > 50) {
-                        nav.classList.add('glass-strong', 'py-3');
-                        nav.classList.remove('py-5');
-                    } else {
-                        nav.classList.remove('glass-strong', 'py-3');
-                        nav.classList.add('py-5');
+                    if(type === 'tv') {
+                        const sRes = await fetch(`https://api.themoviedb.org/3/tv/${id}/season/${season}?api_key=${CFG.API}&language=es-MX`);
+                        const sData = await sRes.json();
+                        const epData = sData.episodes?.find(e => e.episode_number == episode) || {};
+                        
+                        displayData.backdrop_path = epData.still_path || data.backdrop_path;
+                        displayData.overview = epData.overview || data.overview;
+                        displayData.epTitle = `T${season}:E${episode} - "${epData.name || 'Episodio ' + episode}"`;
+                        
+                        App.setupSeriesControls();
                     }
-                });
 
-                // Dropdown close on click outside
-                document.addEventListener('click', (e) => {
-                    const menu = document.getElementById('server-dropdown');
-                    const btn = document.getElementById('current-server-label').parentElement;
-                    if(STATE.isMenuOpen && !menu.contains(e.target) && !btn.contains(e.target)) {
-                        UI.toggleServerMenu(false);
+                    App.updateUI(displayData);
+
+                } catch(e) { console.error("TMDB Error", e); }
+            },
+
+            updateUI: (data) => {
+                document.getElementById('movie-title').innerText = data.title || data.name;
+                document.getElementById('movie-desc').innerText = data.overview || "Sin descripción.";
+                document.getElementById('meta-year').innerText = (data.release_date || data.first_air_date || '----').split('-')[0];
+                document.getElementById('meta-rating').innerHTML = `<i class="fas fa-star text-brand"></i> ${data.vote_average?.toFixed(1) || 'N/A'}`;
+                document.getElementById('meta-type').innerText = App.data.type === 'movie' ? 'PELÍCULA' : 'SERIE';
+                
+                if(data.epTitle) {
+                    const et = document.getElementById('ep-title');
+                    et.innerText = data.epTitle;
+                    et.classList.remove('hidden');
+                }
+
+                const bg = document.getElementById('bg-image');
+                bg.style.backgroundImage = `url('https://image.tmdb.org/t/p/original${data.backdrop_path}')`;
+                bg.classList.remove('opacity-0');
+                
+                document.getElementById('hero-content').classList.remove('opacity-0', 'translate-y-10');
+                document.getElementById('status-indicator').classList.remove('opacity-0');
+            },
+
+            setupSeriesControls: () => {
+                const ui = document.getElementById('series-ui');
+                ui.classList.remove('hidden');
+                ui.classList.add('flex');
+                
+                const sSel = document.getElementById('season-sel');
+                const eSel = document.getElementById('episode-sel');
+                
+                sSel.innerHTML = '';
+                for(let i=1; i<=App.data.totalSeasons; i++) {
+                    sSel.innerHTML += `<option value="${i}" ${i==App.data.season?'selected':''}>Temporada ${i}</option>`;
+                }
+                
+                eSel.innerHTML = '';
+                for(let i=1; i<=30; i++) {
+                    eSel.innerHTML += `<option value="${i}" ${i==App.data.episode?'selected':''}>Episodio ${i}</option>`;
+                }
+
+                sSel.onchange = (e) => window.location.href = `?id=${App.data.id}&season=${e.target.value}&episode=1`;
+                eSel.onchange = (e) => window.location.href = `?id=${App.data.id}&season=${App.data.season}&episode=${e.target.value}`;
+            },
+
+            play: async () => {
+                App.toggleLoader(true);
+                App.data.sources = []; // Reset
+                
+                // 1. Añadir Fuentes Directas (VidSrc, etc) - Prioridad Alta
+                App.addSource({ name: "VidSrc Cloud", type: "iframe", url: App.getVidSrcUrl(), safe: true });
+                App.addSource({ name: "EmbedMaster", type: "iframe", url: App.getEmbedMasterUrl(), safe: true });
+                App.addSource({ name: "UEmbed", type: "iframe", url: App.getUEmbedUrl(), safe: true });
+
+                // 2. Scrape Complejo (Embed69 + AntiAd Logic)
+                if(App.data.imdb) {
+                    await App.scrapeEmbed69();
+                    if(App.data.type === 'movie') await App.scrapeVerHD();
+                }
+
+                App.renderServerList();
+                App.toggleLoader(false);
+                
+                const ui = document.getElementById('player-ui');
+                ui.classList.remove('hidden');
+                setTimeout(() => ui.classList.remove('opacity-0'), 50);
+
+                if(App.data.sources.length > 0) App.loadSource(0);
+                else alert("No se encontraron servidores.");
+            },
+
+            close: () => {
+                const ui = document.getElementById('player-ui');
+                ui.classList.add('opacity-0');
+                setTimeout(() => {
+                    ui.classList.add('hidden');
+                    document.getElementById('main-iframe').src = 'about:blank';
+                }, 500);
+            },
+
+            getVidSrcUrl: () => {
+                const { id, type, season, episode } = App.data;
+                return type === 'movie' ? `https://vidsrc.cc/v2/embed/movie/${id}` : `https://vidsrc.cc/v2/embed/tv/${id}/${season}/${episode}`;
+            },
+            getEmbedMasterUrl: () => {
+                const { id, type, season, episode } = App.data;
+                return type === 'movie' ? `https://embedmaster.com/embed/movie/${id}` : `https://embedmaster.com/embed/tv/${id}/${season}/${episode}`;
+            },
+            getUEmbedUrl: () => {
+                const { id, type, season, episode } = App.data;
+                let u = `https://uembed.xyz/?id=${id}`;
+                if(type === 'tv') u += `&season=${season}&episode=${episode}`;
+                return u;
+            },
+
+            scrapeEmbed69: async () => {
+                try {
+                    const { imdb, type, season, episode } = App.data;
+                    const slug = type === 'tv' ? `${imdb}-${season}x${String(episode).padStart(2,'0')}` : imdb;
+                    const res = await fetch(CFG.PROXY + encodeURIComponent(`https://embed69.org/f/${slug}/`));
+                    const html = await res.text();
+                    
+                    const match = html.match(/let dataLink\s*=\s*(\[[\s\S]*?\]);/);
+                    if(!match) return;
+
+                    const data = JSON.parse(match[1]);
+                    data.forEach(item => {
+                        item.sortedEmbeds.forEach(embed => {
+                            try {
+                                const decoded = JSON.parse(atob(embed.link.split('.')[1].replace(/-/g, '+').replace(/_/g, '/')));
+                                if(decoded.link) {
+                                    const host = embed.servername.toLowerCase();
+                                    // Anti-Ad Wrapper Logic
+                                    let finalUrl = decoded.link;
+                                    let isSafe = false;
+
+                                    if(['voe', 'streamwish', 'dood', 'vidhide', 'filemoon'].some(h => host.includes(h))) {
+                                        const idMatch = finalUrl.match(/\/([a-zA-Z0-9]+)$/) || finalUrl.match(/\/e\/([a-zA-Z0-9]+)/);
+                                        if(idMatch) {
+                                            // Normalizar host
+                                            let hCode = 'voe';
+                                            if(host.includes('wish')) hCode = 'streamwish';
+                                            if(host.includes('dood')) hCode = 'doodstream';
+                                            if(host.includes('hide')) hCode = 'vidhide';
+                                            
+                                            finalUrl = `https://unlimplay.com/embed2/?host=${hCode}&id=${idMatch[1]}`;
+                                            isSafe = true; // Unlimplay es limpio
+                                        }
+                                    }
+
+                                    App.addSource({ name: embed.servername, url: finalUrl, safe: isSafe, type: 'iframe' });
+                                }
+                            } catch(e) {}
+                        });
+                    });
+                } catch(e) {}
+            },
+
+            scrapeVerHD: async () => {
+                try {
+                    const res = await fetch(CFG.PROXY + encodeURIComponent(`https://verhdlink.cam/movie/${App.data.imdb}`));
+                    const html = await res.text();
+                    const matches = html.matchAll(/dropload\.tv\/e\/([a-zA-Z0-9_-]+)/g);
+                    for(const m of matches) {
+                        App.addSource({
+                            name: "Thunderbolt",
+                            url: `https://unlimplay.com/embed2/?host=dropload&id=${m[1]}`,
+                            safe: true,
+                            type: 'iframe'
+                        });
                     }
-                });
+                } catch(e) {}
             },
 
-            showLoader: (show, text = "Cargando...") => {
-                const el = document.getElementById('loader-overlay');
-                const txt = document.getElementById('loader-status');
-                txt.innerText = text;
-                if(show) {
-                    el.classList.remove('hidden-force');
-                    el.style.pointerEvents = 'auto';
-                    requestAnimationFrame(() => el.style.opacity = '1');
-                } else {
-                    el.style.opacity = '0';
-                    el.style.pointerEvents = 'none';
-                    setTimeout(() => el.classList.add('hidden-force'), 500);
-                }
-            },
-
-            toggleServerMenu: (forceState = null) => {
-                const menu = document.getElementById('server-dropdown');
-                const arrow = document.getElementById('menu-arrow');
-                
-                STATE.isMenuOpen = forceState !== null ? forceState : !STATE.isMenuOpen;
-
-                if(STATE.isMenuOpen) {
-                    menu.classList.remove('hidden-state');
-                    menu.classList.add('visible-state');
-                    arrow.style.transform = 'rotate(180deg)';
-                } else {
-                    menu.classList.remove('visible-state');
-                    menu.classList.add('hidden-state');
-                    arrow.style.transform = 'rotate(0deg)';
-                }
-            },
-
-            renderMetadata: (data) => {
-                // Title & Text
-                document.getElementById('movie-title').textContent = data.title;
-                document.getElementById('movie-overview').textContent = data.overview || "Sin descripción disponible.";
-                document.getElementById('meta-year').textContent = (data.release_date || data.first_air_date || '????').substring(0, 4);
-                document.getElementById('meta-runtime').innerHTML = `<i class="far fa-clock text-brand"></i> ${data.runtime || '?'} min`;
-                document.getElementById('meta-rating').innerHTML = `<i class="fas fa-star"></i> ${data.vote_average?.toFixed(1) || '0.0'}`;
-                
-                // Background
-                const bgUrl = data.backdrop_path ? CONFIG.IMG_BASE + data.backdrop_path : '';
-                const bgEl = document.getElementById('backdrop-img');
-                bgEl.style.backgroundImage = `url('${bgUrl}')`;
-                bgEl.classList.remove('opacity-0', 'scale-105');
-                bgEl.classList.add('scale-100', 'opacity-50');
-                
-                document.getElementById('player-blur-bg').style.backgroundImage = `url('${bgUrl}')`;
-
-                // Genres
-                const genresContainer = document.getElementById('genres-list');
-                genresContainer.innerHTML = data.genres.slice(0, 4).map(g => 
-                    `<span class="px-3 py-1 bg-white/5 border border-white/10 rounded-full text-xs font-bold uppercase tracking-wider text-gray-300 hover:bg-brand hover:text-white transition-colors cursor-default">${g.name}</span>`
-                ).join('');
-
-                // Animations Entry
-                document.getElementById('content-wrapper').classList.remove('translate-y-10', 'opacity-0');
-                document.getElementById('api-status').classList.remove('opacity-0');
-            },
-
-            updateSeriesControls: () => {
-                if(STATE.type !== 'tv') return;
-
-                const container = document.getElementById('series-controls-container');
-                container.classList.remove('hidden');
-                container.classList.add('flex');
-
-                const subTitle = document.getElementById('episode-subtitle');
-                subTitle.classList.remove('hidden');
-                
-                // Find current Ep Name
-                const epName = STATE.episodes.find(e => e.episode_number == STATE.episode)?.name || `Episodio ${STATE.episode}`;
-                subTitle.innerHTML = `Temporada ${STATE.season} <span class="mx-2 text-white/20">|</span> Episodio ${STATE.episode} <br> <span class="text-white text-lg not-italic font-normal">"${epName}"</span>`;
-
-                // Render Selects
-                const sSelect = document.getElementById('season-select');
-                sSelect.innerHTML = '';
-                for(let i=1; i<=STATE.totalSeasons; i++) {
-                    sSelect.innerHTML += `<option class="bg-black text-white" value="${i}" ${i==STATE.season?'selected':''}>Temporada ${i}</option>`;
-                }
-
-                const eSelect = document.getElementById('episode-select');
-                eSelect.innerHTML = '';
-                // If episodes array is empty (fallback), show 24
-                const count = STATE.episodes.length || 24;
-                STATE.episodes.forEach(ep => {
-                     eSelect.innerHTML += `<option class="bg-black text-white" value="${ep.episode_number}" ${ep.episode_number==STATE.episode?'selected':''}>Ep. ${ep.episode_number} - ${ep.name?.substring(0,20)}...</option>`;
-                });
-                if(STATE.episodes.length === 0) {
-                     for(let i=1; i<=24; i++) eSelect.innerHTML += `<option class="bg-black text-white" value="${i}" ${i==STATE.episode?'selected':''}>Episodio ${i}</option>`;
+            addSource: (src) => {
+                if(!App.data.sources.some(s => s.url === src.url)) {
+                    App.data.sources.push(src);
                 }
             },
 
             renderServerList: () => {
-                const list = document.getElementById('server-list-container');
-                const countBadge = document.getElementById('server-count-badge');
+                const list = document.getElementById('server-list');
+                const count = document.getElementById('server-count');
                 
+                // Sort: Safe first
+                App.data.sources.sort((a,b) => (a.safe === b.safe) ? 0 : a.safe ? -1 : 1);
+                
+                count.innerText = App.data.sources.length;
                 list.innerHTML = '';
-                countBadge.textContent = STATE.sources.length;
 
-                if(STATE.sources.length === 0) {
-                    list.innerHTML = `<div class="p-8 text-center text-gray-500 font-mono text-xs">NO SE ENCONTRARON ENLACES</div>`;
-                    return;
-                }
-
-                // Sort: NO ADS first, then Priority
-                STATE.sources.sort((a,b) => {
-                    if(a.quality === 'NO ADS' && b.quality !== 'NO ADS') return -1;
-                    if(a.quality !== 'NO ADS' && b.quality === 'NO ADS') return 1;
-                    return 0;
-                });
-
-                STATE.sources.forEach((src, idx) => {
-                    const isClean = src.quality === 'NO ADS';
-                    const badgeClass = isClean ? 'badge-clean' : 'badge-ads';
-                    const iconClass = isClean ? 'fa-shield-alt text-green-400' : 'fa-external-link-alt text-red-400';
-                    const activeClass = idx === STATE.currentSourceIdx ? 'active' : '';
-
-                    const item = document.createElement('div');
-                    item.className = `menu-item p-3 flex items-center justify-between cursor-pointer ${activeClass}`;
-                    item.onclick = () => Core.playSource(idx);
+                App.data.sources.forEach((src, idx) => {
+                    const color = src.safe ? 'text-green-400' : 'text-orange-400';
+                    const badge = src.safe ? 'NO ADS' : 'ADS';
+                    const badgeClass = src.safe ? 'bg-green-500/20 text-green-400 border-green-500/30' : 'bg-orange-500/20 text-orange-400 border-orange-500/30';
                     
-                    item.innerHTML = `
+                    const div = document.createElement('div');
+                    div.className = 'server-item p-3 border-b border-white/5 cursor-pointer flex justify-between items-center transition-colors';
+                    div.innerHTML = `
                         <div class="flex items-center gap-3">
-                            <div class="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center text-xs font-bold text-gray-400 border border-white/5">
-                                ${idx + 1}
-                            </div>
-                            <div class="flex flex-col">
-                                <span class="font-bold text-sm text-gray-200 line-clamp-1">${src.name}</span>
-                                <span class="text-[10px] text-gray-500 uppercase font-mono">${src.lang} • ${src.provider}</span>
-                            </div>
+                            <span class="text-xs font-mono text-gray-500">${idx+1}</span>
+                            <span class="font-bold text-sm text-gray-200">${src.name}</span>
                         </div>
-                        <div class="flex items-center gap-2">
-                            <span class="badge-quality ${badgeClass}">${src.quality}</span>
-                        </div>
+                        <span class="text-[10px] font-bold px-2 py-0.5 rounded border ${badgeClass}">${badge}</span>
                     `;
-                    list.appendChild(item);
+                    div.onclick = () => App.loadSource(idx);
+                    list.appendChild(div);
                 });
-            }
-        };
-
-        // ==========================================
-        // 4. API SERVICE (TMDB)
-        // ==========================================
-        const API = {
-            fetch: async (endpoint) => {
-                try {
-                    const url = `${CONFIG.BASE_URL}${endpoint}`;
-                    const sep = url.includes('?') ? '&' : '?';
-                    const finalUrl = `${url}${sep}api_key=${CONFIG.API_KEY}&language=${CONFIG.DEFAULT_LANG}`;
-                    
-                    Logger.log(`Fetching TMDB: ${endpoint.split('?')[0]}`);
-                    const res = await fetch(finalUrl);
-                    if(!res.ok) throw new Error(`HTTP ${res.status}`);
-                    return await res.json();
-                } catch (e) {
-                    Logger.error(`API Error: ${e.message}`);
-                    return null;
-                }
             },
 
-            getDetails: async (id, type) => {
-                const data = await API.fetch(`/${type}/${id}?append_to_response=external_ids,videos`);
-                if(data) {
-                    STATE.tmdbId = data.id;
-                    STATE.imdbId = data.external_ids?.imdb_id;
-                    return data;
-                }
-                return null;
-            },
+            loadSource: (idx) => {
+                const src = App.data.sources[idx];
+                const iframe = document.getElementById('main-iframe');
+                const label = document.getElementById('current-server');
+                const loader = document.getElementById('player-loader');
 
-            getSeason: async (id, seasonNum) => {
-                return await API.fetch(`/tv/${id}/season/${seasonNum}`);
-            }
-        };
-
-        // ==========================================
-        // 5. SCRAPER ENGINE (THE CORE)
-        // ==========================================
-        const Scraper = {
-            sources: [],
-
-            run: async () => {
-                UI.showLoader(true, "INICIANDO MOTOR DE BÚSQUEDA...");
-                Logger.log("--- STARTING SCRAPE ---");
-                Scraper.sources = [];
-
-                // 1. Direct Sources (Fastest)
-                Scraper.addDirectSources();
-
-                // 2. Complex Scrapers (Async)
-                const tasks = [];
-                if(STATE.imdbId) {
-                    tasks.push(Scraper.embed69(STATE.imdbId, STATE.season, STATE.episode));
-                    if(STATE.type === 'movie') tasks.push(Scraper.verHD(STATE.imdbId));
-                } else {
-                    Logger.error("No IMDB ID found, skipping complex scrapers.");
-                }
-
-                await Promise.allSettled(tasks);
-                
-                UI.showLoader(false);
-                STATE.sources = Scraper.sources;
-                
-                Logger.success(`Scrape Complete. Found ${STATE.sources.length} sources.`);
-                UI.renderServerList();
-
-                if(STATE.sources.length > 0) {
-                    Core.playSource(0); // Autoplay first
-                } else {
-                    alert("No se encontraron servidores disponibles. Intenta recargar.");
-                    Core.closePlayer();
-                }
-            },
-
-            add: (source) => {
-                // Duplicate check
-                if(!Scraper.sources.some(s => s.url === source.url)) {
-                    Scraper.sources.push(source);
-                    Logger.log(`Added Source: ${source.name} [${source.quality}]`);
-                }
-            },
-
-            addDirectSources: () => {
-                // VidSrc.cc
-                let vsUrl = STATE.type === 'movie' 
-                    ? `${CONFIG.SOURCES.VIDSRC}/movie/${STATE.tmdbId}`
-                    : `${CONFIG.SOURCES.VIDSRC}/tv/${STATE.tmdbId}/${STATE.season}/${STATE.episode}`;
-                Scraper.add({ name: "VidSrc Cloud", lang: "Multi", type: "iframe", url: vsUrl, quality: "ADS", provider: "Direct" });
-
-                // UEmbed
-                let ueUrl = `${CONFIG.SOURCES.UEMBED}/?id=${STATE.tmdbId}`;
-                if(STATE.type === 'tv') ueUrl += `&season=${STATE.season}&episode=${STATE.episode}`;
-                Scraper.add({ name: "UEmbed Premium", lang: "Multi", type: "iframe", url: ueUrl, quality: "ADS", provider: "Direct" });
-
-                // EmbedMaster
-                let emUrl = `${CONFIG.SOURCES.EMBEDMASTER}/${STATE.type}/${STATE.tmdbId}`;
-                if(STATE.type === 'tv') emUrl += `/${STATE.season}/${STATE.episode}`;
-                Scraper.add({ name: "EmbedMaster", lang: "Lat/Eng", type: "iframe", url: emUrl, quality: "ADS", provider: "Direct" });
-            },
-
-            embed69: async (imdb, s, e) => {
-                try {
-                    UI.showLoader(true, "ESCANEA E69...");
-                    const slug = STATE.type === 'tv' ? `${imdb}-${s}x${String(e).padStart(2,'0')}` : imdb;
-                    const url = `${CONFIG.PROXY}${encodeURIComponent(`${CONFIG.SOURCES.EMBED69}/${slug}/`)}`;
-                    
-                    const res = await fetch(url);
-                    const html = await res.text();
-                    
-                    // Regex Extract
-                    const match = html.match(/let dataLink\s*=\s*(\[[\s\S]*?\]);/);
-                    if(match) {
-                        const data = JSON.parse(match[1]);
-                        data.forEach(item => {
-                            let lang = 'Inglés';
-                            if(item.video_language.includes('LAT')) lang = 'Latino';
-                            else if(item.video_language.includes('ESP') || item.video_language.includes('CAS')) lang = 'Castellano';
-                            else if(item.video_language.includes('SUB')) lang = 'Subtitulado';
-
-                            item.sortedEmbeds.forEach(embed => {
-                                try {
-                                    // Decode JWT-like link
-                                    const raw = embed.link.split('.')[1].replace(/-/g, '+').replace(/_/g, '/');
-                                    const decoded = JSON.parse(atob(raw));
-                                    
-                                    if(decoded.link) {
-                                        let finalUrl = decoded.link;
-                                        let quality = "ADS";
-                                        let serverName = embed.servername;
-                                        const host = serverName.toLowerCase();
-
-                                        // Anti-Ad Logic (Convert to Unlimplay)
-                                        const supportedHosts = ['voe', 'streamwish', 'doodstream', 'vidhide', 'filemoon', 'mixdrop'];
-                                        if(supportedHosts.some(h => host.includes(h))) {
-                                            // Extract ID
-                                            const idMatch = finalUrl.match(/\/([a-zA-Z0-9]+)$/) || finalUrl.match(/\/e\/([a-zA-Z0-9]+)/);
-                                            if(idMatch) {
-                                                // Normalize Host
-                                                let hCode = 'voe';
-                                                if(host.includes('wish')) hCode = 'streamwish';
-                                                if(host.includes('dood')) hCode = 'doodstream';
-                                                if(host.includes('vidhide')) hCode = 'vidhide';
-                                                if(host.includes('moon')) hCode = 'filemoon';
-                                                
-                                                finalUrl = `https://unlimplay.com/embed2/?host=${hCode}&id=${idMatch[1]}`;
-                                                quality = "NO ADS";
-                                                serverName += " [Limpio]";
-                                            }
-                                        }
-
-                                        Scraper.add({
-                                            name: serverName,
-                                            lang: lang,
-                                            type: "iframe",
-                                            url: finalUrl,
-                                            quality: quality,
-                                            provider: "Embed69"
-                                        });
-                                    }
-                                } catch(err) { /* decode error */ }
-                            });
-                        });
-                    }
-                } catch(e) { Logger.error(`E69 Fail: ${e.message}`); }
-            },
-
-            verHD: async (imdb) => {
-                try {
-                    UI.showLoader(true, "ESCANEA VERHD...");
-                    const url = `${CONFIG.PROXY}${encodeURIComponent(`${CONFIG.SOURCES.VERHD}/${imdb}`)}`;
-                    const res = await fetch(url);
-                    const html = await res.text();
-                    
-                    // Simple Regex for Dropload/Thunderbolt
-                    const regex = /dropload\.tv\/e\/([a-zA-Z0-9_-]+)/g;
-                    let m;
-                    while ((m = regex.exec(html)) !== null) {
-                        Scraper.add({
-                            name: "Thunderbolt Ultra",
-                            lang: "Latino",
-                            type: "iframe",
-                            url: `https://unlimplay.com/embed2/?host=dropload&id=${m[1]}`,
-                            quality: "NO ADS",
-                            provider: "VerHD"
-                        });
-                    }
-                } catch(e) { Logger.error(`VerHD Fail: ${e.message}`); }
-            }
-        };
-
-        // ==========================================
-        // 6. CORE CONTROLLER
-        // ==========================================
-        const Core = {
-            init: async () => {
-                UI.init();
-                UI.showLoader(true, "CONECTANDO CON TMDB...");
-
-                const params = new URLSearchParams(window.location.search);
-                const id = params.get('id');
-                const s = params.get('season');
-                const e = params.get('episode');
-
-                if(!id) {
-                    UI.showLoader(false);
-                    return; // Modo Demo / Home
-                }
-
-                STATE.type = (s && e) ? 'tv' : 'movie';
-                STATE.season = s ? parseInt(s) : 1;
-                STATE.episode = e ? parseInt(e) : 1;
-
-                // 1. Get Details
-                const data = await API.getDetails(id, STATE.type);
-                if(!data) {
-                    alert("Error crítico: No se pudo obtener información de la película.");
-                    return;
-                }
-                
-                // 2. If Series, Get Episodes
-                if(STATE.type === 'tv') {
-                    STATE.totalSeasons = data.number_of_seasons;
-                    const sData = await API.getSeason(id, STATE.season);
-                    if(sData) STATE.episodes = sData.episodes || [];
-                }
-
-                // 3. Render
-                UI.renderMetadata(data);
-                UI.updateSeriesControls();
-                UI.showLoader(false);
-
-                // 4. Setup Listeners
-                document.getElementById('season-select').onchange = (ev) => Core.changeEp(ev.target.value, 1);
-                document.getElementById('episode-select').onchange = (ev) => Core.changeEp(STATE.season, ev.target.value);
-                document.getElementById('btn-next-ep').onclick = () => Core.changeEp(STATE.season, STATE.episode + 1);
-            },
-
-            changeEp: (s, e) => {
-                const url = `?id=${STATE.tmdbId}&season=${s}&episode=${e}`;
-                window.history.pushState({}, '', url);
-                window.location.reload(); // Reload for safety and fresh scrape
-            },
-
-            startPlayback: () => {
-                document.getElementById('player-overlay').classList.remove('hidden');
-                requestAnimationFrame(() => document.getElementById('player-overlay').classList.remove('opacity-0'));
-                Scraper.run();
-            },
-
-            closePlayer: () => {
-                const overlay = document.getElementById('player-overlay');
-                overlay.classList.add('opacity-0');
-                
-                // Stop Video
-                const v = document.getElementById('player-html5');
-                const i = document.getElementById('player-iframe');
-                v.pause(); v.src = "";
-                i.src = "";
-                
-                setTimeout(() => overlay.classList.add('hidden'), 500);
-            },
-
-            playSource: (idx) => {
-                if(!STATE.sources[idx]) return;
-                STATE.currentSourceIdx = idx;
-                
-                const src = STATE.sources[idx];
-                const v = document.getElementById('player-html5');
-                const i = document.getElementById('player-iframe');
-                const label = document.getElementById('current-server-label');
-                const ph = document.getElementById('player-placeholder');
-
-                label.innerText = `${src.name} (${src.lang})`;
-                ph.style.display = 'none';
-                
-                // Update Menu UI
-                UI.renderServerList(); // Re-render to update active class
-                UI.toggleServerMenu(false); // Close menu
+                // UI Update
+                document.querySelectorAll('.server-item').forEach(el => el.classList.remove('active'));
+                document.getElementById('server-list').children[idx]?.classList.add('active');
+                label.innerText = src.name;
+                App.toggleMenu(false);
 
                 // Load Logic
-                if(src.type === 'direct_video') {
-                    // Future HLS implementation
-                    i.classList.add('hidden');
-                    v.classList.remove('hidden');
+                iframe.classList.add('hidden');
+                loader.classList.remove('hidden');
+                
+                setTimeout(() => {
+                    iframe.src = src.url;
+                    iframe.onload = () => {
+                        loader.classList.add('hidden');
+                        iframe.classList.remove('hidden');
+                    };
+                }, 300);
+            },
+
+            toggleMenu: (force) => {
+                const menu = document.getElementById('server-dropdown');
+                const isHidden = menu.classList.contains('hidden');
+                const show = force !== undefined ? force : isHidden;
+                
+                if(show) {
+                    menu.classList.remove('hidden');
+                    setTimeout(() => menu.classList.remove('opacity-0', 'scale-95'), 10);
                 } else {
-                    v.classList.add('hidden');
-                    i.classList.remove('hidden');
-                    i.src = src.url;
+                    menu.classList.add('opacity-0', 'scale-95');
+                    setTimeout(() => menu.classList.add('hidden'), 200);
                 }
-                Logger.log(`Playing: ${src.url}`);
+            },
+
+            toggleLoader: (show) => {
+                const l = document.getElementById('global-loader');
+                if(show) {
+                    l.classList.remove('opacity-0', 'pointer-events-none');
+                } else {
+                    l.classList.add('opacity-0', 'pointer-events-none');
+                }
             }
         };
 
-        // ==========================================
-        // 7. BOOTSTRAP
-        // ==========================================
-        window.onload = Core.init;
-
+        window.onload = App.init;
     </script>
 </body>
 </html>
