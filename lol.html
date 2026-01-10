@@ -5,11 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="referrer" content="no-referrer">
     <meta name="theme-color" content="#000000">
-    <title>JJMOVIES V1.1 | LATINO APOCALYPSE</title>
+    <title>JJMOVIES V1.2 | AD-KILLER</title>
 
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;600;700&family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@300;400;500;600;700&family=Rajdhani:wght@300;500;600;700;800&display=swap" rel="stylesheet">
 
     <script>
         tailwind.config = {
@@ -17,63 +17,83 @@
             theme: {
                 extend: {
                     colors: {
-                        brand: { DEFAULT: '#ff0000', dark: '#cc0000', glow: 'rgba(255, 0, 0, 0.6)' },
-                        sys: { black: '#050505', panel: '#0a0a0a', border: '#1a1a1a' },
-                        term: { green: '#0f0', red: '#f00' }
+                        brand: { DEFAULT: '#ff0000', dark: '#cc0000', neon: '#ff3333' },
+                        sys: { black: '#000000', panel: '#080808', border: '#1a1a1a' },
+                        term: { green: '#00ff41', red: '#ff0033', blue: '#00ccff' }
                     },
-                    fontFamily: { sans: ['Inter', 'sans-serif'], tech: ['Chakra Petch', 'monospace'] },
+                    fontFamily: {
+                        sans: ['Rajdhani', 'sans-serif'],
+                        tech: ['Chakra Petch', 'monospace'],
+                    },
                     animation: {
-                        'pulse-fast': 'pulse 0.5s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-                        'scanline': 'scanline 4s linear infinite',
-                        'flash': 'flash 0.2s infinite'
+                        'pulse-fast': 'pulse 0.8s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'scanline': 'scanline 6s linear infinite',
+                        'flash': 'flash 3s infinite',
                     },
                     keyframes: {
                         scanline: { '0%': { transform: 'translateY(-100%)' }, '100%': { transform: 'translateY(100%)' } },
-                        flash: { '0%, 100%': { opacity: '1' }, '50%': { opacity: '0.8' } }
+                        flash: { '0%, 100%': { opacity: '1' }, '50%': { opacity: '0.5' } }
                     },
-                    boxShadow: { 'neon': '0 0 30px rgba(255, 0, 0, 0.6)' }
+                    boxShadow: {
+                        'neon': '0 0 25px rgba(255, 0, 0, 0.5)',
+                        'term': '0 0 10px rgba(0, 255, 65, 0.3)'
+                    }
                 }
             }
         }
     </script>
 
     <style>
+        /* ESTILOS GLOBALES */
         :root { --app-bg: #000; }
-        body { background: var(--app-bg); color: #fff; overflow-x: hidden; font-family: 'Inter', sans-serif; }
+        body { background: var(--app-bg); color: #fff; overflow-x: hidden; font-family: 'Rajdhani', sans-serif; }
         
+        /* GRID DE FONDO */
         .bg-grid {
-            background-image: linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
-            background-size: 40px 40px;
+            background-image: linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
         }
 
-        ::-webkit-scrollbar { width: 4px; }
+        /* SCROLLBAR PERSONALIZADO */
+        ::-webkit-scrollbar { width: 5px; height: 5px; }
         ::-webkit-scrollbar-track { background: #000; }
-        ::-webkit-scrollbar-thumb { background: #333; }
+        ::-webkit-scrollbar-thumb { background: #333; border-radius: 2px; }
         ::-webkit-scrollbar-thumb:hover { background: #ff0000; }
 
-        .server-item { background: #0a0a0a; border: 1px solid #111; transition: all 0.1s; }
-        .server-item:hover { background: #111; border-color: #ff0000; }
-        .server-item.active { background: #111; border-color: #ff0000; box-shadow: inset 0 0 15px rgba(255,0,0,0.2); }
-        
+        /* ITEMS DE SERVIDOR */
+        .server-item {
+            position: relative;
+            background: rgba(255,255,255,0.02);
+            border-left: 3px solid transparent;
+            transition: all 0.2s;
+        }
+        .server-item:hover { background: rgba(255,255,255,0.06); }
+        .server-item.active {
+            background: linear-gradient(90deg, rgba(255,0,0,0.15) 0%, transparent 100%);
+            border-left-color: #ff0000;
+        }
+        .server-item.active .status-dot { background: #00ff41; box-shadow: 0 0 8px #00ff41; }
+
+        /* CAST & GRID */
+        .cast-scroll { display: flex; overflow-x: auto; gap: 1rem; padding-bottom: 1rem; scroll-behavior: smooth; }
+        .cast-card { flex: 0 0 100px; cursor: pointer; transition: transform 0.2s; }
+        .cast-card:hover { transform: translateY(-5px); }
+        .cast-img { width: 100px; height: 100px; object-fit: cover; border-radius: 50%; border: 2px solid #222; }
+        .cast-card:hover .cast-img { border-color: #ff0000; }
+        .film-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 1rem; }
+        .film-card:hover { transform: scale(1.05); z-index: 10; box-shadow: 0 0 20px rgba(255,0,0,0.4); }
+
+        /* UTILIDADES */
+        .hidden-force { display: none !important; }
         .scanline-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(0,0,0,0.5) 50%);
-            background-size: 100% 4px; pointer-events: none; z-index: 9999; opacity: 0.2;
+            background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0) 50%, rgba(0,0,0,0.2) 50%, rgba(0,0,0,0.2));
+            background-size: 100% 4px; pointer-events: none; z-index: 9999; opacity: 0.15;
         }
-        
-        .cast-scroll { display: flex; overflow-x: auto; gap: 1rem; padding-bottom: 1rem; }
-        .cast-card { flex: 0 0 80px; cursor: pointer; transition: transform 0.2s; }
-        .cast-card:hover { transform: translateY(-3px); }
-        .cast-img { width: 80px; height: 80px; object-fit: cover; border-radius: 50%; border: 2px solid #222; }
-        .cast-card:hover .cast-img { border-color: #ff0000; }
-        .film-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 1rem; }
-        .film-card:hover { transform: scale(1.05); z-index: 10; }
-
-        .hidden-force { display: none !important; }
     </style>
 </head>
-<body>
+<body class="selection:bg-brand selection:text-white">
 
     <div class="scanline-overlay"></div>
 
@@ -81,33 +101,39 @@
         <div class="flex flex-col cursor-pointer" onclick="window.location.reload()">
             <div class="flex items-center gap-2">
                 <i class="fas fa-biohazard text-brand text-2xl animate-pulse"></i>
-                <span class="text-2xl font-black tracking-tighter text-white italic">JJ<span class="text-brand text-neon">MOVIES</span></span>
+                <span class="text-3xl font-black tracking-tighter text-white italic">JJ<span class="text-brand text-neon">MOVIES</span></span>
             </div>
-            <div class="flex items-center gap-2 text-[9px] font-tech text-gray-500 uppercase tracking-widest pl-8 -mt-1">
-                <span class="text-white">V 1.1</span> <span class="text-brand font-bold">LATINO APOCALYPSE</span>
+            <div class="flex items-center gap-2 text-[10px] font-tech text-gray-500 uppercase tracking-widest pl-8 -mt-1">
+                <span>V 1.2</span> <span class="text-brand font-bold">AD-KILLER PROTOCOL</span>
             </div>
         </div>
         <div class="hidden md:flex items-center gap-2 bg-black border border-brand/50 px-3 py-1 rounded shadow-neon">
-            <div class="w-2 h-2 rounded-full bg-red-600 animate-pulse-fast"></div>
-            <span class="text-[10px] font-bold font-tech text-red-500 tracking-[0.2em]">CONNECTED</span>
+            <div class="w-2 h-2 rounded-full bg-term-green animate-pulse-fast"></div>
+            <span class="text-[10px] font-bold font-tech text-term-green tracking-[0.2em]">SECURE</span>
         </div>
     </nav>
 
     <main class="relative z-10 w-full min-h-screen flex flex-col justify-center bg-grid pt-20 pb-20">
+        
         <div class="absolute inset-0 z-[-1] overflow-hidden fixed">
             <div id="bg-backdrop" class="absolute inset-0 bg-cover bg-center transition-all duration-1000 opacity-0 scale-110 grayscale"></div>
-            <div class="absolute inset-0 bg-gradient-to-t from-black via-black/90 to-transparent"></div>
+            <div class="absolute inset-0 bg-gradient-to-r from-black via-black/95 to-transparent"></div>
+            <div class="absolute inset-0 bg-gradient-to-t from-black via-black/80 to-transparent"></div>
         </div>
 
         <div id="hero-panel" class="container mx-auto px-6 max-w-6xl opacity-0 translate-y-10 transition-all duration-700">
-            <div class="flex items-center gap-2 mb-4">
-                <span class="px-2 py-0.5 bg-brand text-black text-[10px] font-black font-tech uppercase rounded">ULTRA HD</span>
-                <span class="px-2 py-0.5 border border-white/20 text-gray-300 text-[10px] font-bold uppercase rounded">UNLOCKED</span>
+            
+            <div class="flex items-center gap-3 mb-4">
+                <div class="px-2 py-0.5 bg-brand text-black text-[10px] font-black font-tech uppercase rounded">AD-BLOCK</div>
+                <div class="px-2 py-0.5 border border-white/20 text-gray-300 text-[10px] font-bold font-tech uppercase rounded">4K HDR</div>
+                <div class="px-2 py-0.5 border border-term-green/30 text-term-green text-[10px] font-bold font-tech uppercase rounded flex items-center gap-1">
+                    <i class="fas fa-shield-alt"></i> Active
+                </div>
             </div>
 
-            <h1 id="movie-title" class="text-5xl md:text-8xl font-black text-white leading-none uppercase tracking-tighter mb-4 text-shadow-neon">ESPERANDO DATOS...</h1>
+            <h1 id="movie-title" class="text-6xl md:text-8xl font-black text-white leading-none uppercase tracking-tighter mb-4 text-shadow-neon">ESPERANDO DATOS...</h1>
 
-            <div class="flex items-center gap-4 text-xs font-bold text-gray-400 mb-6 font-tech uppercase tracking-widest">
+            <div class="flex items-center gap-4 text-sm font-bold text-gray-400 mb-6 font-tech uppercase tracking-widest">
                 <span id="meta-year" class="text-white">----</span>
                 <span class="text-brand">///</span>
                 <span id="meta-rating" class="text-white">--</span>
@@ -115,74 +141,105 @@
                 <span id="meta-duration">-- MIN</span>
             </div>
 
-            <div id="series-controls" class="hidden flex flex-wrap gap-4 mb-8">
-                <select id="season-select" class="bg-black border border-white/20 text-white font-bold px-4 py-3 outline-none focus:border-brand appearance-none font-tech text-sm uppercase min-w-[150px]"></select>
-                <select id="episode-select" class="bg-black border border-white/20 text-white font-bold px-4 py-3 outline-none focus:border-brand appearance-none font-tech text-sm uppercase min-w-[150px]"></select>
+            <div id="series-controls" class="hidden flex flex-wrap gap-4 mb-8 p-4 border border-white/5 bg-black/50 rounded-lg backdrop-blur-sm max-w-2xl">
+                <div class="w-full text-[10px] text-gray-500 font-tech uppercase tracking-widest mb-1 flex justify-between">
+                    <span>Configuración</span> <span id="ep-name-display" class="text-brand">Loading...</span>
+                </div>
+                <div class="relative group flex-1">
+                    <select id="season-select" class="w-full bg-black border border-white/20 text-white font-bold px-4 py-3 outline-none focus:border-brand appearance-none font-tech text-sm uppercase"></select>
+                    <i class="fas fa-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-600"></i>
+                </div>
+                <div class="relative group flex-1">
+                    <select id="episode-select" class="w-full bg-black border border-white/20 text-white font-bold px-4 py-3 outline-none focus:border-brand appearance-none font-tech text-sm uppercase"></select>
+                    <i class="fas fa-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-600"></i>
+                </div>
             </div>
 
             <p id="movie-desc" class="text-gray-400 text-lg max-w-2xl leading-relaxed mb-8 border-l-4 border-brand pl-4 font-light">
-                Agrega ?id=... a la URL para iniciar.
+                Agrega ?id=... a la URL para iniciar el sistema.
             </p>
 
             <button onclick="Core.start()" class="group relative px-12 py-5 bg-brand hover:bg-white text-white hover:text-black font-black text-xl uppercase tracking-widest transition-all duration-200 shadow-neon skew-x-[-10deg] mb-12">
-                <div class="skew-x-[10deg] flex items-center gap-3"><i class="fas fa-play"></i> <span>INICIAR</span></div>
+                <div class="skew-x-[10deg] flex items-center gap-3">
+                    <i class="fas fa-play"></i> <span>INICIAR SISTEMA</span>
+                </div>
             </button>
 
-            <div id="cast-container" class="border-t border-white/10 pt-8 opacity-0">
-                <h3 class="text-xs font-bold font-tech uppercase tracking-widest text-gray-500 mb-4">Reparto</h3>
+            <div id="cast-container" class="border-t border-white/10 pt-8 opacity-0 transition-opacity duration-1000">
+                <h3 class="text-xs font-bold font-tech uppercase tracking-widest text-gray-500 mb-4 flex items-center gap-2">
+                    <i class="fas fa-users text-brand"></i> Reparto
+                </h3>
                 <div id="cast-list" class="cast-scroll custom-scroll"></div>
             </div>
         </div>
     </main>
 
+    <div id="actor-modal" class="fixed inset-0 z-[150] bg-black/95 backdrop-blur-xl hidden opacity-0 transition-all duration-500 overflow-y-auto">
+        <div class="container mx-auto px-6 py-12 max-w-5xl">
+            <div class="flex justify-between items-start mb-8 sticky top-0 bg-black/90 p-4 border-b border-white/10 z-10 backdrop-blur">
+                <div class="flex items-center gap-6">
+                    <img id="actor-profile-img" src="" class="w-20 h-20 rounded-full object-cover border-2 border-brand shadow-neon">
+                    <div>
+                        <h2 id="actor-name" class="text-3xl font-black text-white uppercase">Actor</h2>
+                        <p class="text-xs text-brand font-tech uppercase tracking-widest mt-1">Filmografía Seleccionada</p>
+                    </div>
+                </div>
+                <button onclick="Core.closeActorModal()" class="w-10 h-10 rounded-full bg-white/10 hover:bg-white text-white hover:text-black flex items-center justify-center transition-all">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            <div id="actor-movies-grid" class="film-grid pb-20"></div>
+        </div>
+    </div>
+
     <div id="player-overlay" class="fixed inset-0 z-[100] bg-black hidden flex flex-col md:flex-row opacity-0 transition-opacity duration-500">
+        
         <div id="video-area" class="relative w-full md:w-[75%] h-[40vh] md:h-full bg-black flex items-center justify-center border-r border-white/10">
-            <div class="absolute top-0 left-0 w-full p-4 flex justify-between items-center z-20 bg-gradient-to-b from-black to-transparent pointer-events-none">
-                <button onclick="Core.close()" class="pointer-events-auto w-8 h-8 flex items-center justify-center bg-black border border-white/20 hover:border-brand text-white transition-all"><i class="fas fa-times"></i></button>
+            
+            <div class="absolute top-0 left-0 w-full p-4 flex justify-between items-center z-20 bg-gradient-to-b from-black/90 to-transparent pointer-events-none">
+                <button onclick="Core.close()" class="pointer-events-auto w-10 h-10 rounded bg-white/5 hover:bg-brand border border-white/10 text-white flex items-center justify-center transition-all"><i class="fas fa-times"></i></button>
                 <div class="pointer-events-auto flex gap-2">
-                    <button onclick="Core.toggleSidebar()" class="px-3 py-1 bg-brand text-black text-[10px] font-bold uppercase tracking-widest transition-all hover:bg-white"><i class="fas fa-expand"></i> <span id="toggle-text">Expandir</span></button>
-                    <div class="px-3 py-1 bg-black border border-white/20 text-white text-[10px] font-bold uppercase tracking-widest flex items-center gap-2"><span id="playing-server-name">---</span></div>
+                    <button onclick="Core.toggleSidebar()" class="px-4 py-1.5 bg-brand text-white text-[10px] font-bold uppercase tracking-widest rounded border border-brand hover:bg-white hover:text-brand transition-all flex items-center gap-2"><i class="fas fa-expand"></i> <span id="toggle-text">Expandir</span></button>
+                    <div class="px-4 py-1.5 bg-black/80 text-gray-300 text-[10px] font-bold uppercase tracking-widest rounded border border-white/10 flex items-center gap-2"><span id="playing-server-name">---</span></div>
                 </div>
             </div>
-            <div class="relative w-full h-full bg-black">
-                <iframe id="video-frame" class="w-full h-full border-0 absolute inset-0 z-10" allowfullscreen allow="autoplay; encrypted-media; picture-in-picture"></iframe>
+            
+            <div class="relative w-full h-full bg-black flex flex-col">
+                <div id="security-controls" class="absolute bottom-6 left-1/2 -translate-x-1/2 z-30 pointer-events-auto hidden">
+                    <button onclick="Core.forceUnlock()" class="bg-red-900/90 text-white border border-red-500 px-6 py-2 rounded-full text-xs font-bold uppercase tracking-widest hover:bg-red-700 transition-all shadow-lg flex items-center gap-2">
+                        <i class="fas fa-unlock"></i> Desbloquear (Si no carga)
+                    </button>
+                </div>
+
+                <iframe id="video-frame" class="w-full h-full border-0 z-10" 
+                    allowfullscreen 
+                    sandbox="allow-forms allow-pointer-lock allow-same-origin allow-scripts allow-top-navigation-by-user-activation">
+                </iframe>
             </div>
+
             <div id="internal-loader" class="absolute inset-0 bg-black z-20 flex flex-col items-center justify-center hidden">
                 <div class="w-12 h-12 border-4 border-brand border-t-transparent rounded-full animate-spin mb-4"></div>
-                <div class="text-[10px] font-tech text-brand uppercase tracking-[0.3em] animate-pulse">Obteniendo Stream...</div>
+                <div class="text-[10px] font-tech text-brand uppercase tracking-[0.3em] animate-pulse">Estableciendo Conexión Segura...</div>
             </div>
         </div>
 
-        <div id="sidebar-area" class="w-full md:w-[25%] h-[60vh] md:h-full bg-[#050505] flex flex-col transition-all duration-500 border-l border-white/5 shadow-[-20px_0_50px_rgba(0,0,0,0.5)]">
+        <div id="sidebar-area" class="w-full md:w-[25%] h-[60vh] md:h-full bg-[#050505] flex flex-col transition-all duration-500 overflow-hidden border-l border-white/5 shadow-[-20px_0_50px_rgba(0,0,0,0.5)]">
             <div class="p-4 border-b border-white/5 bg-[#080808] flex justify-between items-center">
                 <div class="flex items-center gap-2"><i class="fas fa-server text-brand"></i><span class="text-xs font-bold font-tech uppercase tracking-widest text-white">Cambiar de Servidor</span></div>
                 <span id="total-sources" class="text-[10px] text-gray-500 font-mono">0 NODES</span>
             </div>
-            <div id="server-list" class="flex-1 overflow-y-auto p-2 space-y-1 bg-grid"></div>
-            <div class="p-2 bg-black border-t border-white/5 text-[8px] text-center text-gray-600 font-mono uppercase">JJMovies V1.1 • Max Power</div>
-        </div>
-    </div>
-
-    <div id="actor-modal" class="fixed inset-0 z-[150] bg-black/95 backdrop-blur-md hidden opacity-0 transition-all duration-500 overflow-y-auto">
-        <div class="container mx-auto px-6 py-12 max-w-5xl">
-            <div class="flex justify-between items-start mb-8 sticky top-0 bg-black/90 p-4 border-b border-white/10 z-10">
-                <div class="flex items-center gap-4">
-                    <img id="actor-profile-img" src="" class="w-16 h-16 rounded-full object-cover border border-brand">
-                    <div>
-                        <h2 id="actor-name" class="text-2xl font-black text-white uppercase">Actor</h2>
-                        <p class="text-[10px] text-gray-500 font-tech uppercase tracking-widest">Filmografía</p>
-                    </div>
-                </div>
-                <button onclick="Core.closeActorModal()" class="text-white hover:text-brand transition-colors"><i class="fas fa-times text-2xl"></i></button>
+            <div id="server-list" class="flex-1 overflow-y-auto custom-scroll relative bg-grid"></div>
+            <div class="p-3 bg-black border-t border-white/5 text-[8px] text-center text-gray-600 font-mono uppercase flex justify-between px-6">
+                <span>JJMovies v1.2</span>
+                <span class="text-term-green flex items-center gap-1"><i class="fas fa-shield-alt"></i> Protected</span>
             </div>
-            <div id="actor-movies-grid" class="film-grid pb-20 grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4"></div>
         </div>
     </div>
 
     <div id="global-loader" class="fixed inset-0 z-[200] bg-black hidden flex flex-col items-center justify-center font-mono">
-        <i class="fas fa-circle-notch fa-spin text-6xl text-brand mb-6"></i>
-        <h2 class="text-2xl font-bold text-white tracking-widest mb-4">BURNING SERVERS...</h2>
-        <div class="w-80 h-32 bg-[#050505] border border-brand/50 p-4 text-[10px] text-green-500 overflow-hidden relative font-tech">
+        <i class="fas fa-fingerprint text-6xl text-brand mb-6 animate-pulse"></i>
+        <h2 class="text-2xl font-bold text-white tracking-widest mb-4">SCANNING NETWORKS</h2>
+        <div class="w-80 h-32 bg-[#0a0a0a] border border-brand/30 rounded p-4 text-[10px] text-term-green overflow-hidden relative shadow-neon">
             <div class="absolute inset-0 bg-scanline opacity-10 pointer-events-none"></div>
             <div id="terminal-logs" class="flex flex-col gap-1"></div>
         </div>
@@ -190,8 +247,7 @@
 
     <script>
         const CFG = {
-            API: '936410eebae74f9895643e085cc4a740',
-            // LISTA DE PROXIES DE ATAQUE
+            API: '936410eebae74f9895643e085cc4a740', 
             PROXIES: [
                 'https://api.codetabs.com/v1/proxy/?quest=',
                 'https://corsproxy.io/?',
@@ -208,7 +264,7 @@
                 const p = new URLSearchParams(location.search);
                 const id = p.get('id');
                 if(!id) {
-                    Core.updateMeta({ title: "JJMOVIES V1.1", overview: "Esperando ID." });
+                    Core.updateMeta({ title: "SYSTEM IDLE", overview: "Esperando comando de entrada." });
                     document.getElementById('hero-panel').classList.remove('opacity-0', 'translate-y-10');
                     return;
                 }
@@ -247,7 +303,7 @@
 
             updateMeta: (data) => {
                 document.getElementById('movie-title').innerText = data.title || data.name;
-                document.getElementById('movie-desc').innerText = data.overview || "Sin descripción.";
+                document.getElementById('movie-desc').innerText = data.overview || "No data.";
                 document.getElementById('meta-year').innerText = (data.release_date || data.first_air_date || '----').split('-')[0];
                 document.getElementById('meta-rating').innerText = data.vote_average?.toFixed(1) || '0.0';
                 if(data.backdrop_path) {
@@ -327,19 +383,16 @@
 
                 Core.state.sources = { 'LAT': [], 'ESP': [], 'ENG': [] };
 
-                addLog("Golpeando VerHD (Latino)...");
-                const tasks = [];
-                
+                addLog("Scanning VerHD...");
                 if(Core.state.imdb) {
-                    tasks.push(Scraper.verHD().then(() => addLog("VerHD: OK")));
-                    tasks.push(Scraper.embed69().then(() => addLog("Embed69: OK")));
+                    await Scraper.verHD();
+                    addLog("Scanning Embed69 Network...");
+                    await Scraper.embed69();
                 }
                 
-                // BACKUPS
-                Core.addSource('ENG', { name: "VidSrc", url: Scraper.getVidSrc(), clean: false });
-                Core.addSource('ENG', { name: "UEmbed", url: Scraper.getUEmbed(), clean: false });
-
-                await Promise.allSettled(tasks);
+                addLog("Loading backup nodes...");
+                Core.addSource('ENG', { name: "VidSrc", url: Scraper.getVidSrc(), clean: false, dangerous: true });
+                Core.addSource('ENG', { name: "UEmbed", url: Scraper.getUEmbed(), clean: false, dangerous: true });
 
                 addLog("Done.");
                 setTimeout(() => {
@@ -361,7 +414,6 @@
                 c.innerHTML = '';
                 let total = 0;
                 
-                // ORDENAR PRIORIDAD: LATINO > CASTELLANO > INGLES
                 const sections = [
                     { id: 'LAT', label: 'LATINO', flag: 'https://flagcdn.com/w40/mx.png' },
                     { id: 'ESP', label: 'CASTELLANO', flag: 'https://flagcdn.com/w40/es.png' },
@@ -394,21 +446,44 @@
                 const src = Core.state.sources[lang][idx];
                 const frame = document.getElementById('video-frame');
                 const loader = document.getElementById('internal-loader');
+                const unlockBtn = document.getElementById('security-controls');
                 
                 document.querySelectorAll('.server-item').forEach(el => el.classList.remove('active'));
                 const activeEl = document.querySelector(`.server-item[data-gid="${lang}-${idx}"]`);
                 if(activeEl) activeEl.classList.add('active');
                 
                 document.getElementById('playing-server-name').innerText = `${lang} • ${src.name}`;
+                
+                // MODO "BÚNKER" POR DEFECTO
+                // Sandbox estricto (Sin popups, sin redirecciones)
+                frame.setAttribute('sandbox', 'allow-forms allow-pointer-lock allow-same-origin allow-scripts allow-top-navigation-by-user-activation'); 
+                
+                // Si el servidor es "Peligroso" (VidSrc), mostramos el botón de desbloqueo por si falla
+                if(src.dangerous || !src.clean) {
+                    unlockBtn.classList.remove('hidden');
+                } else {
+                    unlockBtn.classList.add('hidden');
+                }
+
                 frame.classList.add('hidden');
                 loader.classList.remove('hidden');
-                frame.removeAttribute('sandbox'); 
                 
                 setTimeout(() => {
                     frame.src = src.url;
                     frame.onload = () => { loader.classList.add('hidden'); frame.classList.remove('hidden'); };
                     setTimeout(() => { loader.classList.add('hidden'); frame.classList.remove('hidden'); }, 2000);
                 }, 200);
+            },
+
+            forceUnlock: () => {
+                const frame = document.getElementById('video-frame');
+                const url = frame.src;
+                // QUITAMOS EL CONDÓN (SANDBOX)
+                frame.removeAttribute('sandbox');
+                // Recargamos
+                frame.src = url;
+                document.getElementById('security-controls').classList.add('hidden');
+                alert("Protección desactivada. Pueden salir anuncios.");
             },
 
             openPlayer: () => {
@@ -496,7 +571,7 @@
                                             clean = true;
                                         }
                                     }
-                                    if(!clean) Core.addSource(lang, { name: name, url: url, clean: false });
+                                    if(!clean) Core.addSource(lang, { name: name, url: url, clean: false, dangerous: true });
                                 }
                             });
                         });
@@ -506,18 +581,16 @@
 
             verHD: async () => {
                 try {
-                    // INTENTO 1: Directo por ID
-                    let html = await Scraper.fetchSafe(`https://verhdlink.cam/movie/${Core.state.imdb}`);
+                    const html = await Scraper.fetchSafe(`https://verhdlink.cam/movie/${Core.state.imdb}`);
+                    if(!html) return;
                     
-                    if(html) {
-                        const matches = html.matchAll(/dropload\.tv\/e\/([a-zA-Z0-9_-]+)/g);
-                        for(const m of matches) {
-                            Core.addSource('LAT', { name: "Thunderbolt (Limpio)", url: `https://unlimplay.com/embed2/?host=dropload&id=${m[1]}`, clean: true });
-                        }
-                        const vip = html.matchAll(/streamwish\.to\/e\/([a-zA-Z0-9]+)/g);
-                        for(const v of vip) {
-                            Core.addSource('LAT', { name: "VIP Server (Limpio)", url: `https://unlimplay.com/embed2/?host=streamwish&id=${v[1]}`, clean: true });
-                        }
+                    const matches = html.matchAll(/dropload\.tv\/e\/([a-zA-Z0-9_-]+)/g);
+                    for(const m of matches) {
+                        Core.addSource('LAT', { name: "Thunderbolt (Ultra)", url: `https://unlimplay.com/embed2/?host=dropload&id=${m[1]}`, clean: true });
+                    }
+                    const vip = html.matchAll(/streamwish\.to\/e\/([a-zA-Z0-9]+)/g);
+                    for(const v of vip) {
+                        Core.addSource('LAT', { name: "VIP Server", url: `https://unlimplay.com/embed2/?host=streamwish&id=${v[1]}`, clean: true });
                     }
                 } catch(e) {}
             }
