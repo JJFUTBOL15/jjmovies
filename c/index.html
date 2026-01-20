@@ -1,6 +1,17 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+  <script>
+// --- SEGURIDAD ANTI-ROBO JJFUTBOL ---
+document.addEventListener('contextmenu', event => event.preventDefault());
+document.onkeydown = function(e) {
+  if(event.keyCode == 123) { return false; } // Bloquear F12
+  if(e.ctrlKey && e.shiftKey && e.keyCode == 'I'.charCodeAt(0)) { return false; } // Bloquear Ctrl+Shift+I
+  if(e.ctrlKey && e.shiftKey && e.keyCode == 'C'.charCodeAt(0)) { return false; } // Bloquear Ctrl+Shift+C
+  if(e.ctrlKey && e.shiftKey && e.keyCode == 'J'.charCodeAt(0)) { return false; } // Bloquear Ctrl+Shift+J
+  if(e.ctrlKey && e.keyCode == 'U'.charCodeAt(0)) { return false; } // Bloquear Ctrl+U
+}
+</script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <meta name="theme-color" content="#0e1129">
