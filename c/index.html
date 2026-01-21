@@ -2,387 +2,271 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <meta name="theme-color" content="#0e1129">
-  <title>JJFUTBOL CHAMPIONS V20</title>
+  <title>JJFUTBOL FAST</title>
   
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/luxon@3.4.4/build/global/luxon.min.js"></script>
   
-  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700;800&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;700&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   
   <style>
-    /* --- TEMA CHAMPIONS V20 --- */
+    /* --- ESTILO CHAMPIONS CLÁSICO --- */
     :root {
       --bg: #050507;
+      --card: #14192b;
       --cyan: #00f0ff;
-      --pink: #ff0055;
-      --card: #121629;
       --border: rgba(255, 255, 255, 0.1);
     }
 
-    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-
     body {
       font-family: 'Inter', sans-serif;
-      background-color: var(--bg);
-      color: white; margin: 0; padding: 0; min-height: 100vh;
-      background-image: radial-gradient(circle at 50% 0%, #1a237e 0%, #000000 80%);
+      background: var(--bg); color: white; margin: 0; padding: 0;
+      background-image: radial-gradient(circle at 50% 0%, #1a237e 0%, #000000 70%);
+      min-height: 100vh;
     }
 
     .hidden { display: none !important; }
 
     /* HEADER */
     header {
-      padding: 15px 20px; display: flex; align-items: center; justify-content: space-between;
-      background: rgba(5, 5, 10, 0.95); position: sticky; top: 0; z-index: 100;
-      border-bottom: 1px solid var(--border); box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+      padding: 15px 20px; background: rgba(5,5,10,0.95); position: sticky; top: 0; z-index: 50;
+      display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border);
     }
-    .brand { display: flex; align-items: center; gap: 12px; }
-    .logo { width: 40px; height: 40px; border-radius: 50%; border: 2px solid var(--cyan); }
-    .title { font-family: 'Rajdhani', sans-serif; font-size: 22px; font-weight: 800; line-height: 1; }
-    .title span { color: var(--cyan); font-size: 11px; display: block; letter-spacing: 2px; }
+    .logo-area { display: flex; align-items: center; gap: 10px; }
+    .logo-img { width: 38px; height: 38px; border-radius: 50%; border: 2px solid var(--cyan); }
+    .app-name { font-family: 'Rajdhani'; font-size: 22px; font-weight: 800; line-height: 1; }
+    .app-name span { color: var(--cyan); font-size: 11px; display: block; letter-spacing: 2px; }
 
-    /* CONTENEDOR */
-    .container { max-width: 800px; margin: 0 auto; padding: 20px 15px 100px; }
+    /* AGENDA */
+    .container { max-width: 800px; margin: 0 auto; padding: 15px; }
 
-    /* BUSCADOR */
-    .search-box { position: relative; margin-bottom: 20px; }
-    .search-box input {
-      width: 100%; padding: 14px 45px; background: rgba(255,255,255,0.05);
-      border: 1px solid var(--border); border-radius: 12px; color: white; outline: none;
-    }
-    .search-box i { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: var(--cyan); }
+    .search { width: 100%; padding: 12px 15px; border-radius: 10px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: white; margin-bottom: 20px; outline: none; }
 
-    /* FILTROS */
-    .filters { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 5px; margin-bottom: 20px; }
-    .chip {
-      padding: 8px 18px; background: rgba(255,255,255,0.05); border: 1px solid var(--border);
-      border-radius: 30px; font-size: 12px; font-weight: 600; color: #aaa; white-space: nowrap;
-    }
-    .chip.active { background: var(--cyan); color: black; font-weight: 700; }
-
-    /* TARJETAS */
-    .card {
-      background: var(--card); border: 1px solid var(--border);
-      border-radius: 16px; margin-bottom: 15px; overflow: hidden; position: relative;
-    }
-    .card-header { padding: 15px; display: flex; align-items: center; gap: 15px; cursor: pointer; }
+    .card { background: var(--card); border-radius: 12px; border: 1px solid var(--border); margin-bottom: 12px; overflow: hidden; }
     
-    .time {
-      background: rgba(0,0,0,0.3); border-radius: 8px; padding: 8px 0; width: 55px; text-align: center;
-      border: 1px solid var(--border); font-family: 'Rajdhani', sans-serif;
-    }
-    .time span { font-weight: 700; font-size: 14px; display: block; }
-    .time small { font-size: 9px; color: #888; }
-
+    .card-head { padding: 15px; display: flex; align-items: center; gap: 15px; cursor: pointer; }
+    .time { background: rgba(0,0,0,0.3); padding: 8px 12px; border-radius: 8px; text-align: center; border: 1px solid var(--border); font-family: 'Rajdhani'; font-weight: 700; font-size: 13px; min-width: 60px; }
+    
     .info { flex: 1; display: flex; align-items: center; gap: 12px; }
-    .info img { width: 32px; height: 32px; object-fit: contain; }
-    .info div { font-family: 'Rajdhani', sans-serif; font-size: 15px; font-weight: 700; line-height: 1.2; text-transform: uppercase; }
-    .league { font-size: 10px; color: var(--cyan); font-weight: 600; margin-top: 3px; display: block; }
+    .info img { width: 30px; height: 30px; object-fit: contain; }
+    .info-text { font-family: 'Rajdhani'; font-weight: 700; font-size: 15px; line-height: 1.2; text-transform: uppercase; }
+    .league { font-size: 10px; color: var(--cyan); margin-top: 3px; }
 
-    .channels {
-      display: none; background: rgba(0,0,0,0.4); border-top: 1px solid var(--border); padding: 15px;
-    }
+    .channels { display: none; background: rgba(0,0,0,0.3); padding: 15px; border-top: 1px solid var(--border); }
     .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 
-    /* BOTONES FUERTES */
-    .btn-play {
-      background: rgba(255,255,255,0.08); border: 1px solid var(--border);
-      border-radius: 8px; color: white; padding: 14px; font-size: 11px; font-weight: 700;
-      text-align: center; cursor: pointer; font-family: 'Rajdhani', sans-serif; text-transform: uppercase;
+    .btn-ch {
+      background: rgba(255,255,255,0.05); padding: 12px; border-radius: 8px; border: 1px solid var(--border);
+      text-align: center; font-size: 11px; font-weight: 700; cursor: pointer; text-transform: uppercase;
       display: flex; align-items: center; justify-content: center; gap: 8px;
-      /* IMPORTANT: Asegurar que el clic lo reciba el botón */
-      position: relative; z-index: 10; pointer-events: auto;
     }
-    .btn-play:active { background: var(--cyan); color: black; transform: scale(0.98); }
+    .btn-ch:active { background: var(--cyan); color: black; }
 
-    /* --- REPRODUCTOR FORZADO (V20) --- */
-    #player-overlay {
-      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-      background: black; z-index: 999999; /* MÁXIMA PRIORIDAD */
-      display: none; /* Se activa con JS style.display = 'flex' */
-      flex-direction: column;
-    }
+    /* REPRODUCTOR (CLÁSICO) */
+    #player-view { position: fixed; inset: 0; background: black; z-index: 100; display: flex; flex-direction: column; }
+    
+    .p-nav { padding: 15px; background: rgba(0,0,0,0.8); display: flex; align-items: center; gap: 15px; border-bottom: 1px solid var(--border); }
+    .back { background: rgba(255,255,255,0.1); border: none; color: white; width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; cursor: pointer; }
 
-    .player-top {
-      padding: 15px; display: flex; align-items: center; gap: 15px;
-      background: linear-gradient(to bottom, #000, transparent);
-    }
-    .back-btn {
-      width: 40px; height: 40px; border-radius: 50%; background: rgba(255,255,255,0.2);
-      color: white; border: none; font-size: 18px; display: flex; align-items: center; justify-content: center;
-    }
-
-    .video-box { flex: 1; display: flex; align-items: center; justify-content: center; position: relative; background: #000; }
-    .ratio { width: 100%; padding-top: 56.25%; position: relative; }
+    .video-area { flex: 1; display: flex; align-items: center; justify-content: center; position: relative; background: #000; }
+    .aspect { width: 100%; padding-top: 56.25%; position: relative; }
     iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
 
-    /* ESCUDO */
-    #shield {
-      position: absolute; inset: 0; z-index: 20; background: black;
-      display: flex; flex-direction: column; align-items: center; justify-content: center;
-    }
-    .status { color: var(--cyan); font-family: 'Rajdhani'; font-weight: 700; margin-bottom: 10px; }
-    .bar { width: 200px; height: 4px; background: #333; border-radius: 2px; }
-    .fill { height: 100%; background: var(--cyan); width: 0%; transition: width 0.1s; }
+    /* ESCUDO TURBO (RÁPIDO) */
+    #shield { position: absolute; inset: 0; background: black; z-index: 20; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+    .loader { width: 40px; height: 40px; border: 4px solid rgba(255,255,255,0.1); border-top-color: var(--cyan); border-radius: 50%; animation: spin 0.8s linear infinite; margin-bottom: 15px; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .shield-txt { color: var(--cyan); font-family: 'Rajdhani'; font-weight: 700; font-size: 14px; letter-spacing: 1px; }
 
-    #unlock-btn {
-      position: absolute; top: 80px; right: 20px; z-index: 60;
-      background: rgba(255,0,85,0.4); border: 1px solid var(--pink); color: white;
-      padding: 8px 16px; border-radius: 20px; font-size: 10px; font-weight: 700; display: none;
-    }
+    #unlock { position: absolute; top: 70px; right: 15px; z-index: 50; background: rgba(255,0,0,0.3); border: 1px solid red; color: white; padding: 5px 10px; border-radius: 15px; font-size: 10px; font-weight: 700; display: none; }
 
-    .details { padding: 20px; background: #070918; border-top: 1px solid var(--border); height: 40%; overflow-y: auto; }
-    .btn-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px; }
-    .btn-link { padding: 12px; border-radius: 10px; text-align: center; color: white; text-decoration: none; font-size: 12px; font-weight: 700; background: rgba(255,255,255,0.1); }
+    .details { padding: 20px; background: #0e1129; height: 40%; }
+    .btn-link { display: block; width: 100%; padding: 12px; background: #229ED9; color: white; text-align: center; border-radius: 8px; text-decoration: none; font-weight: 700; margin-bottom: 10px; font-size: 12px; }
 
   </style>
 </head>
 <body>
 
-  <header>
-    <div class="brand">
-      <img src="https://raw.githubusercontent.com/JJFUTBOL15/eventos/main/1762386751.png" alt="Logo" class="logo">
-      <div class="title">JJFUTBOL <span>CHAMPIONS</span></div>
-    </div>
-    <div onclick="window.location.reload()" style="color:var(--cyan); font-size:20px;"><i class="fas fa-rotate-right"></i></div>
-  </header>
-
   <div id="view-agenda">
+    <header>
+      <div class="logo-area">
+        <img src="https://raw.githubusercontent.com/JJFUTBOL15/eventos/main/1762386751.png" class="logo-img">
+        <div class="app-name">JJFUTBOL <span>CHAMPIONS</span></div>
+      </div>
+      <div onclick="location.reload()" style="font-size:20px; color:var(--cyan);"><i class="fas fa-rotate-right"></i></div>
+    </header>
+
     <div class="container">
-      <div class="search-box">
-        <i class="fas fa-search"></i>
-        <input type="text" id="search" placeholder="Buscar partido...">
+      <input type="text" class="search" id="search" placeholder="Buscar partido...">
+      
+      <div style="background: linear-gradient(90deg, #090c24, #1a225e); padding:15px; border-radius:10px; border:1px solid var(--border); margin-bottom:20px; display:flex; justify-content:space-between; align-items:center;">
+        <div style="color:white; font-weight:700; font-family:'Rajdhani';">JJMOVIES 2026</div>
+        <a href="https://jjmovies.lat" target="_blank" style="background:white; color:black; padding:5px 15px; border-radius:20px; text-decoration:none; font-size:11px; font-weight:800;">VER</a>
       </div>
 
-      <div class="filters">
-        <div class="chip active">TODOS</div>
-        <div class="chip">● EN VIVO</div>
-        <div class="chip">♥ FAVORITOS</div>
-      </div>
-
-      <div id="event-list">
-        <div style="text-align:center; padding:40px; color:#666;">Cargando eventos...</div>
+      <div id="list">
+        <div style="text-align:center; padding:40px; color:#666;">Cargando...</div>
       </div>
     </div>
   </div>
 
-  <div id="player-overlay">
-    <div class="player-top">
-      <button class="back-btn" onclick="cerrar()"><i class="fas fa-arrow-left"></i></button>
-      <span style="font-weight:700; margin-left:10px;">EN VIVO</span>
+  <div id="player-view" class="hidden">
+    <div class="p-nav">
+      <button class="back" onclick="cerrar()"><i class="fas fa-arrow-left"></i></button>
+      <span style="font-weight:700; font-size:14px;">EN VIVO</span>
     </div>
 
-    <div class="video-box">
-      <div class="ratio">
-        <div id="unlock-btn" onclick="desbloquear()">DESBLOQUEAR</div>
+    <div class="video-area">
+      <div class="aspect">
+        <div id="unlock" onclick="desbloquear()">DESBLOQUEAR</div>
         <div id="shield">
-          <div class="status" id="status-txt">CARGANDO...</div>
-          <div class="bar"><div class="fill" id="status-bar"></div></div>
+          <div class="loader"></div>
+          <div class="shield-txt" id="st-txt">CONECTANDO...</div>
         </div>
         <iframe id="viewer" src="" allowfullscreen allow="autoplay; encrypted-media"></iframe>
       </div>
     </div>
 
     <div class="details">
-      <h2 id="event-title" style="margin:0; font-family:'Rajdhani'; text-transform:uppercase;">Evento</h2>
-      <div class="btn-row">
-        <a href="https://t.me/+EPyKMpHXlv5lMmYx" target="_blank" class="btn-link" style="background:#229ED9;">TELEGRAM</a>
-        <a href="https://jjmovies.lat" target="_blank" class="btn-link" style="background:var(--cyan); color:black;">CINE GRATIS</a>
-      </div>
-      
-      <div style="margin-top:20px; border-radius:10px; overflow:hidden; border:1px solid var(--border);">
-        <div onclick="verChat()" style="padding:10px; background:rgba(255,255,255,0.05); font-size:12px; font-weight:700; display:flex; justify-content:space-between;">
-          <span>CHAT GLOBAL</span> <i class="fas fa-chevron-down"></i>
-        </div>
-        <div id="chat-area" style="height:0; transition:height 0.3s;">
-          <iframe id="chat-frame" width="100%" height="100%" frameborder="0"></iframe>
-        </div>
-      </div>
+      <h2 id="ev-title" style="margin:0 0 20px; font-family:'Rajdhani'; text-transform:uppercase;">Evento</h2>
+      <a href="https://t.me/+EPyKMpHXlv5lMmYx" target="_blank" class="btn-link"><i class="fab fa-telegram-plane"></i> UNIRSE AL TELEGRAM</a>
+      <a href="https://jjmovies.lat" target="_blank" class="btn-link" style="background:var(--cyan); color:black;"><i class="fas fa-film"></i> PELÍCULAS GRATIS</a>
     </div>
   </div>
 
   <script>
-    // --- DATOS JSON COMPLETOS ---
+    // --- DATOS JSON ---
     const DATA = {"data":[{"attributes":{"diary_description":"Tour El Salvador 2026: Etapa #4","diary_hour":"11:00am","league_name":"CICLISMO","country":{"data":{"attributes":{"image":{"data":{"attributes":{"url":"https://via.placeholder.com/40?text=TV"}}}}}},"embeds":{"data":[{"attributes":{"embed_name":"Tour El Salvador 2026: Etapa #4","embed_iframe":"#"}},{"attributes":{"embed_name":"ESPN 4","embed_iframe":"https://bestleague.world/en-vivo/espn-4/"}}]}}},{"attributes":{"diary_description":"UEFA Champions League: Galatasaray vs. Atlético Madrid","diary_hour":"12:45pm","league_name":"CHA","country":{"data":{"attributes":{"image":{"data":{"attributes":{"url":"//bestleague.world/jr/5.png"}}}}}},"embeds":{"data":[{"attributes":{"embed_name":"UEFA Champions League: Galatasaray vs. Atlético Madrid","embed_iframe":"#"}},{"attributes":{"embed_name":"ESPN 1 CO","embed_iframe":"https://bestleague.world/en-vivo/espn-cope/"}},{"attributes":{"embed_name":"FOX Sports 1","embed_iframe":"https://bestleague.world/en-vivo/fox-sports/"}},{"attributes":{"embed_name":"Disney+","embed_iframe":"/eventos/?r=aHR0cHM6Ly9zdHJlYW10cGNsb3VkLmNvbS9nbG9iYWwxLnBocD9zdHJlYW09ZGlzbmV5MQ=="}}]}}},{"attributes":{"diary_description":"UEFA Champions League: Qarabağ vs. Eintracht Frankfurt","diary_hour":"12:45pm","league_name":"CHA","country":{"data":{"attributes":{"image":{"data":{"attributes":{"url":"//bestleague.world/jr/5.png"}}}}}},"embeds":{"data":[{"attributes":{"embed_name":"UEFA Champions League: Qarabağ vs. Eintracht Frankfurt","embed_iframe":"#"}},{"attributes":{"embed_name":"ESPN 2","embed_iframe":"https://bestleague.world/en-vivo/espn-2/"}},{"attributes":{"embed_name":"Disney+","embed_iframe":"/eventos/?r=aHR0cHM6Ly9zdHJlYW10cGNsb3VkLmNvbS9nbG9iYWwxLnBocD9zdHJlYW09ZGlzbmV5Mg=="}},{"attributes":{"embed_name":"MAX","embed_iframe":"/eventos/?r=aHR0cHM6Ly9zdHJlYW10cGNsb3VkLmNvbS9nbG9iYWwxLnBocD9zdHJlYW09bWF4MQ=="}}]}}},{"attributes":{"diary_description":"UEFA Champions League: Olympique Marseille vs. Liverpool","diary_hour":"3:00pm","league_name":"CHA","country":{"data":{"attributes":{"image":{"data":{"attributes":{"url":"//bestleague.world/jr/5.png"}}}}}},"embeds":{"data":[{"attributes":{"embed_name":"UEFA Champions League: Olympique Marseille vs. Liverpool","embed_iframe":"#"}},{"attributes":{"embed_name":"ESPN 5","embed_iframe":"https://bestleague.world/en-vivo/espn-5"}},{"attributes":{"embed_name":"FOX Sports 1","embed_iframe":"https://bestleague.world/en-vivo/fox-sports/"}},{"attributes":{"embed_name":"MAX","embed_iframe":"/eventos/?r=aHR0cHM6Ly9zdHJlYW10cGNsb3VkLmNvbS9nbG9iYWwxLnBocD9zdHJlYW09bWF4Mw=="}}]}}},{"attributes":{"diary_description":"UEFA Champions League: Bayern München vs. Union Saint-Gilloise","diary_hour":"3:00pm","league_name":"CHA","country":{"data":{"attributes":{"image":{"data":{"attributes":{"url":"//bestleague.world/jr/5.png"}}}}}},"embeds":{"data":[{"attributes":{"embed_name":"UEFA Champions League: Bayern München vs. Union Saint-Gilloise","embed_iframe":"#"}},{"attributes":{"embed_name":"ESPN 3 AR","embed_iframe":"https://bestleague.world/en-vivo/espn-3-ar/"}},{"attributes":{"embed_name":"ESPN 1 CO","embed_iframe":"https://bestleague.world/en-vivo/espn-co/"}},{"attributes":{"embed_name":"Disney+","embed_iframe":"/eventos/?r=aHR0cHM6Ly9zdHJlYW10cGNsb3VkLmNvbS9nbG9iYWwxLnBocD9zdHJlYW09ZGlzbmV5MQ=="}},{"attributes":{"embed_name":"Paramount+","embed_iframe":"/eventos/?r=aHR0cHM6Ly9zdHJlYW10cGNsb3VkLmNvbS9nbG9iYWwxLnBocD9zdHJlYW09cGFyYW1vdW50Mg=="}}]}}},{"attributes":{"diary_description":"UEFA Champions League: Newcastle United vs. PSV","diary_hour":"3:00pm","league_name":"CHA","country":{"data":{"attributes":{"image":{"data":{"attributes":{"url":"//bestleague.world/jr/5.png"}}}}}},"embeds":{"data":[{"attributes":{"embed_name":"UEFA Champions League: Newcastle United vs. PSV","embed_iframe":"#"}},{"attributes":{"embed_name":"ESPN 6","embed_iframe":"https://bestleague.world/en-vivo/espn-6/"}},{"attributes":{"embed_name":"Disney+","embed_iframe":"/eventos/?r=aHR0cHM6Ly9zdHJlYW10cGNsb3VkLmNvbS9nbG9iYWwxLnBocD9zdHJlYW09ZGlzbmV5Ng=="}},{"attributes":{"embed_name":"MAX","embed_iframe":"/eventos/?r=aHR0cHM6Ly9zdHJlYW10cGNsb3VkLmNvbS9nbG9iYWwxLnBocD9zdHJlYW09bWF4NA=="}},{"attributes":{"embed_name":"Paramount+","embed_iframe":"/eventos/?r=aHR0cHM6Ly9zdHJlYW10cGNsb3VkLmNvbS9nbG9iYWwxLnBocD9zdHJlYW09cGFyYW1vdW50NQ=="}}]}}},{"attributes":{"diary_description":"UEFA Champions League: Chelsea vs. Paphos","diary_hour":"3:00pm","league_name":"CHA","country":{"data":{"attributes":{"image":{"data":{"attributes":{"url":"//bestleague.world/jr/5.png"}}}}}},"embeds":{"data":[{"attributes":{"embed_name":"UEFA Champions League: Chelsea vs. Paphos","embed_iframe":"#"}},{"attributes":{"embed_name":"ESPN 3 CO","embed_iframe":"https://bestleague.world/en-vivo/espn-3-cope/"}},{"attributes":{"embed_name":"ESPN 1 AR","embed_iframe":"https://bestleague.world/en-vivo/espn-ar/"}},{"attributes":{"embed_name":"Disney+","embed_iframe":"/eventos/?r=aHR0cHM6Ly9zdHJlYW10cGNsb3VkLmNvbS9nbG9iYWwxLnBocD9zdHJlYW09ZGlzbmV5Mw=="}},{"attributes":{"embed_name":"MAX","embed_iframe":"/eventos/?r=aHR0cHM6Ly9zdHJlYW10cGNsb3VkLmNvbS9nbG9iYWwxLnBocD9zdHJlYW09bWF4Mg=="}}]}}},{"attributes":{"diary_description":"UEFA Champions League: Juventus vs. Benfica","diary_hour":"3:00pm","league_name":"CHA","country":{"data":{"attributes":{"image":{"data":{"attributes":{"url":"//bestleague.world/jr/5.png"}}}}}},"embeds":{"data":[{"attributes":{"embed_name":"UEFA Champions League: Juventus vs. Benfica","embed_iframe":"#"}},{"attributes":{"embed_name":"ESPN 7","embed_iframe":"https://bestleague.world/en-vivo/espn-7/"}},{"attributes":{"embed_name":"FOX Sports 2","embed_iframe":"https://bestleague.world/en-vivo/fox-sports-2/"}},{"attributes":{"embed_name":"Disney+","embed_iframe":"/eventos/?r=aHR0cHM6Ly9zdHJlYW10cGNsb3VkLmNvbS9nbG9iYWwxLnBocD9zdHJlYW09ZGlzbmV5Nw=="}}]}}},{"attributes":{"diary_description":"UEFA Champions League: Atalanta vs. Athletic Club","diary_hour":"3:00pm","league_name":"CHA","country":{"data":{"attributes":{"image":{"data":{"attributes":{"url":"//bestleague.world/jr/5.png"}}}}}},"embeds":{"data":[{"attributes":{"embed_name":"UEFA Champions League: Atalanta vs. Athletic Club","embed_iframe":"#"}},{"attributes":{"embed_name":"ESPN 4","embed_iframe":"https://bestleague.world/en-vivo/espn-4/"}},{"attributes":{"embed_name":"Disney+","embed_iframe":"/eventos/?r=aHR0cHM6Ly9zdHJlYW10cGNsb3VkLmNvbS9nbG9iYWwxLnBocD9zdHJlYW09ZGlzbmV5NA=="}}]}}},{"attributes":{"diary_description":"UEFA Champions League: Slavia Praha vs. Barcelona","diary_hour":"3:00pm","league_name":"CHA","country":{"data":{"attributes":{"image":{"data":{"attributes":{"url":"//bestleague.world/jr/5.png"}}}}}},"embeds":{"data":[{"attributes":{"embed_name":"UEFA Champions League: Slavia Praha vs. Barcelona","embed_iframe":"#"}},{"attributes":{"embed_name":"ESPN 2 AR","embed_iframe":"https://bestleague.world/en-vivo/espn-2-arco/"}},{"attributes":{"embed_name":"Paramount+","embed_iframe":"/eventos/?r=aHR0cHM6Ly9zdHJlYW10cGNsb3VkLmNvbS9nbG9iYWwxLnBocD9zdHJlYW09cGFyYW1vdW50MQ=="}}]}}},{"attributes":{"diary_description":"Championship: Stoke City vs. Middlesbrough","diary_hour":"3:00pm","league_name":"ENG","country":{"data":{"attributes":{"image":{"data":{"attributes":{"url":"//bestleague.world/jr/61.png"}}}}}},"embeds":{"data":[{"attributes":{"embed_name":"Championship: Stoke City vs. Middlesbrough","embed_iframe":"#"}},{"attributes":{"embed_name":"Disney+","embed_iframe":"/eventos/?r=aHR0cHM6Ly9zdHJlYW10cGNsb3VkLmNvbS9nbG9iYWwxLnBocD9zdHJlYW09ZGlzbmV5OA=="}}]}}},{"attributes":{"diary_description":"Campeonato Carioca: Maricá vs. Bangu","diary_hour":"3:00pm","league_name":"BRA","country":{"data":{"attributes":{"image":{"data":{"attributes":{"url":"//bestleague.world/jr/79.png"}}}}}},"embeds":{"data":[{"attributes":{"embed_name":"Campeonato Carioca: Maricá vs. Bangu","embed_iframe":"#"}},{"attributes":{"embed_name":"Premiere 2 BR","embed_iframe":"/eventos/?r=aHR0cHM6Ly9zdHJlYW10cGNsb3VkLmNvbS9nbG9iYWwxLnBocD9zdHJlYW09cHJlbWllcmUy"}},{"attributes":{"embed_name":"Premiere 2 BR","embed_iframe":"/eventos/?r=aHR0cHM6Ly9iZXN0bGVhZ3VlLndvcmxkL21wZGsvP2dldD1hSFIwY0hNNkx5OWhZbU16YjNKM1lXRmhZV0ZoWVdGdFpUWTFOVFZvTTJJMllXWTBOQzV2ZEhSaUxteHBkbVV1WTJZdWQzY3VZV2wyTFdOa2JpNXVaWFF2WjNKMUxXNXBkSEp2TDJ4cGRtVXZZMnhwWlc1MGN5OWtZWE5vTDJWdVl5OXZlVFp5Y0RCcWQyMW1MMjkxZEM5Mk1TODFPREJsWTJZeE1tSmhaREkwT1RjNVltRm1PR1JrT1RrelpHTmxNRFV6WlM5alpXNWpMbTF3WkE9PSZrZXk9T1dSak5EQTBOakJqT1RNd09EZGhaV0U0TkdRMk16RTFaakE0WldOaU5qUT0ma2V5Mj1aalk1WXpoa05EWXlOR1prWkdabU5HTmhPRGxpWkRCaU16RmlaR00wWVRjPQ=="}}]}}},{"attributes":{"diary_description":"Supercopa de Chile: Coquimbo Unido vs. Deportes Limache","diary_hour":"5:00pm","league_name":"CH","country":{"data":{"attributes":{"image":{"data":{"attributes":{"url":"https://via.placeholder.com/40?text=TV"}}}}}},"embeds":{"data":[{"attributes":{"embed_name":"Supercopa de Chile: Coquimbo Unido vs. Deportes Limache","embed_iframe":"#"}},{"attributes":{"embed_name":"TNT Sports Premium","embed_iframe":"https://bestleague.world/en-vivo/tnt-sports/"}},{"attributes":{"embed_name":"MAX","embed_iframe":"/eventos/?r=aHR0cHM6Ly9zdHJlYW10cGNsb3VkLmNvbS9nbG9iYWwxLnBocD9zdHJlYW09bWF4NQ=="}}]}}},{"attributes":{"diary_description":"Campeonato Carioca: Botafogo vs. Volta Redonda","diary_hour":"5:00pm","league_name":"BRA","country":{"data":{"attributes":{"image":{"data":{"attributes":{"url":"//bestleague.world/jr/79.png"}}}}}},"embeds":{"data":[{"attributes":{"embed_name":"Campeonato Carioca: Botafogo vs. Volta Redonda","embed_iframe":"#"}},{"attributes":{"embed_name":"Premiere 1 BR","embed_iframe":"/eventos/?r=aHR0cHM6Ly9zdHJlYW10cGNsb3VkLmNvbS9nbG9iYWwxLnBocD9zdHJlYW09cHJlbWllcmUx"}},{"attributes":{"embed_name":"Premiere 1 BR","embed_iframe":"/eventos/?r=aHR0cHM6Ly9iZXN0bGVhZ3VlLndvcmxkL21wZGsvP2dldD1hSFIwY0hNNkx5OWhZbU16YjNKM1lXRmhZV0ZoWVdGdGFIQjFhVGQzYkc1dFpuRm5hQzV2ZEhSaUxteHBkbVV1WTJZdWQzY3VZV2wyTFdOa2JpNXVaWFF2WjNKMUxXNXBkSEp2TDJ4cGRtVXZZMnhwWlc1MGN5OWtZWE5vTDJWdVl5OXVaV3htZVhWamR6bGhMMjkxZEM5Mk1TODJabVppTW1Nek5qVmhaREUwWmpnNFlqRTFORFU1TVdKbFlqUXpaREZtTmk5alpXNWpMbTF3WkE9PSZrZXk9TlRaaU56bGpNVGM0TW1Jek1HVTJZalptWXprM00ySXdaVGhtWkRReE1EUT0ma2V5Mj1abUV6T0dGaFlUZzJOV0UxTjJWa1lUZGpOemMwTkRRMk9UZGlZVGhsWkRNPQ=="}}]}}},{"attributes":{"diary_description":"Campeonato Gaúcho: Internacional vs. Inter Santa Maria","diary_hour":"5:00pm","league_name":"BRA","country":{"data":{"attributes":{"image":{"data":{"attributes":{"url":"//bestleague.world/jr/79.png"}}}}}},"embeds":{"data":[{"attributes":{"embed_name":"Campeonato Gaúcho: Internacional vs. Inter Santa Maria","embed_iframe":"#"}},{"attributes":{"embed_name":"Sport TV1 BR","embed_iframe":"/eventos/?r=aHR0cHM6Ly9zdHJlYW10cGNsb3VkLmNvbS9nbG9iYWwxLnBocD9zdHJlYW09c3BvcnR0dmJyMQ=="}},{"attributes":{"embed_name":"Premiere 3 BR","embed_iframe":"/eventos/?r=aHR0cHM6Ly9zdHJlYW10cGNsb3VkLmNvbS9nbG9iYWwxLnBocD9zdHJlYW09cHJlbWllcmUz"}},{"attributes":{"embed_name":"Premiere 3 BR","embed_iframe":"/eventos/?r=aHR0cHM6Ly9iZXN0bGVhZ3VlLndvcmxkL21wZGsvP2dldD1hSFIwY0hNNkx5OWhZbU16YjNKM1lXRmhZV0ZoWVdGdGFIQjFhVGQzYkc1dFpuRm5hQzV2ZEhSaUxteHBkbVV1WTJZdWQzY3VZV2wyTFdOa2JpNXVaWFF2WjNKMUxXNXBkSEp2TDJ4cGRtVXZZMnhwWlc1MGN5OWtZWE5vTDJWdVl5ODJiMjV5Wm01cGVYSjVMMjkxZEM5Mk1TOW1Nak13Tmpsak5qRmtZbVkwWlRBd09Ea3dZVFF3WWpjd05XRTROREEzT1M5alpXNWpMbTF3WkE9PSZrZXk9WkRJelpqYzBNek0zT1RoaE5qVXlZVGRrTkdZMk56a3haRGxsTVRBek5tTT0ma2V5Mj1ORGswTW1WbFltUTFPVGhpTlRjeU4yTTFZMk0wT0RSall6WXlZalV5WlRnPQ=="}}]}}},{"attributes":{"diary_description":"Campeonato Paulista A1: Mirassol vs. RB Bragantino","diary_hour":"6:00pm","league_name":"BRA","country":{"data":{"attributes":{"image":{"data":{"attributes":{"url":"//bestleague.world/jr/79.png"}}}}}},"embeds":{"data":[{"attributes":{"embed_name":"Campeonato Paulista A1: Mirassol vs. RB Bragantino","embed_iframe":"#"}},{"attributes":{"embed_name":"MAX","embed_iframe":"/eventos/?r=aHR0cHM6Ly9zdHJlYW10cGNsb3VkLmNvbS9nbG9iYWwxLnBocD9zdHJlYW09bWF4MQ=="}}]}}},{"attributes":{"diary_description":"Amistoso: Colo-Colo vs. Peñarol","diary_hour":"7:00pm","league_name":"FUT","country":{"data":{"attributes":{"image":{"data":{"attributes":{"url":"https://via.placeholder.com/40?text=TV"}}}}}},"embeds":{"data":[{"attributes":{"embed_name":"Amistoso: Colo-Colo vs. Peñarol","embed_iframe":"#"}},{"attributes":{"embed_name":"ESPN Premium","embed_iframe":"https://bestleague.world/en-vivo/espn-premium/"}},{"attributes":{"embed_name":"Disney+","embed_iframe":"/eventos/?r=aHR0cHM6Ly9zdHJlYW10cGNsb3VkLmNvbS9nbG9iYWwxLnBocD9zdHJlYW09ZGlzbmV5MQ=="}}]}}},{"attributes":{"diary_description":"Australian Open 2026: Cobertura Internacional | En español","diary_hour":"7:00pm","league_name":"TE","country":{"data":{"attributes":{"image":{"data":{"attributes":{"url":"https://via.placeholder.com/40?text=TV"}}}}}},"embeds":{"data":[{"attributes":{"embed_name":"Australian Open 2026: Cobertura Internacional | En español","embed_iframe":"#"}},{"attributes":{"embed_name":"ESPN 2","embed_iframe":"https://bestleague.world/en-vivo/espn-2/"}}]}}},{"attributes":{"diary_description":"Australian Open 2026: Cobertura Regional | En español","diary_hour":"7:00pm","league_name":"TE","country":{"data":{"attributes":{"image":{"data":{"attributes":{"url":"https://via.placeholder.com/40?text=TV"}}}}}},"embeds":{"data":[{"attributes":{"embed_name":"Australian Open 2026: Cobertura Regional | En español","embed_iframe":"#"}},{"attributes":{"embed_name":"ESPN 3","embed_iframe":"https://bestleague.world/en-vivo/espn-3/"}}]}}},{"attributes":{"diary_description":"NBA: Cleveland Cavaliers vs. Charlotte Hornets","diary_hour":"7:00pm","league_name":"NBA","country":{"data":{"attributes":{"image":{"data":{"attributes":{"url":"https://bestleague.world/img/nba.svg"}}}}}},"embeds":{"data":[{"attributes":{"embed_name":"NBA: Cleveland Cavaliers vs. Charlotte Hornets","embed_iframe":"#"}},{"attributes":{"embed_name":"ESPN 4","embed_iframe":"https://bestleague.world/en-vivo/espn-4/"}}]}}},{"attributes":{"diary_description":"Copa Argentina: Argentinos Juniors vs. Midland","diary_hour":"7:15pm","league_name":"AR","country":{"data":{"attributes":{"image":{"data":{"attributes":{"url":"https://via.placeholder.com/40?text=TV"}}}}}},"embeds":{"data":[{"attributes":{"embed_name":"Copa Argentina: Argentinos Juniors vs. Midland","embed_iframe":"#"}},{"attributes":{"embed_name":"TyC Sports","embed_iframe":"https://bestleague.world/en-vivo/tyc-sports/"}}]}}},{"attributes":{"diary_description":"Superliga de Colombia (Final 2/2): Santa Fe vs. Junior","diary_hour":"7:30pm","league_name":"COL","country":{"data":{"attributes":{"image":{"data":{"attributes":{"url":"https://via.placeholder.com/40?text=TV"}}}}}},"embeds":{"data":[{"attributes":{"embed_name":"Superliga de Colombia (Final 2/2): Santa Fe vs. Junior","embed_iframe":"#"}},{"attributes":{"embed_name":"Win+ Fútbol","embed_iframe":"https://bestleague.world/en-vivo/win-sports-premium/"}}]}}},{"attributes":{"diary_description":"Campeonato Mineiro: América Mineiro vs. Atlético Mineiro","diary_hour":"7:30pm","league_name":"BRA","country":{"data":{"attributes":{"image":{"data":{"attributes":{"url":"//bestleague.world/jr/79.png"}}}}}},"embeds":{"data":[{"attributes":{"embed_name":"Campeonato Mineiro: América Mineiro vs. Atlético Mineiro","embed_iframe":"#"}},{"attributes":{"embed_name":"Premiere 2 BR","embed_iframe":"/eventos/?r=aHR0cHM6Ly9zdHJlYW10cGNsb3VkLmNvbS9nbG9iYWwxLnBocD9zdHJlYW09cHJlbWllcmUy"}},{"attributes":{"embed_name":"Premiere 2 BR","embed_iframe":"/eventos/?r=aHR0cHM6Ly9iZXN0bGVhZ3VlLndvcmxkL21wZGsvP2dldD1hSFIwY0hNNkx5OWhZbU16YjNKM1lXRmhZV0ZoWVdGdFpUWTFOVFZvTTJJMllXWTBOQzV2ZEhSaUxteHBkbVV1WTJZdWQzY3VZV2wyTFdOa2JpNXVaWFF2WjNKMUxXNXBkSEp2TDJ4cGRtVXZZMnhwWlc1MGN5OWtZWE5vTDJWdVl5OXZlVFp5Y0RCcWQyMW1MMjkxZEM5Mk1TODFPREJsWTJZeE1tSmhaREkwT1RjNVltRm1PR1JrT1RrelpHTmxNRFV6WlM5alpXNWpMbTF3WkE9PSZrZXk9T1dSak5EQTBOakJqT1RNd09EZGhaV0U0TkdRMk16RTFaakE0WldOaU5qUT0ma2V5Mj1aalk1WXpoa05EWXlOR1prWkdabU5HTmhPRGxpWkRCaU16RmlaR00wWVRjPQ=="}}]}}},{"attributes":{"diary_description":"Campeonato Carioca: Flamengo vs. Vasco da Gama","diary_hour":"7:30pm","league_name":"BRA","country":{"data":{"attributes":{"image":{"data":{"attributes":{"url":"//bestleague.world/jr/79.png"}}}}}},"embeds":{"data":[{"attributes":{"embed_name":"Campeonato Carioca: Flamengo vs. Vasco da Gama","embed_iframe":"#"}},{"attributes":{"embed_name":"Premiere 1 BR","embed_iframe":"/eventos/?r=aHR0cHM6Ly9zdHJlYW10cGNsb3VkLmNvbS9nbG9iYWwxLnBocD9zdHJlYW09cHJlbWllcmUx"}},{"attributes":{"embed_name":"Premiere 1 BR","embed_iframe":"/eventos/?r=aHR0cHM6Ly9iZXN0bGVhZ3VlLndvcmxkL21wZGsvP2dldD1hSFIwY0hNNkx5OWhZbU16YjNKM1lXRmhZV0ZoWVdGdGFIQjFhVGQzYkc1dFpuRm5hQzV2ZEhSaUxteHBkbVV1WTJZdWQzY3VZV2wyTFdOa2JpNXVaWFF2WjNKMUxXNXBkSEp2TDJ4cGRtVXZZMnhwWlc1MGN5OWtZWE5vTDJWdVl5OXVaV3htZVhWamR6bGhMMjkxZEM5Mk1TODJabVppTW1Nek5qVmhaREUwWmpnNFlqRTFORFU1TVdKbFlqUXpaREZtTmk5alpXNWpMbTF3WkE9PSZrZXk9TlRaaU56bGpNVGM0TW1Jek1HVTJZalptWXprM00ySXdaVGhtWkRReE1EUT0ma2V5Mj1abUV6T0dGaFlUZzJOV0UxTjJWa1lUZGpOemMwTkRRMk9UZGlZVGhsWkRNPQ=="}}]}}},{"attributes":{"diary_description":"Campeonato Gaúcho: Guarany de Bagé vs. Grêmio","diary_hour":"7:30pm","league_name":"BRA","country":{"data":{"attributes":{"image":{"data":{"attributes":{"url":"//bestleague.world/jr/79.png"}}}}}},"embeds":{"data":[{"attributes":{"embed_name":"Campeonato Gaúcho: Guarany de Bagé vs. Grêmio","embed_iframe":"#"}},{"attributes":{"embed_name":"Premiere 3 BR","embed_iframe":"/eventos/?r=aHR0cHM6Ly9zdHJlYW10cGNsb3VkLmNvbS9nbG9iYWwxLnBocD9zdHJlYW09cHJlbWllcmUz"}},{"attributes":{"embed_name":"Premiere 3 BR","embed_iframe":"/eventos/?r=aHR0cHM6Ly9iZXN0bGVhZ3VlLndvcmxkL21wZGsvP2dldD1hSFIwY0hNNkx5OWhZbU16YjNKM1lXRmhZV0ZoWVdGdGFIQjFhVGQzYkc1dFpuRm5hQzV2ZEhSaUxteHBkbVV1WTJZdWQzY3VZV2wyTFdOa2JpNXVaWFF2WjNKMUxXNXBkSEp2TDJ4cGRtVXZZMnhwWlc1MGN5OWtZWE5vTDJWdVl5ODJiMjV5Wm01cGVYSjVMMjkxZEM5Mk1TOW1Nak13Tmpsak5qRmtZbVkwWlRBd09Ea3dZVFF3WWpjd05XRTROREEzT1M5alpXNWpMbTF3WkE9PSZrZXk9WkRJelpqYzBNek0zT1RoaE5qVXlZVGRrTkdZMk56a3haRGxsTVRBek5tTT0ma2V5Mj1ORGswTW1WbFltUTFPVGhpTlRjeU4yTTFZMk0wT0RSall6WXlZalV5WlRnPQ=="}}]}}},{"attributes":{"diary_description":"NBA: Oklahoma City Thunder vs. Milwaukee Bucks","diary_hour":"9:30pm","league_name":"NBA","country":{"data":{"attributes":{"image":{"data":{"attributes":{"url":"https://bestleague.world/img/nba.svg"}}}}}},"embeds":{"data":[{"attributes":{"embed_name":"NBA: Oklahoma City Thunder vs. Milwaukee Bucks","embed_iframe":"#"}},{"attributes":{"embed_name":"ESPN 4","embed_iframe":"https://bestleague.world/en-vivo/espn-4/"}}]}}},{"attributes":{"diary_description":"Australian Open 2026: Cobertura Internacional | En español","diary_hour":"3:00am","league_name":"TE","country":{"data":{"attributes":{"image":{"data":{"attributes":{"url":"https://via.placeholder.com/40?text=TV"}}}}}},"embeds":{"data":[{"attributes":{"embed_name":"Australian Open 2026: Cobertura Internacional | En español","embed_iframe":"#"}},{"attributes":{"embed_name":"ESPN 2","embed_iframe":"https://bestleague.world/en-vivo/espn-2/"}}]}}}]};
 
-    $(document).ready(function() {
-      // Cargar Datos
-      renderizarEventos(DATA.data);
-
+    $(document).ready(() => {
+      cargar();
+      
       // Buscador
       $('#search').on('keyup', function() {
         let val = $(this).val().toLowerCase();
-        $('.card').filter(function() {
-          $(this).toggle($(this).text().toLowerCase().indexOf(val) > -1)
+        $('.card').toggle(function() {
+          return $(this).text().toLowerCase().indexOf(val) > -1;
         });
       });
 
       // Expandir Carta
-      $(document).on('click', '.card-header', function() {
+      $(document).on('click', '.card-head', function() {
         let card = $(this).parent();
-        let wasOpen = card.hasClass('open');
-        $('.card').removeClass('open').find('.channels').slideUp(200);
-        if(!wasOpen) {
-          card.addClass('open').find('.channels').slideDown(200);
-        }
+        let wasVisible = card.find('.channels').is(':visible');
+        $('.channels').slideUp(200);
+        if(!wasVisible) card.find('.channels').slideDown(200);
       });
+
+      // --- CLIC EN CANAL (FORZADO) ---
+      // Usamos onclick inline en el HTML generado para asegurar que funcione
     });
 
-    function renderizarEventos(lista) {
+    function cargar() {
       let html = '';
-      if(!lista || lista.length === 0) {
-        $('#event-list').html('<div style="text-align:center; padding:40px; color:#aaa;">No hay eventos.</div>');
-        return;
-      }
-
-      lista.forEach(ev => {
-        let attr = ev.attributes;
-        let img = "https://via.placeholder.com/40?text=TV";
+      DATA.data.forEach(item => {
+        let attr = item.attributes;
         
-        // Imagen (Seguro)
-        if(attr.country && attr.country.data && attr.country.data.attributes && attr.country.data.attributes.image) {
-           let rawImg = attr.country.data.attributes.image.data.attributes.url;
-           if(rawImg) img = rawImg;
+        let img = "https://via.placeholder.com/40?text=TV";
+        if(attr.country?.data?.attributes?.image?.data?.attributes?.url) {
+          img = attr.country.data.attributes.image.data.attributes.url;
         }
 
-        // Botones
-        let botones = '';
-        if(attr.embeds && attr.embeds.data) {
-          attr.embeds.data.forEach(emb => {
-            let nombre = emb.attributes.embed_name;
-            let rawUrl = emb.attributes.embed_iframe;
-            
-            // LIMPIADOR DE LINKS
-            let cleanUrl = rawUrl;
-            if(rawUrl.includes('<iframe')) {
-               let match = rawUrl.match(/src=["'](.*?)["']/);
-               if(match) cleanUrl = match[1];
-            }
+        let btns = '';
+        (attr.embeds?.data || []).forEach(emb => {
+          let url = emb.attributes.embed_iframe;
+          let name = emb.attributes.embed_name;
+          
+          // Limpiar Link
+          if(url.includes('<iframe')) {
+            let m = url.match(/src=["'](.*?)["']/);
+            if(m) url = m[1];
+          }
+          
+          // Encriptar
+          let b64 = "";
+          try {
+            if(url.includes("?r=")) b64 = url.split("?r=")[1];
+            else b64 = btoa(url);
+          } catch(e) {}
 
-            // ENCRIPTAR
-            let payload = "";
-            try {
-               if(cleanUrl.includes("?r=")) {
-                 payload = cleanUrl.split("?r=")[1];
-               } else if (cleanUrl.startsWith("http")) {
-                 payload = btoa(cleanUrl);
-               } else {
-                 payload = btoa(cleanUrl);
-               }
-            } catch(e) {}
+          let safeName = name.replace(/"/g, '');
+          let safeTitle = attr.diary_description.replace(/"/g, '');
 
-            // LIMPIEZA DE TÍTULO PARA EL CLIC
-            let cleanTitle = attr.diary_description.replace(/['"]/g, "");
-
-            if(payload) {
-               // CLIC DIRECTO V20
-               botones += `<div class="btn-play" onclick="abrir('${payload}', '${cleanTitle}')">
-                             <i class="fas fa-play"></i> ${nombre}
-                           </div>`;
-            }
-          });
-        }
+          // ONCLICK DIRECTO (NO JQUERY) PARA EVITAR FALLOS
+          if(b64) {
+            btns += `<div class="btn-ch" onclick="abrir('${b64}', '${safeTitle}')"><i class="fas fa-play"></i> ${safeName}</div>`;
+          }
+        });
 
         html += `
           <div class="card">
-            <div class="card-header">
-              <div class="time">
-                <span>${attr.diary_hour.replace(/[a-z]/gi,'')}</span>
-                <small>HOY</small>
-              </div>
+            <div class="card-head">
+              <div class="time">${attr.diary_hour.replace(/[a-z]/gi,'')}</div>
               <div class="info">
                 <img src="${img}" onerror="this.src='https://via.placeholder.com/40?text=TV'">
                 <div>
-                  <div>${attr.diary_description}</div>
-                  <span class="league">${attr.league_name || "EN VIVO"}</span>
+                  <div class="info-text">${attr.diary_description}</div>
+                  <div class="league">${attr.league_name || 'EN VIVO'}</div>
                 </div>
               </div>
-              <i class="fas fa-chevron-down" style="color:var(--cyan);"></i>
+              <i class="fas fa-chevron-down" style="color:var(--cyan)"></i>
             </div>
             <div class="channels">
-              <div class="grid">${botones}</div>
+              <div class="grid">${btns}</div>
             </div>
           </div>
         `;
       });
-
-      $('#event-list').html(html);
+      $('#list').html(html);
     }
 
-    // --- REPRODUCTOR V20 (ATÓMICO) ---
-    let currentUrl = "";
+    // --- PLAYER LOGIC (TURBO) ---
+    let curr = "";
 
-    function abrir(payload, title) {
-      // 1. Decodificar
+    function abrir(b64, title) {
       try {
-        currentUrl = atob(decodeURIComponent(payload));
-      } catch(e) {
-        alert("Error al abrir canal.");
-        return;
-      }
-
-      // 2. FORZAR VISIBILIDAD (Display Flex)
-      document.getElementById('player-overlay').style.display = 'flex';
-      document.getElementById('event-title').innerText = title;
-
-      // 3. Cargar Video
-      let v = document.getElementById('viewer');
-      v.setAttribute('sandbox', 'allow-forms allow-scripts allow-same-origin allow-pointer-lock allow-presentation');
-      v.src = currentUrl;
-
-      // 4. Animación 7 Clicks
-      document.getElementById('shield').style.display = 'flex';
-      document.getElementById('unlock-btn').style.display = 'block';
-      document.getElementById('status-txt').innerText = "CONECTANDO...";
-      document.getElementById('status-bar').style.width = '0%';
-
-      let paso = 0;
-      let timer = setInterval(() => {
-        paso++;
-        document.getElementById('status-bar').style.width = (paso/7)*100 + '%';
-        document.getElementById('status-txt').innerText = `BLOQUEANDO ANUNCIO ${paso}/7...`;
+        curr = atob(decodeURIComponent(b64));
         
-        if(paso >= 7) {
-          clearInterval(timer);
-          document.getElementById('status-txt').innerText = "SEÑAL LIMPIA";
-          setTimeout(() => {
-            document.getElementById('shield').style.display = 'none';
-          }, 500);
-        }
-      }, 700);
+        // 1. Mostrar Player
+        $('#ev-title').text(title);
+        $('#view-agenda').addClass('hidden');
+        $('#player-view').removeClass('hidden');
+
+        // 2. Cargar Iframe (Sandbox Anti-Ads)
+        let v = document.getElementById('viewer');
+        v.setAttribute('sandbox', 'allow-forms allow-scripts allow-same-origin allow-pointer-lock allow-presentation');
+        v.src = curr;
+
+        // 3. Escudo TURBO (Solo 1.5 seg)
+        $('#shield').show();
+        $('#unlock').show();
+        $('#st-txt').text("CONECTANDO...");
+        
+        setTimeout(() => { $('#st-txt').text("LIMPIANDO ADS..."); }, 500);
+        setTimeout(() => { $('#st-txt').text("SEÑAL LISTA"); }, 1000);
+        setTimeout(() => { $('#shield').fadeOut(); }, 1500); // 1.5 Segundos total
+
+      } catch(e) { alert("Error de enlace"); }
     }
 
     function cerrar() {
       let v = document.getElementById('viewer');
       v.src = "";
       v.removeAttribute('sandbox');
-      document.getElementById('player-overlay').style.display = 'none';
+      $('#player-view').addClass('hidden');
+      $('#view-agenda').removeClass('hidden');
     }
 
     function desbloquear() {
-      if(confirm("¿Pantalla negra? Desbloquear permitirá la carga completa.\n\n¿Continuar?")) {
+      if(confirm("¿Video no carga? Desbloquear permite anuncios.\n\n¿Seguro?")) {
         let v = document.getElementById('viewer');
         v.removeAttribute('sandbox');
-        v.src = currentUrl;
-        document.getElementById('shield').style.display = 'none';
-        document.getElementById('unlock-btn').style.display = 'none';
-      }
-    }
-
-    let chatReady = false;
-    function verChat() {
-      let area = document.getElementById('chat-area');
-      if(area.style.height === '0px' || area.style.height === '' || area.style.height === '0') {
-        area.style.height = '350px';
-        if(!chatReady) {
-          document.getElementById('chat-frame').src = "https://www3.cbox.ws/box/?boxid=3550648&boxtag=KQBTQs";
-          chatReady = true;
-        }
-      } else {
-        area.style.height = '0';
+        v.src = curr;
+        $('#shield').hide();
+        $('#unlock').hide();
       }
     }
   </script>
