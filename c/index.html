@@ -2,43 +2,35 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <meta name="theme-color" content="#0e1129">
-  <title>JJFUTBOL CHAMPIONS</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#000000">
+  <title>JJFUTBOL 2026</title>
   
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/luxon@3.4.4/build/global/luxon.min.js"></script>
   
-  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-  
+
   <style>
-    /* --- TEMA CHAMPIONS LEAGUE --- */
+    /* --- ESTILOS 2026 (Dark & Gold) --- */
     :root {
-      --ucl-dark: #070918;
-      --cyan: #00f0ff;
-      --star-silver: #e6e8eb;
-      --card-glass: rgba(17, 26, 71, 0.85);
-      --card-border: rgba(0, 240, 255, 0.15);
-      --font-main: 'Rajdhani', sans-serif;
-      --font-body: 'Inter', sans-serif;
+      --bg-dark: #050507;
+      --card-bg: rgba(30, 35, 50, 0.9);
+      --card-border: rgba(255, 255, 255, 0.1);
+      --accent: #D4AF37; /* Dorado */
+      --live: #ff4444;   /* Rojo Vivo */
+      --text-main: #ffffff;
+      --text-muted: #9ca3af;
     }
 
     * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
     body {
-      font-family: var(--font-body);
-      background-color: var(--ucl-dark);
-      color: var(--star-silver);
-      margin: 0; padding: 0; min-height: 100vh; overflow-x: hidden;
-      background: radial-gradient(circle at 50% 0%, #222c66 0%, #080a1a 80%);
-    }
-
-    /* Estrellas Fondo */
-    body::before {
-      content: ''; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-      background-image: radial-gradient(white, rgba(255,255,255,.2) 2px, transparent 3px);
-      background-size: 550px 550px; opacity: 0.2; z-index: -1;
+      font-family: 'Outfit', sans-serif;
+      background: radial-gradient(circle at 50% 0%, #1a1f35 0%, #000000 80%);
+      margin: 0; padding: 0; color: var(--text-main);
+      min-height: 100vh; overflow-x: hidden;
     }
 
     .view-section { width: 100%; min-height: 100vh; transition: opacity 0.3s; }
@@ -46,412 +38,388 @@
 
     /* HEADER */
     header {
-      padding: 18px 20px; display: flex; align-items: center; justify-content: space-between;
-      background: rgba(7, 9, 24, 0.95); backdrop-filter: blur(15px);
-      position: sticky; top: 0; z-index: 50; border-bottom: 1px solid rgba(255,255,255,0.05);
+      padding: 15px 20px; display: flex; align-items: center; justify-content: space-between;
+      background: rgba(5, 5, 7, 0.95); backdrop-filter: blur(10px);
+      position: sticky; top: 0; z-index: 50; border-bottom: 1px solid var(--card-border);
     }
-    .brand { display: flex; align-items: center; gap: 12px; }
-    .logo { width: 42px; height: 42px; border-radius: 50%; border: 2px solid var(--cyan); box-shadow: 0 0 15px var(--cyan); object-fit: cover; }
-    .title { font-family: var(--font-main); font-size: 24px; font-weight: 700; color: white; line-height: 1; }
-    .title span { color: var(--cyan); font-size: 12px; display: block; letter-spacing: 3px; }
-    .btn-reload { width: 40px; height: 40px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.1); color: var(--cyan); display: flex; align-items: center; justify-content: center; font-size: 18px; cursor: pointer; }
+    .app-brand { font-size: 22px; font-weight: 800; background: linear-gradient(to right, #fff, var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .btn-reload { width: 40px; height: 40px; border-radius: 50%; background: rgba(255,255,255,0.1); color: white; border: none; font-size: 18px; display: flex; align-items: center; justify-content: center; }
 
-    /* DASHBOARD */
-    .container { max-width: 800px; margin: 0 auto; padding: 20px 15px 100px; }
+    /* AGENDA */
+    .container { max-width: 800px; margin: 0 auto; padding: 15px 15px 80px; }
 
-    .search { position: relative; margin-bottom: 25px; }
-    .search input { width: 100%; padding: 14px 20px 14px 50px; background: rgba(15, 20, 45, 0.6); border: 1px solid var(--card-border); border-radius: 12px; color: white; outline: none; }
-    .search i { position: absolute; left: 18px; top: 50%; transform: translateY(-50%); color: var(--cyan); }
+    .search-box { position: relative; margin-bottom: 15px; }
+    .search-box input { width: 100%; padding: 12px 15px 12px 45px; background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 25px; color: white; outline: none; font-family: 'Outfit'; }
+    .search-box i { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: var(--text-muted); }
 
-    .filters { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 5px; margin-bottom: 25px; scrollbar-width: none; justify-content: center; }
-    .chip { padding: 10px 22px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 30px; font-size: 13px; font-weight: 600; color: #a0a5bd; white-space: nowrap; cursor: pointer; transition: 0.3s; font-family: var(--font-main); }
-    .chip.active { background: var(--cyan); color: #000; font-weight: 700; box-shadow: 0 0 15px var(--cyan); }
-    .chip.live.active { background: #ff0055; color: white; box-shadow: 0 0 15px #ff0055; }
+    .filters { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 5px; margin-bottom: 20px; scrollbar-width: none; justify-content: center; }
+    .chip { padding: 8px 18px; background: rgba(255,255,255,0.08); border-radius: 20px; font-size: 13px; font-weight: 600; color: var(--text-muted); white-space: nowrap; border: 1px solid transparent; cursor: pointer; transition: 0.2s; }
+    .chip.active { background: var(--accent); color: black; font-weight: 700; box-shadow: 0 0 10px rgba(212, 175, 55, 0.3); }
+    .chip.live.active { background: var(--live); color: white; box-shadow: 0 0 10px rgba(255, 68, 68, 0.3); }
+    .chip.fav.active { background: #ec4899; color: white; box-shadow: 0 0 10px rgba(236, 72, 153, 0.3); }
 
-    /* BANNER */
-    .banner { background: linear-gradient(90deg, #090c24, #1a225e); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
-    .btn-cta { background: white; color: #0b0e29; font-weight: 800; padding: 8px 18px; border-radius: 20px; text-decoration: none; font-size: 11px; font-family: var(--font-main); }
+    .promo { background: linear-gradient(135deg, #2a0f0f, #000); padding: 15px; border-radius: 16px; border: 1px solid rgba(255,68,68,0.3); display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+    .btn-cine { background: white; color: #cc0000; font-weight: 800; padding: 6px 14px; border-radius: 20px; font-size: 11px; text-decoration: none; }
 
-    /* LISTA */
-    #list { display: flex; flex-direction: column; gap: 15px; }
+    #menu { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 12px; }
 
-    .card { background: var(--card-glass); border: 1px solid var(--card-border); border-radius: 16px; overflow: hidden; position: relative; transition: transform 0.2s; backdrop-filter: blur(10px); }
-    .card:active { transform: scale(0.98); }
-    .card.live-on { border-color: #ff0055; box-shadow: 0 0 10px rgba(255,0,85,0.2); }
-
-    .fav { position: absolute; top: 0; right: 0; width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; color: rgba(255,255,255,0.2); z-index: 10; font-size: 18px; }
-    .fav.active { color: #ff0055; }
-
-    .head { padding: 18px; display: grid; grid-template-columns: 60px 1fr 24px; align-items: center; gap: 15px; }
+    .match-card {
+      background: var(--card-bg); border: 1px solid var(--card-border);
+      border-radius: 16px; overflow: hidden; position: relative; transition: transform 0.2s;
+    }
+    .match-card:active { transform: scale(0.98); background: rgba(40, 45, 60, 0.9); }
     
-    .time { display: flex; flex-direction: column; align-items: center; background: rgba(0,0,0,0.4); border-radius: 8px; padding: 10px 0; border: 1px solid rgba(255,255,255,0.1); font-family: var(--font-main); }
-    .time span { font-weight: 700; font-size: 16px; color: white; }
-    .time small { font-size: 10px; color: #8890b5; }
-    .card.live-on .time { background: #ff0055; border-color: #ff0055; }
-    .card.live-on .time small { color: white; }
+    .fav-icon { position: absolute; top: 0; right: 0; padding: 12px; font-size: 18px; color: rgba(255,255,255,0.2); z-index: 10; }
+    .fav-icon.active { color: #ec4899; animation: pop 0.3s; }
+    @keyframes pop { 50% { transform: scale(1.4); } }
 
-    .info { display: flex; align-items: center; gap: 12px; overflow: hidden; }
-    .flag { width: 35px; height: 35px; object-fit: contain; }
-    .teams { font-family: var(--font-main); font-size: 17px; font-weight: 600; color: white; line-height: 1.2; text-transform: uppercase; }
-    .league { font-size: 10px; color: var(--cyan); font-family: var(--font-body); font-weight: 600; margin-top: 4px; letter-spacing: 1px; }
-
-    .arrow { color: var(--cyan); transition: 0.3s; opacity: 0.7; }
-    .card.open .arrow { transform: rotate(180deg); opacity: 1; }
-
-    .channels { max-height: 0; overflow: hidden; transition: max-height 0.3s ease; background: rgba(0,0,0,0.4); border-top: 1px solid rgba(255,255,255,0.05); }
-    .grid { padding: 15px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-
-    .btn-tv { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: white; padding: 12px; font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 8px; cursor: pointer; text-transform: uppercase; position: relative; }
-    .btn-tv::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: var(--cyan); border-radius: 8px 0 0 8px; opacity: 0.5; }
-    .btn-tv:active { background: var(--cyan); color: black; }
-
-    /* PLAYER V17 */
-    #player { background: black; position: fixed; inset: 0; z-index: 200; display: flex; flex-direction: column; }
+    .card-header { padding: 15px; display: flex; align-items: center; gap: 15px; }
     
-    .p-head { padding: 15px 20px; display: flex; align-items: center; gap: 15px; background: linear-gradient(to bottom, #070918, transparent); position: absolute; top: 0; width: 100%; z-index: 50; }
-    .back { width: 40px; height: 40px; border-radius: 50%; background: rgba(255,255,255,0.1); backdrop-filter: blur(10px); display: flex; align-items: center; justify-content: center; color: white; border: none; font-size: 18px; }
-
-    .video-wrap { flex: 1; display: flex; flex-direction: column; justify-content: center; position: relative; }
-    .aspect { width: 100%; padding-top: 56.25%; position: relative; background: black; box-shadow: 0 0 50px rgba(0,240,255,0.1); }
-    iframe#viewer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
-
-    /* ESCUDO 7 CLICKS */
-    #shield { position: absolute; inset: 0; z-index: 20; background: #000; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 0.5s; }
-    .bar-bg { width: 200px; height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; margin-top: 15px; overflow: hidden; }
-    .bar-fill { height: 100%; background: var(--cyan); width: 0%; box-shadow: 0 0 10px var(--cyan); transition: width 0.3s linear; }
-    .shield-txt { font-family: var(--font-main); font-size: 14px; font-weight: 700; color: var(--cyan); letter-spacing: 2px; }
-
-    #unlock { position: absolute; top: 70px; right: 20px; z-index: 60; background: rgba(255,0,85,0.2); border: 1px solid #ff0055; color: white; padding: 6px 14px; border-radius: 20px; font-size: 10px; font-weight: 700; display: none; backdrop-filter: blur(5px); }
-
-    .details { padding: 25px 20px; background: #070918; border-top: 1px solid rgba(255,255,255,0.05); flex: 1; }
-    .ev-title { font-family: var(--font-main); font-size: 20px; font-weight: 700; color: white; margin-bottom: 20px; line-height: 1.2; text-transform: uppercase; }
+    .time-box { 
+      background: rgba(255,255,255,0.05); padding: 8px 0; width: 55px; border-radius: 10px; text-align: center; border: 1px solid var(--card-border);
+      display: flex; flex-direction: column; justify-content: center;
+    }
+    .time-box span { font-weight: 700; font-size: 13px; color: white; }
+    .time-box small { font-size: 8px; color: var(--text-muted); margin-top: 2px; }
+    .match-card[data-live="true"] .time-box { border-color: var(--live); }
+    .match-card[data-live="true"] .time-box span { color: var(--live); }
     
-    .actions { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
-    .btn-soc { padding: 12px; background: rgba(255,255,255,0.05); border-radius: 12px; text-align: center; color: white; text-decoration: none; font-size: 12px; font-weight: 700; border: 1px solid rgba(255,255,255,0.1); }
+    .match-info { flex: 1; overflow: hidden; }
+    .match-title { font-size: 14px; font-weight: 600; color: #fff; margin-bottom: 4px; line-height: 1.2; }
+    .league-name { font-size: 10px; color: var(--accent); text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px; }
+    .league-img { width: 35px; height: 35px; object-fit: contain; margin-right: 10px; }
 
-    .chat { border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; overflow: hidden; background: #0e1129; }
-    .c-head { padding: 12px 15px; background: rgba(255,255,255,0.03); font-size: 12px; font-weight: 700; display: flex; justify-content: space-between; color: var(--cyan); }
-    .c-body { height: 0; transition: height 0.3s; }
-    .c-body.open { height: 350px; }
+    .channels-container { display: none; padding: 0 15px 15px; background: rgba(0,0,0,0.3); border-top: 1px solid var(--card-border); }
+    .channels-list { list-style: none; padding: 10px 0 0; margin: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+
+    /* BOTONES (CLASE ESPECIAL PARA JS) */
+    .btn-channel {
+      background: rgba(255,255,255,0.05); border: 1px solid var(--card-border); color: white;
+      padding: 12px; border-radius: 10px; font-size: 12px; font-weight: 600; text-align: center; cursor: pointer;
+      display: flex; align-items: center; justify-content: center; gap: 6px;
+    }
+    .btn-channel:active { background: var(--accent); color: black; }
+
+    /* PLAYER */
+    #view-player { background: black; position: fixed; inset: 0; z-index: 100; display: flex; flex-direction: column; }
+    .player-top { padding: 15px; background: linear-gradient(to bottom, rgba(0,0,0,0.9), transparent); position: absolute; width: 100%; z-index: 50; display: flex; align-items: center; gap: 15px; }
+    .btn-back { width: 35px; height: 35px; border-radius: 50%; background: rgba(255,255,255,0.2); color: white; border: none; display: flex; align-items: center; justify-content: center; font-size: 16px; backdrop-filter: blur(5px); }
+
+    .video-area { flex: 1; display: flex; align-items: center; position: relative; }
+    .video-frame { width: 100%; aspect-ratio: 16/9; position: relative; background: black; }
+    iframe#viewer { width: 100%; height: 100%; border: none; }
+
+    /* SHIELD & AUTO-CLICK 7 */
+    #titan-shield { position: absolute; inset: 0; background: transparent; z-index: 20; display: flex; align-items: center; justify-content: center; transition: opacity 0.5s; }
+    .status-msg { background: rgba(0,0,0,0.85); color: #00ff88; padding: 10px 20px; border-radius: 30px; font-size: 12px; font-weight: 700; border: 1px solid #00ff88; display: flex; align-items: center; gap: 8px; box-shadow: 0 0 15px rgba(0,255,136,0.3); }
+    
+    #unlock-btn { position: absolute; top: 60px; right: 10px; z-index: 60; background: rgba(0,0,0,0.6); color: #ffaaaa; border: 1px solid #ff4444; padding: 6px 12px; border-radius: 20px; font-size: 10px; font-weight: 700; display: none; cursor: pointer; }
+
+    .info-area { padding: 20px; background: #050507; flex: 1; border-top: 1px solid var(--card-border); }
+    
+    /* Chat */
+    .chat-box { margin-top: 15px; border: 1px solid var(--card-border); border-radius: 12px; overflow: hidden; background: #101015; }
+    .chat-header { padding: 10px 15px; background: rgba(255,255,255,0.05); font-size: 13px; font-weight: 700; display: flex; justify-content: space-between; cursor: pointer; }
+    .chat-body { height: 0; transition: height 0.3s; }
+    .chat-body.open { height: 350px; }
 
   </style>
 </head>
 <body>
 
-  <header>
-    <div class="brand">
-      <img src="https://raw.githubusercontent.com/JJFUTBOL15/eventos/main/1762386751.png" alt="Logo" class="logo">
-      <div class="title">JJFUTBOL <span>CHAMPIONS</span></div>
-    </div>
-    <div class="btn-reload" onclick="init()"><i class="fas fa-rotate-right"></i></div>
-  </header>
-
   <div id="view-agenda" class="view-section">
+    <header>
+      <div class="app-brand">JJFUTBOL <span style="color:var(--accent); font-size:12px;">2026</span></div>
+      <button class="btn-reload" onclick="location.reload()"><i class="fas fa-rotate-right"></i></button>
+    </header>
+
     <div class="container">
-      <div class="search">
+      
+      <div class="search-box">
         <i class="fas fa-search"></i>
-        <input type="text" id="searchInput" placeholder="Buscar equipo...">
+        <input type="text" id="search" placeholder="Buscar partido...">
       </div>
 
       <div class="filters">
-        <div class="chip active" onclick="setFilter('all', this)">TODOS</div>
-        <div class="chip live" onclick="setFilter('live', this)">● EN VIVO</div>
-        <div class="chip" onclick="setFilter('fav', this)">♥ FAVORITOS</div>
+        <div class="chip active" onclick="filter('all', this)">Todos</div>
+        <div class="chip live" onclick="filter('live', this)">🔴 En Vivo</div>
+        <div class="chip fav" onclick="filter('fav', this)">❤️ Favoritos</div>
       </div>
 
-      <div class="banner">
+      <div class="promo">
         <div>
-          <h3 style="margin:0; color:white; font-family:var(--font-main);">JJMOVIES 2026</h3>
-          <p style="margin:5px 0 0; font-size:11px; color:var(--cyan);">CINE GRATIS SIN LÍMITES</p>
+          <div style="color:white; font-weight:700;">JJMOVIES 2026</div>
+          <div style="color:#aaa; font-size:11px;">Películas Gratis</div>
         </div>
-        <a href="https://jjmovies.lat" target="_blank" class="btn-cta">VER AHORA</a>
+        <a href="https://jjmovies.lat" target="_blank" class="btn-cine">VER AHORA</a>
       </div>
 
-      <div id="list"></div>
-      <div id="loading" style="text-align:center; padding:30px; color:#666;">Cargando eventos...</div>
+      <ul id="menu"></ul>
+      <div id="loading" style="text-align:center; padding:40px; color:#666;">Cargando partidos...</div>
     </div>
   </div>
 
-  <div id="player" class="hidden">
-    <div class="p-head">
-      <button class="back" onclick="closeP()"><i class="fas fa-arrow-left"></i></button>
-      <span style="font-weight:700; font-size:14px; color:white;">EN VIVO</span>
+  <div id="view-player" class="hidden">
+    <div class="player-top">
+      <button class="btn-back" onclick="closePlayer()"><i class="fas fa-arrow-left"></i></button>
+      <span style="font-weight:700; font-size:14px; color:white;">En Vivo</span>
     </div>
 
-    <div class="video-wrap">
-      <div class="aspect">
-        <div id="unlock" onclick="unlock()">OPCIÓN 2 / DESBLOQUEAR</div>
-        <div id="shield">
-          <div class="shield-txt" id="s-txt">INICIANDO...</div>
-          <div class="bar-bg"><div class="bar-fill" id="s-bar"></div></div>
+    <div class="video-area">
+      <div class="video-frame">
+        <div id="unlock-btn" onclick="unlock()">DESBLOQUEAR / OPCIÓN 2</div>
+        <div id="titan-shield">
+          <div class="status-msg"><i class="fas fa-bolt"></i> <span id="shield-text">INICIANDO...</span></div>
         </div>
         <iframe id="viewer" src="" allowfullscreen allow="autoplay; encrypted-media"></iframe>
       </div>
     </div>
 
-    <div class="details">
-      <div class="ev-title" id="p-title">Evento</div>
-      <div class="actions">
-        <a href="https://t.me/+EPyKMpHXlv5lMmYx" target="_blank" class="btn-soc" style="background:#229ED9; border-color:#229ED9;">TELEGRAM</a>
-        <a href="https://jjmovies.lat" target="_blank" class="btn-soc" style="background:var(--cyan); color:black;">PELÍCULAS</a>
+    <div class="info-area">
+      <h3 id="player-title" style="margin:0 0 15px; font-size:16px; color:white;">Evento</h3>
+      
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+        <a href="https://t.me/+EPyKMpHXlv5lMmYx" target="_blank" style="background:#229ED9; color:white; padding:10px; border-radius:10px; text-align:center; text-decoration:none; font-size:12px; font-weight:700;">TELEGRAM</a>
+        <a href="https://jjmovies.lat" target="_blank" style="background:var(--accent); color:black; padding:10px; border-radius:10px; text-align:center; text-decoration:none; font-size:12px; font-weight:700;">PELÍCULAS</a>
       </div>
-      <div class="chat">
-        <div class="c-head" onclick="togChat()"><span>CHAT GLOBAL</span> <i class="fas fa-chevron-down"></i></div>
-        <div class="c-body" id="c-box">
-          <iframe id="c-frame" width="100%" height="100%" frameborder="0"></iframe>
+
+      <div class="chat-box">
+        <div class="chat-header" onclick="toggleChat()">
+          <span>CHAT COMUNIDAD</span> <i class="fas fa-chevron-down"></i>
+        </div>
+        <div class="chat-body" id="chat-content">
+          <iframe id="chat-frame" width="100%" height="100%" frameborder="0"></iframe>
         </div>
       </div>
     </div>
   </div>
 
   <script>
-    // --- DATOS EMBEBIDOS (TU JSON NUEVO + APIs) ---
-    // Aquí pego los datos que me diste para que carguen al instante
-    const MANUAL_DATA = {"data":[{"attributes":{"diary_description":"Tour El Salvador 2026: Etapa #4","diary_hour":"11:00am","league_name":"CICLISMO","country":{"data":{"attributes":{"image":{"data":{"attributes":{"url":"https://via.placeholder.com/40?text=TV"}}}}}},"embeds":{"data":[{"attributes":{"embed_name":"Tour El Salvador 2026: Etapa #4","embed_iframe":"#"}},{"attributes":{"embed_name":"ESPN 4","embed_iframe":"https://bestleague.world/en-vivo/espn-4/"}}]}}},{"attributes":{"diary_description":"UEFA Champions League: Galatasaray vs. Atlético Madrid","diary_hour":"12:45pm","league_name":"CHA","country":{"data":{"attributes":{"image":{"data":{"attributes":{"url":"//bestleague.world/jr/5.png"}}}}}},"embeds":{"data":[{"attributes":{"embed_name":"UEFA Champions League: Galatasaray vs. Atlético Madrid","embed_iframe":"#"}},{"attributes":{"embed_name":"ESPN 1 CO","embed_iframe":"https://bestleague.world/en-vivo/espn-cope/"}},{"attributes":{"embed_name":"FOX Sports 1","embed_iframe":"https://bestleague.world/en-vivo/fox-sports/"}},{"attributes":{"embed_name":"Disney+","embed_iframe":"/eventos/?r=aHR0cHM6Ly9zdHJlYW10cGNsb3VkLmNvbS9nbG9iYWwxLnBocD9zdHJlYW09ZGlzbmV5MQ=="}}]}}},{"attributes":{"diary_description":"UEFA Champions League: Qarabağ vs. Eintracht Frankfurt","diary_hour":"12:45pm","league_name":"CHA","country":{"data":{"attributes":{"image":{"data":{"attributes":{"url":"//bestleague.world/jr/5.png"}}}}}},"embeds":{"data":[{"attributes":{"embed_name":"UEFA Champions League: Qarabağ vs. Eintracht Frankfurt","embed_iframe":"#"}},{"attributes":{"embed_name":"ESPN 2","embed_iframe":"https://bestleague.world/en-vivo/espn-2/"}},{"attributes":{"embed_name":"Disney+","embed_iframe":"/eventos/?r=aHR0cHM6Ly9zdHJlYW10cGNsb3VkLmNvbS9nbG9iYWwxLnBocD9zdHJlYW09ZGlzbmV5Mg=="}},{"attributes":{"embed_name":"MAX","embed_iframe":"/eventos/?r=aHR0cHM6Ly9zdHJlYW10cGNsb3VkLmNvbS9nbG9iYWwxLnBocD9zdHJlYW09bWF4MQ=="}}]}}},{"attributes":{"diary_description":"UEFA Champions League: Olympique Marseille vs. Liverpool","diary_hour":"3:00pm","league_name":"CHA","country":{"data":{"attributes":{"image":{"data":{"attributes":{"url":"//bestleague.world/jr/5.png"}}}}}},"embeds":{"data":[{"attributes":{"embed_name":"UEFA Champions League: Olympique Marseille vs. Liverpool","embed_iframe":"#"}},{"attributes":{"embed_name":"ESPN 5","embed_iframe":"https://bestleague.world/en-vivo/espn-5"}},{"attributes":{"embed_name":"FOX Sports 1","embed_iframe":"https://bestleague.world/en-vivo/fox-sports/"}},{"attributes":{"embed_name":"MAX","embed_iframe":"/eventos/?r=aHR0cHM6Ly9zdHJlYW10cGNsb3VkLmNvbS9nbG9iYWwxLnBocD9zdHJlYW09bWF4Mw=="}}]}}},{"attributes":{"diary_description":"UEFA Champions League: Bayern München vs. Union Saint-Gilloise","diary_hour":"3:00pm","league_name":"CHA","country":{"data":{"attributes":{"image":{"data":{"attributes":{"url":"//bestleague.world/jr/5.png"}}}}}},"embeds":{"data":[{"attributes":{"embed_name":"UEFA Champions League: Bayern München vs. Union Saint-Gilloise","embed_iframe":"#"}},{"attributes":{"embed_name":"ESPN 3 AR","embed_iframe":"https://bestleague.world/en-vivo/espn-3-ar/"}},{"attributes":{"embed_name":"ESPN 1 CO","embed_iframe":"https://bestleague.world/en-vivo/espn-co/"}},{"attributes":{"embed_name":"Disney+","embed_iframe":"/eventos/?r=aHR0cHM6Ly9zdHJlYW10cGNsb3VkLmNvbS9nbG9iYWwxLnBocD9zdHJlYW09ZGlzbmV5MQ=="}},{"attributes":{"embed_name":"Paramount+","embed_iframe":"/eventos/?r=aHR0cHM6Ly9zdHJlYW10cGNsb3VkLmNvbS9nbG9iYWwxLnBocD9zdHJlYW09cGFyYW1vdW50Mg=="}}]}}},{"attributes":{"diary_description":"UEFA Champions League: Newcastle United vs. PSV","diary_hour":"3:00pm","league_name":"CHA","country":{"data":{"attributes":{"image":{"data":{"attributes":{"url":"//bestleague.world/jr/5.png"}}}}}},"embeds":{"data":[{"attributes":{"embed_name":"UEFA Champions League: Newcastle United vs. PSV","embed_iframe":"#"}},{"attributes":{"embed_name":"ESPN 6","embed_iframe":"https://bestleague.world/en-vivo/espn-6/"}},{"attributes":{"embed_name":"Disney+","embed_iframe":"/eventos/?r=aHR0cHM6Ly9zdHJlYW10cGNsb3VkLmNvbS9nbG9iYWwxLnBocD9zdHJlYW09ZGlzbmV5Ng=="}},{"attributes":{"embed_name":"MAX","embed_iframe":"/eventos/?r=aHR0cHM6Ly9zdHJlYW10cGNsb3VkLmNvbS9nbG9iYWwxLnBocD9zdHJlYW09bWF4NA=="}},{"attributes":{"embed_name":"Paramount+","embed_iframe":"/eventos/?r=aHR0cHM6Ly9zdHJlYW10cGNsb3VkLmNvbS9nbG9iYWwxLnBocD9zdHJlYW09cGFyYW1vdW50NQ=="}}]}}},{"attributes":{"diary_description":"UEFA Champions League: Chelsea vs. Paphos","diary_hour":"3:00pm","league_name":"CHA","country":{"data":{"attributes":{"image":{"data":{"attributes":{"url":"//bestleague.world/jr/5.png"}}}}}},"embeds":{"data":[{"attributes":{"embed_name":"UEFA Champions League: Chelsea vs. Paphos","embed_iframe":"#"}},{"attributes":{"embed_name":"ESPN 3 CO","embed_iframe":"https://bestleague.world/en-vivo/espn-3-cope/"}},{"attributes":{"embed_name":"ESPN 1 AR","embed_iframe":"https://bestleague.world/en-vivo/espn-ar/"}},{"attributes":{"embed_name":"Disney+","embed_iframe":"/eventos/?r=aHR0cHM6Ly9zdHJlYW10cGNsb3VkLmNvbS9nbG9iYWwxLnBocD9zdHJlYW09ZGlzbmV5Mw=="}},{"attributes":{"embed_name":"MAX","embed_iframe":"/eventos/?r=aHR0cHM6Ly9zdHJlYW10cGNsb3VkLmNvbS9nbG9iYWwxLnBocD9zdHJlYW09bWF4Mg=="}}]}}},{"attributes":{"diary_description":"UEFA Champions League: Juventus vs. Benfica","diary_hour":"3:00pm","league_name":"CHA","country":{"data":{"attributes":{"image":{"data":{"attributes":{"url":"//bestleague.world/jr/5.png"}}}}}},"embeds":{"data":[{"attributes":{"embed_name":"UEFA Champions League: Juventus vs. Benfica","embed_iframe":"#"}},{"attributes":{"embed_name":"ESPN 7","embed_iframe":"https://bestleague.world/en-vivo/espn-7/"}},{"attributes":{"embed_name":"FOX Sports 2","embed_iframe":"https://bestleague.world/en-vivo/fox-sports-2/"}},{"attributes":{"embed_name":"Disney+","embed_iframe":"/eventos/?r=aHR0cHM6Ly9zdHJlYW10cGNsb3VkLmNvbS9nbG9iYWwxLnBocD9zdHJlYW09ZGlzbmV5Nw=="}}]}}},{"attributes":{"diary_description":"UEFA Champions League: Atalanta vs. Athletic Club","diary_hour":"3:00pm","league_name":"CHA","country":{"data":{"attributes":{"image":{"data":{"attributes":{"url":"//bestleague.world/jr/5.png"}}}}}},"embeds":{"data":[{"attributes":{"embed_name":"UEFA Champions League: Atalanta vs. Athletic Club","embed_iframe":"#"}},{"attributes":{"embed_name":"ESPN 4","embed_iframe":"https://bestleague.world/en-vivo/espn-4/"}},{"attributes":{"embed_name":"Disney+","embed_iframe":"/eventos/?r=aHR0cHM6Ly9zdHJlYW10cGNsb3VkLmNvbS9nbG9iYWwxLnBocD9zdHJlYW09ZGlzbmV5NA=="}}]}}},{"attributes":{"diary_description":"UEFA Champions League: Slavia Praha vs. Barcelona","diary_hour":"3:00pm","league_name":"CHA","country":{"data":{"attributes":{"image":{"data":{"attributes":{"url":"//bestleague.world/jr/5.png"}}}}}},"embeds":{"data":[{"attributes":{"embed_name":"UEFA Champions League: Slavia Praha vs. Barcelona","embed_iframe":"#"}},{"attributes":{"embed_name":"ESPN 2 AR","embed_iframe":"https://bestleague.world/en-vivo/espn-2-arco/"}},{"attributes":{"embed_name":"Paramount+","embed_iframe":"/eventos/?r=aHR0cHM6Ly9zdHJlYW10cGNsb3VkLmNvbS9nbG9iYWwxLnBocD9zdHJlYW09cGFyYW1vdW50MQ=="}}]}}},{"attributes":{"diary_description":"Championship: Stoke City vs. Middlesbrough","diary_hour":"3:00pm","league_name":"ENG","country":{"data":{"attributes":{"image":{"data":{"attributes":{"url":"//bestleague.world/jr/61.png"}}}}}},"embeds":{"data":[{"attributes":{"embed_name":"Championship: Stoke City vs. Middlesbrough","embed_iframe":"#"}},{"attributes":{"embed_name":"Disney+","embed_iframe":"/eventos/?r=aHR0cHM6Ly9zdHJlYW10cGNsb3VkLmNvbS9nbG9iYWwxLnBocD9zdHJlYW09ZGlzbmV5OA=="}}]}}},{"attributes":{"diary_description":"Campeonato Carioca: Maricá vs. Bangu","diary_hour":"3:00pm","league_name":"BRA","country":{"data":{"attributes":{"image":{"data":{"attributes":{"url":"//bestleague.world/jr/79.png"}}}}}},"embeds":{"data":[{"attributes":{"embed_name":"Campeonato Carioca: Maricá vs. Bangu","embed_iframe":"#"}},{"attributes":{"embed_name":"Premiere 2 BR","embed_iframe":"/eventos/?r=aHR0cHM6Ly9zdHJlYW10cGNsb3VkLmNvbS9nbG9iYWwxLnBocD9zdHJlYW09cHJlbWllcmUy"}},{"attributes":{"embed_name":"Premiere 2 BR","embed_iframe":"/eventos/?r=aHR0cHM6Ly9iZXN0bGVhZ3VlLndvcmxkL21wZGsvP2dldD1hSFIwY0hNNkx5OWhZbU16YjNKM1lXRmhZV0ZoWVdGdFpUWTFOVFZvTTJJMllXWTBOQzV2ZEhSaUxteHBkbVV1WTJZdWQzY3VZV2wyTFdOa2JpNXVaWFF2WjNKMUxXNXBkSEp2TDJ4cGRtVXZZMnhwWlc1MGN5OWtZWE5vTDJWdVl5OXZlVFp5Y0RCcWQyMW1MMjkxZEM5Mk1TODFPREJsWTJZeE1tSmhaREkwT1RjNVltRm1PR1JrT1RrelpHTmxNRFV6WlM5alpXNWpMbTF3WkE9PSZrZXk9T1dSak5EQTBOakJqT1RNd09EZGhaV0U0TkdRMk16RTFaakE0WldOaU5qUT0ma2V5Mj1aalk1WXpoa05EWXlOR1prWkdabU5HTmhPRGxpWkRCaU16RmlaR00wWVRjPQ=="}}]}}},{"attributes":{"diary_description":"Supercopa de Chile: Coquimbo Unido vs. Deportes Limache","diary_hour":"5:00pm","league_name":"CH","country":{"data":{"attributes":{"image":{"data":{"attributes":{"url":"https://via.placeholder.com/40?text=TV"}}}}}},"embeds":{"data":[{"attributes":{"embed_name":"Supercopa de Chile: Coquimbo Unido vs. Deportes Limache","embed_iframe":"#"}},{"attributes":{"embed_name":"TNT Sports Premium","embed_iframe":"https://bestleague.world/en-vivo/tnt-sports/"}},{"attributes":{"embed_name":"MAX","embed_iframe":"/eventos/?r=aHR0cHM6Ly9zdHJlYW10cGNsb3VkLmNvbS9nbG9iYWwxLnBocD9zdHJlYW09bWF4NQ=="}}]}}},{"attributes":{"diary_description":"Campeonato Carioca: Botafogo vs. Volta Redonda","diary_hour":"5:00pm","league_name":"BRA","country":{"data":{"attributes":{"image":{"data":{"attributes":{"url":"//bestleague.world/jr/79.png"}}}}}},"embeds":{"data":[{"attributes":{"embed_name":"Campeonato Carioca: Botafogo vs. Volta Redonda","embed_iframe":"#"}},{"attributes":{"embed_name":"Premiere 1 BR","embed_iframe":"/eventos/?r=aHR0cHM6Ly9zdHJlYW10cGNsb3VkLmNvbS9nbG9iYWwxLnBocD9zdHJlYW09cHJlbWllcmUx"}},{"attributes":{"embed_name":"Premiere 1 BR","embed_iframe":"/eventos/?r=aHR0cHM6Ly9iZXN0bGVhZ3VlLndvcmxkL21wZGsvP2dldD1hSFIwY0hNNkx5OWhZbU16YjNKM1lXRmhZV0ZoWVdGdGFIQjFhVGQzYkc1dFpuRm5hQzV2ZEhSaUxteHBkbVV1WTJZdWQzY3VZV2wyTFdOa2JpNXVaWFF2WjNKMUxXNXBkSEp2TDJ4cGRtVXZZMnhwWlc1MGN5OWtZWE5vTDJWdVl5OXVaV3htZVhWamR6bGhMMjkxZEM5Mk1TODJabVppTW1Nek5qVmhaREUwWmpnNFlqRTFORFU1TVdKbFlqUXpaREZtTmk5alpXNWpMbTF3WkE9PSZrZXk9TlRaaU56bGpNVGM0TW1Jek1HVTJZalptWXprM00ySXdaVGhtWkRReE1EUT0ma2V5Mj1abUV6T0dGaFlUZzJOV0UxTjJWa1lUZGpOemMwTkRRMk9UZGlZVGhsWkRNPQ=="}}]}}},{"attributes":{"diary_description":"Campeonato Gaúcho: Internacional vs. Inter Santa Maria","diary_hour":"5:00pm","league_name":"BRA","country":{"data":{"attributes":{"image":{"data":{"attributes":{"url":"//bestleague.world/jr/79.png"}}}}}},"embeds":{"data":[{"attributes":{"embed_name":"Campeonato Gaúcho: Internacional vs. Inter Santa Maria","embed_iframe":"#"}},{"attributes":{"embed_name":"Sport TV1 BR","embed_iframe":"/eventos/?r=aHR0cHM6Ly9zdHJlYW10cGNsb3VkLmNvbS9nbG9iYWwxLnBocD9zdHJlYW09c3BvcnR0dmJyMQ=="}},{"attributes":{"embed_name":"Premiere 3 BR","embed_iframe":"/eventos/?r=aHR0cHM6Ly9zdHJlYW10cGNsb3VkLmNvbS9nbG9iYWwxLnBocD9zdHJlYW09cHJlbWllcmUz"}},{"attributes":{"embed_name":"Premiere 3 BR","embed_iframe":"/eventos/?r=aHR0cHM6Ly9iZXN0bGVhZ3VlLndvcmxkL21wZGsvP2dldD1hSFIwY0hNNkx5OWhZbU16YjNKM1lXRmhZV0ZoWVdGdGFIQjFhVGQzYkc1dFpuRm5hQzV2ZEhSaUxteHBkbVV1WTJZdWQzY3VZV2wyTFdOa2JpNXVaWFF2WjNKMUxXNXBkSEp2TDJ4cGRtVXZZMnhwWlc1MGN5OWtZWE5vTDJWdVl5ODJiMjV5Wm01cGVYSjVMMjkxZEM5Mk1TOW1Nak13Tmpsak5qRmtZbVkwWlRBd09Ea3dZVFF3WWpjd05XRTROREEzT1M5alpXNWpMbTF3WkE9PSZrZXk9WkRJelpqYzBNek0zT1RoaE5qVXlZVGRrTkdZMk56a3haRGxsTVRBek5tTT0ma2V5Mj1ORGswTW1WbFltUTFPVGhpTlRjeU4yTTFZMk0wT0RSall6WXlZalV5WlRnPQ=="}}]}}},{"attributes":{"diary_description":"Campeonato Paulista A1: Mirassol vs. RB Bragantino","diary_hour":"6:00pm","league_name":"BRA","country":{"data":{"attributes":{"image":{"data":{"attributes":{"url":"//bestleague.world/jr/79.png"}}}}}},"embeds":{"data":[{"attributes":{"embed_name":"Campeonato Paulista A1: Mirassol vs. RB Bragantino","embed_iframe":"#"}},{"attributes":{"embed_name":"MAX","embed_iframe":"/eventos/?r=aHR0cHM6Ly9zdHJlYW10cGNsb3VkLmNvbS9nbG9iYWwxLnBocD9zdHJlYW09bWF4MQ=="}}]}}},{"attributes":{"diary_description":"Amistoso: Colo-Colo vs. Peñarol","diary_hour":"7:00pm","league_name":"FUT","country":{"data":{"attributes":{"image":{"data":{"attributes":{"url":"https://via.placeholder.com/40?text=TV"}}}}}},"embeds":{"data":[{"attributes":{"embed_name":"Amistoso: Colo-Colo vs. Peñarol","embed_iframe":"#"}},{"attributes":{"embed_name":"ESPN Premium","embed_iframe":"https://bestleague.world/en-vivo/espn-premium/"}},{"attributes":{"embed_name":"Disney+","embed_iframe":"/eventos/?r=aHR0cHM6Ly9zdHJlYW10cGNsb3VkLmNvbS9nbG9iYWwxLnBocD9zdHJlYW09ZGlzbmV5MQ=="}}]}}},{"attributes":{"diary_description":"Australian Open 2026: Cobertura Internacional | En español","diary_hour":"7:00pm","league_name":"TE","country":{"data":{"attributes":{"image":{"data":{"attributes":{"url":"https://via.placeholder.com/40?text=TV"}}}}}},"embeds":{"data":[{"attributes":{"embed_name":"Australian Open 2026: Cobertura Internacional | En español","embed_iframe":"#"}},{"attributes":{"embed_name":"ESPN 2","embed_iframe":"https://bestleague.world/en-vivo/espn-2/"}}]}}},{"attributes":{"diary_description":"Australian Open 2026: Cobertura Regional | En español","diary_hour":"7:00pm","league_name":"TE","country":{"data":{"attributes":{"image":{"data":{"attributes":{"url":"https://via.placeholder.com/40?text=TV"}}}}}},"embeds":{"data":[{"attributes":{"embed_name":"Australian Open 2026: Cobertura Regional | En español","embed_iframe":"#"}},{"attributes":{"embed_name":"ESPN 3","embed_iframe":"https://bestleague.world/en-vivo/espn-3/"}}]}}},{"attributes":{"diary_description":"NBA: Cleveland Cavaliers vs. Charlotte Hornets","diary_hour":"7:00pm","league_name":"NBA","country":{"data":{"attributes":{"image":{"data":{"attributes":{"url":"https://bestleague.world/img/nba.svg"}}}}}},"embeds":{"data":[{"attributes":{"embed_name":"NBA: Cleveland Cavaliers vs. Charlotte Hornets","embed_iframe":"#"}},{"attributes":{"embed_name":"ESPN 4","embed_iframe":"https://bestleague.world/en-vivo/espn-4/"}}]}}},{"attributes":{"diary_description":"Copa Argentina: Argentinos Juniors vs. Midland","diary_hour":"7:15pm","league_name":"AR","country":{"data":{"attributes":{"image":{"data":{"attributes":{"url":"https://via.placeholder.com/40?text=TV"}}}}}},"embeds":{"data":[{"attributes":{"embed_name":"Copa Argentina: Argentinos Juniors vs. Midland","embed_iframe":"#"}},{"attributes":{"embed_name":"TyC Sports","embed_iframe":"https://bestleague.world/en-vivo/tyc-sports/"}}]}}},{"attributes":{"diary_description":"Superliga de Colombia (Final 2/2): Santa Fe vs. Junior","diary_hour":"7:30pm","league_name":"COL","country":{"data":{"attributes":{"image":{"data":{"attributes":{"url":"https://via.placeholder.com/40?text=TV"}}}}}},"embeds":{"data":[{"attributes":{"embed_name":"Superliga de Colombia (Final 2/2): Santa Fe vs. Junior","embed_iframe":"#"}},{"attributes":{"embed_name":"Win+ Fútbol","embed_iframe":"https://bestleague.world/en-vivo/win-sports-premium/"}}]}}},{"attributes":{"diary_description":"Campeonato Mineiro: América Mineiro vs. Atlético Mineiro","diary_hour":"7:30pm","league_name":"BRA","country":{"data":{"attributes":{"image":{"data":{"attributes":{"url":"//bestleague.world/jr/79.png"}}}}}},"embeds":{"data":[{"attributes":{"embed_name":"Campeonato Mineiro: América Mineiro vs. Atlético Mineiro","embed_iframe":"#"}},{"attributes":{"embed_name":"Premiere 2 BR","embed_iframe":"/eventos/?r=aHR0cHM6Ly9zdHJlYW10cGNsb3VkLmNvbS9nbG9iYWwxLnBocD9zdHJlYW09cHJlbWllcmUy"}},{"attributes":{"embed_name":"Premiere 2 BR","embed_iframe":"/eventos/?r=aHR0cHM6Ly9iZXN0bGVhZ3VlLndvcmxkL21wZGsvP2dldD1hSFIwY0hNNkx5OWhZbU16YjNKM1lXRmhZV0ZoWVdGdFpUWTFOVFZvTTJJMllXWTBOQzV2ZEhSaUxteHBkbVV1WTJZdWQzY3VZV2wyTFdOa2JpNXVaWFF2WjNKMUxXNXBkSEp2TDJ4cGRtVXZZMnhwWlc1MGN5OWtZWE5vTDJWdVl5OXZlVFp5Y0RCcWQyMW1MMjkxZEM5Mk1TODFPREJsWTJZeE1tSmhaREkwT1RjNVltRm1PR1JrT1RrelpHTmxNRFV6WlM5alpXNWpMbTF3WkE9PSZrZXk9T1dSak5EQTBOakJqT1RNd09EZGhaV0U0TkdRMk16RTFaakE0WldOaU5qUT0ma2V5Mj1aalk1WXpoa05EWXlOR1prWkdabU5HTmhPRGxpWkRCaU16RmlaR00wWVRjPQ=="}}]}}},{"attributes":{"diary_description":"Campeonato Carioca: Flamengo vs. Vasco da Gama","diary_hour":"7:30pm","league_name":"BRA","country":{"data":{"attributes":{"image":{"data":{"attributes":{"url":"//bestleague.world/jr/79.png"}}}}}},"embeds":{"data":[{"attributes":{"embed_name":"Campeonato Carioca: Flamengo vs. Vasco da Gama","embed_iframe":"#"}},{"attributes":{"embed_name":"Premiere 1 BR","embed_iframe":"/eventos/?r=aHR0cHM6Ly9zdHJlYW10cGNsb3VkLmNvbS9nbG9iYWwxLnBocD9zdHJlYW09cHJlbWllcmUx"}},{"attributes":{"embed_name":"Premiere 1 BR","embed_iframe":"/eventos/?r=aHR0cHM6Ly9iZXN0bGVhZ3VlLndvcmxkL21wZGsvP2dldD1hSFIwY0hNNkx5OWhZbU16YjNKM1lXRmhZV0ZoWVdGdGFIQjFhVGQzYkc1dFpuRm5hQzV2ZEhSaUxteHBkbVV1WTJZdWQzY3VZV2wyTFdOa2JpNXVaWFF2WjNKMUxXNXBkSEp2TDJ4cGRtVXZZMnhwWlc1MGN5OWtZWE5vTDJWdVl5OXVaV3htZVhWamR6bGhMMjkxZEM5Mk1TODJabVppTW1Nek5qVmhaREUwWmpnNFlqRTFORFU1TVdKbFlqUXpaREZtTmk5alpXNWpMbTF3WkE9PSZrZXk9TlRaaU56bGpNVGM0TW1Jek1HVTJZalptWXprM00ySXdaVGhtWkRReE1EUT0ma2V5Mj1abUV6T0dGaFlUZzJOV0UxTjJWa1lUZGpOemMwTkRRMk9UZGlZVGhsWkRNPQ=="}}]}}},{"attributes":{"diary_description":"Campeonato Gaúcho: Guarany de Bagé vs. Grêmio","diary_hour":"7:30pm","league_name":"BRA","country":{"data":{"attributes":{"image":{"data":{"attributes":{"url":"//bestleague.world/jr/79.png"}}}}}},"embeds":{"data":[{"attributes":{"embed_name":"Campeonato Gaúcho: Guarany de Bagé vs. Grêmio","embed_iframe":"#"}},{"attributes":{"embed_name":"Premiere 3 BR","embed_iframe":"/eventos/?r=aHR0cHM6Ly9zdHJlYW10cGNsb3VkLmNvbS9nbG9iYWwxLnBocD9zdHJlYW09cHJlbWllcmUz"}},{"attributes":{"embed_name":"Premiere 3 BR","embed_iframe":"/eventos/?r=aHR0cHM6Ly9iZXN0bGVhZ3VlLndvcmxkL21wZGsvP2dldD1hSFIwY0hNNkx5OWhZbU16YjNKM1lXRmhZV0ZoWVdGdGFIQjFhVGQzYkc1dFpuRm5hQzV2ZEhSaUxteHBkbVV1WTJZdWQzY3VZV2wyTFdOa2JpNXVaWFF2WjNKMUxXNXBkSEp2TDJ4cGRtVXZZMnhwWlc1MGN5OWtZWE5vTDJWdVl5ODJiMjV5Wm01cGVYSjVMMjkxZEM5Mk1TOW1Nak13Tmpsak5qRmtZbVkwWlRBd09Ea3dZVFF3WWpjd05XRTROREEzT1M5alpXNWpMbTF3WkE9PSZrZXk9WkRJelpqYzBNek0zT1RoaE5qVXlZVGRrTkdZMk56a3haRGxsTVRBek5tTT0ma2V5Mj1ORGswTW1WbFltUTFPVGhpTlRjeU4yTTFZMk0wT0RSall6WXlZalV5WlRnPQ=="}}]}}},{"attributes":{"diary_description":"NBA: Oklahoma City Thunder vs. Milwaukee Bucks","diary_hour":"9:30pm","league_name":"NBA","country":{"data":{"attributes":{"image":{"data":{"attributes":{"url":"https://bestleague.world/img/nba.svg"}}}}}},"embeds":{"data":[{"attributes":{"embed_name":"NBA: Oklahoma City Thunder vs. Milwaukee Bucks","embed_iframe":"#"}},{"attributes":{"embed_name":"ESPN 4","embed_iframe":"https://bestleague.world/en-vivo/espn-4/"}}]}}},{"attributes":{"diary_description":"Australian Open 2026: Cobertura Internacional | En español","diary_hour":"3:00am","league_name":"TE","country":{"data":{"attributes":{"image":{"data":{"attributes":{"url":"https://via.placeholder.com/40?text=TV"}}}}}},"embeds":{"data":[{"attributes":{"embed_name":"Australian Open 2026: Cobertura Internacional | En español","embed_iframe":"#"}},{"attributes":{"embed_name":"ESPN 2","embed_iframe":"https://bestleague.world/en-vivo/espn-2/"}}]}}}]};
-
+    // --- 1. CARGA DE DATOS ---
     const API_URLS = [
       { url: "https://a.ftvhd.com/diaries.json", base: "https://img.futbolonlinehd.com" },
       { url: "https://golazoplay.com/agenda.json?v=1.0", base: "https://img.golazoplay.com" }
     ];
-    let favs = JSON.parse(localStorage.getItem('jj_ucl_favs') || '[]');
+    let favorites = JSON.parse(localStorage.getItem('jj_favs') || '[]');
 
     $(document).ready(() => {
-      init();
+      loadData();
       
-      $('#searchInput').on('keyup', function() {
+      $('#search').on('keyup', function() {
         const val = $(this).val().toLowerCase();
-        $('.card').toggle(function() {
+        $('.match-card').toggle(function() {
           return $(this).text().toLowerCase().indexOf(val) > -1;
         });
       });
 
-      $(document).on('click', '.card', function(e) {
-        if($(e.target).closest('.fav, .btn-tv').length) return;
-        $('.card').not(this).removeClass('open').find('.channels').slideUp(200);
-        $(this).toggleClass('open').find('.channels').slideToggle(200);
+      // Expandir tarjeta
+      $(document).on('click', '.match-card', function(e) {
+        if($(e.target).closest('.fav-icon, .btn-channel').length) return;
+        $('.match-card').not(this).removeClass('active').find('.channels-container').slideUp(200);
+        $(this).toggleClass('active').find('.channels-container').slideToggle(200);
       });
 
-      $(document).on('click', '.btn-tv', function(e) {
+      // --- CLIC EN CANAL (SOLUCIÓN TÉCNICA) ---
+      // Usamos "delegación" y leemos atributos "data" para que no se rompa nunca
+      $(document).on('click', '.btn-channel', function(e) {
         e.stopPropagation();
-        const b64 = $(this).data('link');
+        const b64 = $(this).data('url');
         const title = $(this).data('title');
-        playCh(b64, title);
+        play(b64, title);
       });
     });
 
-    async function init() {
-      $('#list').empty();
-      $('#loading').show();
-      
-      let allEvents = [];
-
-      // 1. Cargar APIs externas
+    async function loadData() {
       try {
-        const reqs = API_URLS.map(api => fetch(api.url + "?t=" + Date.now()).then(r=>r.json()).then(d => d.data.map(i => ({...i, _base: api.base}))).catch(e=>[]));
-        const res = await Promise.all(reqs);
-        allEvents = res.flat();
-      } catch(e) {}
+        const promises = API_URLS.map(api => fetch(api.url + "?t=" + Date.now()).then(r=>r.json()).then(d => d.data.map(i => ({...i, _base: api.base}))));
+        const res = await Promise.all(promises);
+        const events = res.flat();
+        
+        const unique = [];
+        const seen = new Set();
+        events.forEach(ev => {
+          const k = ev.attributes.diary_description + ev.attributes.diary_hour;
+          if(!seen.has(k)) { seen.add(k); unique.push(ev); }
+        });
+        unique.sort((a,b) => (a.attributes.diary_hour || "00:00").localeCompare(b.attributes.diary_hour || "00:00"));
 
-      // 2. Mezclar con MANUAL_DATA
-      if (MANUAL_DATA && MANUAL_DATA.data) {
-        // Asignar base vacía para las imágenes manuales que ya vienen completas
-        const manualItems = MANUAL_DATA.data.map(i => ({...i, _base: ""}));
-        allEvents = [...allEvents, ...manualItems];
+        render(unique);
+        $('#loading').hide();
+      } catch(e) {
+        $('#loading').text("Error de conexión. Recarga.");
       }
-
-      // 3. Procesar y Renderizar
-      const unique = [];
-      const seen = new Set();
-      
-      allEvents.forEach(ev => {
-        const k = (ev.attributes.diary_description || "") + (ev.attributes.diary_hour || "");
-        if(!seen.has(k)) { seen.add(k); unique.push(ev); }
-      });
-
-      // Ordenar por hora (convertir todo a formato comparable)
-      unique.sort((a,b) => {
-        // Simple string compare funciona si el formato es consistente, 
-        // pero idealmente parsearíamos fechas. Aquí confiamos en el string HH:MM.
-        const ha = a.attributes.diary_hour || "00:00";
-        const hb = b.attributes.diary_hour || "00:00";
-        return ha.localeCompare(hb);
-      });
-
-      render(unique);
-      $('#loading').hide();
     }
 
     function render(list) {
-      const container = $('#list');
+      const menu = $('#menu');
+      menu.empty();
+
       if(list.length === 0) {
-        container.html('<div style="text-align:center; padding:40px; opacity:0.5;">No hay eventos disponibles.</div>');
+        menu.html('<div style="text-align:center; padding:30px;">No hay eventos hoy.</div>');
         return;
       }
 
       list.forEach(item => {
         const attr = item.attributes;
-        const id = btoa(encodeURIComponent(attr.diary_description + attr.diary_hour)).replace(/=/g, '');
-        const isFav = favs.includes(id);
+        const id = btoa(unescape(encodeURIComponent(attr.diary_description + attr.diary_hour))).replace(/=/g, '');
+        const isFav = favorites.includes(id);
 
-        // Hora inteligente
-        let time = attr.diary_hour;
+        let time = "--:--";
         let isLive = false;
-        // Intento básico de parseo si viene limpio
-        if(time.includes(":")) {
-           // Lógica simple: Si hora actual > hora evento (aprox)
-           // (Omitido para simplificar, se muestra tal cual viene del JSON)
+        if(attr.diary_hour) {
+          const dt = luxon.DateTime.fromFormat(attr.diary_hour.substring(0,5), "HH:mm", {zone:"America/Lima"});
+          const now = luxon.DateTime.now().setZone("America/Lima");
+          time = dt.toLocal().toFormat("HH:mm");
+          const diff = now.diff(dt, 'minutes').minutes;
+          if(diff >= 0 && diff < 130) isLive = true;
         }
 
-        // Imagen
-        let img = "https://via.placeholder.com/40?text=L";
+        // Logo Liga
+        let img = "https://via.placeholder.com/35?text=VS";
         if(attr.league?.data?.attributes?.image?.data?.attributes?.url) {
           img = item._base + attr.league.data.attributes.image.data.attributes.url;
-        } else if(attr.country?.data?.attributes?.image?.data?.attributes?.url) {
-          img = item._base + attr.country.data.attributes.image.data.attributes.url;
         } else if (attr.country?.data?.attributes?.image?.data?.attributes?.url) {
-           // Caso JSON manual que trae url directa
-           img = attr.country.data.attributes.image.data.attributes.url; 
+          img = item._base + attr.country.data.attributes.image.data.attributes.url;
         }
 
-        // Canales
+        // --- GENERADOR DE BOTONES SEGURO ---
         let btns = "";
         (attr.embeds?.data || []).forEach(em => {
-          let raw = em.attributes.embed_iframe || "";
-          let clean = raw;
+          let url = em.attributes.embed_iframe || "";
           
-          // Iframe src extractor
-          if(raw.includes('<iframe')) {
-            const m = raw.match(/src=["'](.*?)["']/);
-            if(m) clean = m[1];
+          // Link Fixer
+          if(url.includes('<iframe')) {
+            const m = url.match(/src=["'](.*?)["']/);
+            if(m) url = m[1];
           }
 
-          // Encode
           let payload = "";
           try {
-            if(clean.includes("?r=")) payload = clean.split("?r=")[1];
-            else if(clean.startsWith("http")) payload = btoa(clean);
-            else payload = btoa(clean); // Fallback
+            if(url.includes("?r=")) payload = url.split("?r=")[1];
+            else payload = btoa(url);
           } catch(e){}
 
           if(payload) {
-            const safeTitle = attr.diary_description.replace(/"/g, "&quot;");
-            btns += `<div class="btn-tv" data-link="${payload}" data-title="${safeTitle}"><i class="fas fa-play"></i> ${em.attributes.embed_name}</div>`;
+            // AQUÍ ESTÁ EL TRUCO: data-url y data-title en vez de onclick()
+            // Esto evita que las comillas rompan el código
+            btns += `<div class="btn-channel" data-url="${payload}" data-title="${attr.diary_description.replace(/"/g, '"')}"><i class="fas fa-play"></i> ${em.attributes.embed_name}</div>`;
           }
         });
 
-        if(!btns) btns = '<div style="text-align:center; font-size:11px; opacity:0.5;">No disponible</div>';
+        if(!btns) btns = '<div style="grid-column:1/-1; text-align:center; font-size:11px; opacity:0.5;">Sin señal</div>';
 
         const html = `
-          <div class="card ${isLive ? 'live-on' : ''}" data-fav="${isFav}">
-            <div class="fav ${isFav ? 'active' : ''}" onclick="toggleFav('${id}', this)"><i class="${isFav ? 'fas' : 'far'} fa-heart"></i></div>
-            <div class="head" onclick="void(0)">
-              <div class="time">
-                <span>${time.replace(/[a-z]/gi,'')}</span>
-                <small>${time.replace(/[0-9:]/g,'') || 'HOY'}</small>
+          <li class="match-card" data-live="${isLive}" data-fav="${isFav}">
+            <div class="fav-icon ${isFav ? 'active' : ''}" onclick="toggleFav('${id}', this)"><i class="${isFav ? 'fas' : 'far'} fa-heart"></i></div>
+            <div class="card-header">
+              <div class="time-box">
+                <span style="${isLive ? 'color:var(--live)' : ''}">${time}</span>
+                <small>${isLive ? 'VIVO' : 'HORA'}</small>
               </div>
-              <div class="info">
-                <img src="${img}" class="flag" onerror="this.src='https://via.placeholder.com/40?text=L'">
-                <div>
-                  <div class="teams">${attr.diary_description}</div>
-                  <span class="league">${attr.league_name || "MUNDO"}</span>
+              <div style="display:flex; align-items:center;">
+                <img src="${img}" class="league-img">
+                <div class="match-info">
+                  <div class="match-title">${attr.diary_description}</div>
+                  <div class="league-name">${attr.league_name || "Mundo"}</div>
                 </div>
               </div>
-              <i class="fas fa-chevron-down arrow"></i>
             </div>
-            <div class="channels"><div class="grid">${btns}</div></div>
-          </div>
+            <div class="channels-container">
+              <div class="channels-list">${btns}</div>
+            </div>
+          </li>
         `;
-        container.append(html);
+        menu.append(html);
       });
     }
 
     function toggleFav(id, btn) {
-      event.stopPropagation();
-      const idx = favs.indexOf(id);
+      const idx = favorites.indexOf(id);
       if(idx === -1) {
-        favs.push(id);
+        favorites.push(id);
         $(btn).addClass('active').html('<i class="fas fa-heart"></i>');
-        $(btn).closest('.card').attr('data-fav', 'true');
+        $(btn).closest('li').attr('data-fav', 'true');
       } else {
-        favs.splice(idx, 1);
+        favorites.splice(idx, 1);
         $(btn).removeClass('active').html('<i class="far fa-heart"></i>');
-        $(btn).closest('.card').attr('data-fav', 'false');
+        $(btn).closest('li').attr('data-fav', 'false');
       }
-      localStorage.setItem('jj_ucl_favs', JSON.stringify(favs));
+      localStorage.setItem('jj_favs', JSON.stringify(favorites));
     }
 
-    function setFilter(type, btn) {
+    function filter(type, btn) {
       $('.chip').removeClass('active');
       $(btn).addClass('active');
-      $('.card').hide();
-      if(type === 'all') $('.card').show();
-      else if(type === 'fav') $('.card[data-fav="true"]').show();
-      else if(type === 'live') $('.card.live-on').show();
+      $('.match-card').hide();
+      
+      if(type === 'all') $('.match-card').show();
+      else if(type === 'live') $('.match-card[data-live="true"]').show();
+      else if(type === 'fav') $('.match-card[data-fav="true"]').show();
     }
 
-    // --- PLAYER AUTO-CLEAN (7 STEPS) ---
-    let currUrl = "";
-
-    function playCh(b64, title) {
+    // --- 2. REPRODUCTOR (AUTO-CLICK x7) ---
+    let currentSrc = "";
+    
+    function play(b64, title) {
       try {
-        currUrl = atob(decodeURIComponent(b64));
-        $('#p-title').text(title);
+        currentSrc = atob(decodeURIComponent(b64));
+        $('#player-title').text(title);
         $('#view-agenda').addClass('hidden');
-        $('#player').addClass('active');
+        $('#view-player').removeClass('hidden');
         
+        // Cargar
         const v = document.getElementById('viewer');
         v.setAttribute('sandbox', 'allow-forms allow-scripts allow-same-origin allow-pointer-lock allow-presentation');
-        v.src = currUrl;
+        v.src = currentSrc;
 
-        // Sequence
-        $('#shield').show().css('opacity', 1);
-        $('#unlock').show();
-        $('#s-txt').text("INICIANDO...");
-        $('#s-bar').css('width', '0%');
-
-        let s = 0;
-        const t = setInterval(() => {
-          s++;
-          $('#s-bar').css('width', (s/7)*100 + '%');
-          $('#s-txt').text(`LIMPIANDO PUBLICIDAD ${s}/7...`);
-          if(s >= 7) {
-            clearInterval(t);
-            $('#s-txt').text("SEÑAL LISTA");
+        // Auto-Click x7
+        $('#titan-shield').show().css('opacity', 1);
+        $('#unlock-btn').show();
+        let c = 1;
+        $('#shield-text').text("INICIANDO...");
+        
+        const timer = setInterval(() => {
+          if(c <= 7) {
+            $('#shield-text').text(`BLOQUEANDO ANUNCIO ${c}/7...`);
+            c++;
+          } else {
+            clearInterval(timer);
+            $('#shield-text').text("✅ LISTO");
             setTimeout(() => {
-              $('#shield').animate({opacity: 0}, 500, function(){ $(this).hide(); });
+              $('#titan-shield').animate({opacity: 0}, 500, function(){ $(this).hide(); });
             }, 500);
           }
-        }, 800);
+        }, 700);
 
-      } catch(e) { alert("Error enlace"); }
+      } catch(e) { alert("Error de enlace"); }
     }
 
-    function closeP() {
+    function closePlayer() {
       const v = document.getElementById('viewer');
       v.src = "";
       v.removeAttribute('sandbox');
-      $('#player').removeClass('active');
+      $('#view-player').addClass('hidden');
       $('#view-agenda').removeClass('hidden');
     }
 
     function unlock() {
-      if(confirm("¿Video negro? Desbloquear permitirá anuncios para intentar cargar la señal.\n\n¿Continuar?")) {
+      if(confirm("¿Pantalla negra? Desbloquear permitirá anuncios del servidor.\n\n¿Seguro?")) {
         const v = document.getElementById('viewer');
         v.removeAttribute('sandbox');
-        v.src = currUrl;
-        $('#shield, #unlock').hide();
+        v.src = currentSrc;
+        $('#titan-shield, #unlock-btn').hide();
       }
     }
 
-    let chatInit = false;
-    function togChat() {
-      $('#c-box').toggleClass('open');
-      if($('#c-box').hasClass('open') && !chatInit) {
-        $('#c-frame').attr('src', "https://www3.cbox.ws/box/?boxid=3550648&boxtag=KQBTQs");
-        chatInit = true;
+    let chatReady = false;
+    function toggleChat() {
+      const body = $('#chat-content');
+      body.toggleClass('open');
+      if(body.hasClass('open') && !chatReady) {
+        $('#chat-frame').attr('src', "https://www3.cbox.ws/box/?boxid=3550648&boxtag=KQBTQs");
+        chatReady = true;
       }
     }
   </script>
 </body>
 </html>
-
