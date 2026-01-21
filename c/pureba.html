@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#0e1129">
+  <title>JJFUTBOL CHAMPIONS</title>
+  
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/luxon@3.4.4/build/global/luxon.min.js"></script>
+  
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;700&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <style>
+    /* --- TEMA CHAMPIONS LEAGUE --- */
+    :root {
+      --bg: #050507;
+      --card: #14192b;
+      --cyan: #00f0ff;
+      --pink: #ff0055;
+      --border: rgba(255, 255, 255, 0.1);
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg); color: white; margin: 0; padding: 0;
+      background-image: radial-gradient(circle at 50% 0%, #1a237e 0%, #000000 70%);
+      min-height: 100vh;
+    }
+
+    .hidden { display: none !important; }
+
+    /* HEADER */
+    header {
+      padding: 15px 20px; background: rgba(5,5,10,0.95); position: sticky; top: 0; z-index: 50;
+      display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border);
+    }
+    .logo-area { display: flex; align-items: center; gap: 10px; }
+    .logo-img { width: 38px; height: 38px; border-radius: 50%; border: 2px solid var(--cyan); box-shadow: 0 0 10px rgba(0, 240, 255, 0.3); }
+    .app-name { font-family: 'Rajdhani'; font-size: 22px; font-weight: 800; line-height: 1; }
+    .app-name span { color: var(--cyan); font-size: 11px; display: block; letter-spacing: 2px; }
+
+    /* AGENDA */
+    .container { max-width: 800px; margin: 0 auto; padding: 15px; }
+
+    .search { width: 100%; padding: 12px 15px; border-radius: 10px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: white; margin-bottom: 20px; outline: none; }
+
+    .card { background: var(--card); border-radius: 12px; border: 1px solid var(--border); margin-bottom: 12px; overflow: hidden; transition: transform 0.2s; }
+    .card:active { transform: scale(0.99); }
+    
+    .card-head { padding: 15px; display: flex; align-items: center; gap: 15px; cursor: pointer; }
+    .time { background: rgba(0,0,0,0.3); padding: 8px 12px; border-radius: 8px; text-align: center; border: 1px solid var(--border); font-family: 'Rajdhani'; font-weight: 700; font-size: 13px; min-width: 60px; }
+    
+    .info { flex: 1; display: flex; align-items: center; gap: 12px; }
+    .info img { width: 30px; height: 30px; object-fit: contain; }
+    .info-text { font-family: 'Rajdhani'; font-weight: 700; font-size: 15px; line-height: 1.2; text-transform: uppercase; }
+    .league { font-size: 10px; color: var(--cyan); margin-top: 3px; font-weight: 600; }
+
+    .channels { display: none; background: rgba(0,0,0,0.3); padding: 15px; border-top: 1px solid var(--border); }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+    .btn-ch {
+      background: rgba(255,255,255,0.05); padding: 12px; border-radius: 8px; border: 1px solid var(--border);
+      text-align: center; font-size: 11px; font-weight: 700; cursor: pointer; text-transform: uppercase;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+    }
+    .btn-ch:active { background: var(--cyan); color: black; }
+
+    /* REPRODUCTOR */
+    #player-view { position: fixed; inset: 0; background: black; z-index: 100; display: flex; flex-direction: column; }
+    
+    .p-nav { padding: 15px; background: rgba(0,0,0,0.8); display: flex; align-items: center; gap: 15px; border-bottom: 1px solid var(--border); }
+    .back { background: rgba(255,255,255,0.1); border: none; color: white; width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; cursor: pointer; }
+
+    .video-area { flex: 1; display: flex; align-items: center; justify-content: center; position: relative; background: #000; }
+    .aspect { width: 100%; padding-top: 56.25%; position: relative; }
+    iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
+
+    /* ESCUDO (1.5s) */
+    #shield { position: absolute; inset: 0; background: black; z-index: 20; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+    .loader { width: 40px; height: 40px; border: 4px solid rgba(255,255,255,0.1); border-top-color: var(--cyan); border-radius: 50%; animation: spin 0.8s linear infinite; margin-bottom: 15px; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .shield-txt { color: var(--cyan); font-family: 'Rajdhani'; font-weight: 700; font-size: 14px; letter-spacing: 1px; }
+
+    #unlock { position: absolute; top: 70px; right: 15px; z-index: 50; background: rgba(255,0,85,0.3); border: 1px solid var(--pink); color: white; padding: 6px 12px; border-radius: 15px; font-size: 10px; font-weight: 700; display: none; }
+
+    .details { padding: 20px; background: #0e1129; height: 40%; border-top: 1px solid var(--border); }
+    .btn-link { display: block; width: 100%; padding: 12px; background: #229ED9; color: white; text-align: center; border-radius: 8px; text-decoration: none; font-weight: 700; margin-bottom: 10px; font-size: 12px; font-family: 'Rajdhani'; letter-spacing: 1px; }
+
+  </style>
+</head>
+<body>
+
+  <div id="view-agenda">
+    <header>
+      <div class="logo-area">
+        <img src="https://raw.githubusercontent.com/JJFUTBOL15/eventos/main/1762386751.png" class="logo-img">
+        <div class="app-name">JJFUTBOL <span>CHAMPIONS</span></div>
+      </div>
+      <div onclick="location.reload()" style="font-size:20px; color:var(--cyan); cursor:pointer;"><i class="fas fa-rotate-right"></i></div>
+    </header>
+
+    <div class="container">
+      <input type="text" class="search" id="search" placeholder="Buscar partido...">
+      
+      <div style="background: linear-gradient(90deg, #090c24, #1a225e); padding:15px; border-radius:10px; border:1px solid var(--border); margin-bottom:20px; display:flex; justify-content:space-between; align-items:center;">
+        <div style="color:white; font-weight:700; font-family:'Rajdhani';">JJMOVIES 2026</div>
+        <a href="https://jjmovies.lat" target="_blank" style="background:white; color:black; padding:6px 16px; border-radius:20px; text-decoration:none; font-size:11px; font-weight:800; font-family:'Rajdhani';">VER AHORA</a>
+      </div>
+
+      <div id="list">
+        <div style="text-align:center; padding:40px; color:#666;">
+          <i class="fas fa-circle-notch fa-spin"></i> Cargando eventos...
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="player-view" class="hidden">
+    <div class="p-nav">
+      <button class="back" onclick="cerrar()"><i class="fas fa-arrow-left"></i></button>
+      <span style="font-weight:700; font-size:14px; font-family:'Rajdhani'; letter-spacing:1px;">EN VIVO</span>
+    </div>
+
+    <div class="video-area">
+      <div class="aspect">
+        <div id="unlock" onclick="desbloquear()">DESBLOQUEAR</div>
+        <div id="shield">
+          <div class="loader"></div>
+          <div class="shield-txt" id="st-txt">CONECTANDO...</div>
+        </div>
+        <iframe id="viewer" src="" allowfullscreen allow="autoplay; encrypted-media"></iframe>
+      </div>
+    </div>
+
+    <div class="details">
+      <h2 id="ev-title" style="margin:0 0 20px; font-family:'Rajdhani'; text-transform:uppercase; font-size:18px;">Evento</h2>
+      <a href="https://t.me/+EPyKMpHXlv5lMmYx" target="_blank" class="btn-link"><i class="fab fa-telegram-plane"></i> UNIRSE AL TELEGRAM</a>
+      <a href="https://jjmovies.lat" target="_blank" class="btn-link" style="background:var(--cyan); color:black;"><i class="fas fa-film"></i> CINE GRATIS</a>
+    </div>
+  </div>
+
+  <script>
+    // --- CONFIGURACIÓN DE APIs ---
+    // Aquí está tu nueva API + las clásicas para tener TODOS los partidos
+    const API_SOURCES = [
+      { url: "https://a.ftvhd.com/diaries.json", base: "https://img.futbolonlinehd.com" },
+      { url: "https://golazoplay.com/agenda.json?v=1.0", base: "https://img.golazoplay.com" },
+      { url: "https://jjfutbol.lat/api_agenda.php", base: "" } // TU NUEVA API AUTOMÁTICA
+    ];
+
+    $(document).ready(() => {
+      cargarEventos();
+      
+      // Buscador
+      $('#search').on('keyup', function() {
+        let val = $(this).val().toLowerCase();
+        $('.card').toggle(function() {
+          return $(this).text().toLowerCase().indexOf(val) > -1;
+        });
+      });
+
+      // Expandir Carta
+      $(document).on('click', '.card-head', function() {
+        let card = $(this).parent();
+        let wasVisible = card.find('.channels').is(':visible');
+        $('.channels').slideUp(200);
+        if(!wasVisible) card.find('.channels').slideDown(200);
+      });
+    });
+
+    async function cargarEventos() {
+      let eventos = [];
+      
+      // Descargar datos de las 3 fuentes en paralelo
+      const promesas = API_SOURCES.map(fuente => 
+        fetch(fuente.url + "?t=" + Date.now())
+          .then(r => r.json())
+          .then(d => (d.data || []).map(item => ({ ...item, _imgBase: fuente.base })))
+          .catch(e => [])
+      );
+
+      const resultados = await Promise.all(promesas);
+      eventos = resultados.flat();
+
+      // Filtrar duplicados y ordenar
+      let unicos = [];
+      let vistos = new Set();
+      
+      eventos.forEach(ev => {
+        let k = (ev.attributes.diary_description || "") + (ev.attributes.diary_hour || "");
+        if(!vistos.has(k)) { vistos.add(k); unicos.push(ev); }
+      });
+
+      // Ordenar por hora (simple)
+      unicos.sort((a,b) => (a.attributes.diary_hour || "00:00").localeCompare(b.attributes.diary_hour || "00:00"));
+
+      render(unicos);
+    }
+
+    function render(lista) {
+      let html = '';
+      if(lista.length === 0) {
+        $('#list').html('<div style="text-align:center; padding:40px; color:#aaa;">No hay partidos disponibles.</div>');
+        return;
+      }
+
+      lista.forEach(item => {
+        let attr = item.attributes;
+        
+        // Imagen inteligente
+        let img = "https://via.placeholder.com/40?text=TV";
+        if(attr.country?.data?.attributes?.image?.data?.attributes?.url) {
+          let rawImg = attr.country.data.attributes.image.data.attributes.url;
+          // Si la imagen viene con http es absoluta, sino usamos la base
+          img = rawImg.startsWith('http') ? rawImg : (item._imgBase + rawImg);
+        } else if (attr.league?.data?.attributes?.image?.data?.attributes?.url) {
+           img = item._imgBase + attr.league.data.attributes.image.data.attributes.url;
+        }
+
+        let btns = '';
+        (attr.embeds?.data || []).forEach(emb => {
+          let url = emb.attributes.embed_iframe || "";
+          let name = emb.attributes.embed_name || "Ver Canal";
+          
+          // Limpieza
+          if(url.includes('<iframe')) {
+            let m = url.match(/src=["'](.*?)["']/);
+            if(m) url = m[1];
+          }
+          
+          // Encriptar para pasar al reproductor
+          let b64 = "";
+          try {
+            if(url.includes("?r=")) b64 = url.split("?r=")[1];
+            else b64 = btoa(url);
+          } catch(e) {}
+
+          let safeTitle = attr.diary_description.replace(/"/g, '');
+
+          // ONCLICK DIRECTO
+          if(b64) {
+            btns += `<div class="btn-ch" onclick="abrir('${b64}', '${safeTitle}')"><i class="fas fa-play"></i> ${name}</div>`;
+          }
+        });
+
+        html += `
+          <div class="card">
+            <div class="card-head">
+              <div class="time">${attr.diary_hour.replace(/[a-z]/gi,'')}</div>
+              <div class="info">
+                <img src="${img}" onerror="this.src='https://via.placeholder.com/40?text=TV'">
+                <div>
+                  <div class="info-text">${attr.diary_description}</div>
+                  <div class="league">${attr.league_name || 'EN VIVO'}</div>
+                </div>
+              </div>
+              <i class="fas fa-chevron-down" style="color:var(--cyan)"></i>
+            </div>
+            <div class="channels">
+              <div class="grid">${btns}</div>
+            </div>
+          </div>
+        `;
+      });
+      $('#list').html(html);
+    }
+
+    // --- REPRODUCTOR TURBO (1.5 Segundos) ---
+    let curr = "";
+
+    function abrir(b64, title) {
+      try {
+        curr = atob(decodeURIComponent(b64));
+        
+        // UI Player
+        $('#ev-title').text(title);
+        $('#view-agenda').addClass('hidden');
+        $('#player-view').removeClass('hidden');
+
+        // Cargar
+        let v = document.getElementById('viewer');
+        v.setAttribute('sandbox', 'allow-forms allow-scripts allow-same-origin allow-pointer-lock allow-presentation');
+        v.src = curr;
+
+        // Escudo Rápido
+        $('#shield').show();
+        $('#unlock').show();
+        $('#st-txt').text("CONECTANDO...");
+        
+        setTimeout(() => { $('#st-txt').text("OPTIMIZANDO..."); }, 600);
+        setTimeout(() => { $('#st-txt').text("SEÑAL LISTA"); }, 1100);
+        setTimeout(() => { $('#shield').fadeOut(); }, 1600);
+
+      } catch(e) { alert("Error de enlace"); }
+    }
+
+    function cerrar() {
+      let v = document.getElementById('viewer');
+      v.src = "";
+      v.removeAttribute('sandbox');
+      $('#player-view').addClass('hidden');
+      $('#view-agenda').removeClass('hidden');
+    }
+
+    function desbloquear() {
+      if(confirm("¿Pantalla negra? Desbloquear permitirá anuncios.\n\n¿Continuar?")) {
+        let v = document.getElementById('viewer');
+        v.removeAttribute('sandbox');
+        v.src = curr;
+        $('#shield').hide();
+        $('#unlock').hide();
+      }
+    }
+  </script>
+</body>
+</html>
