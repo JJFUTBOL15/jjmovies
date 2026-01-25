@@ -3,55 +3,129 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reproductor Embed</title>
+    <title>CineMax Multi-Player</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        body, html { margin: 0; padding: 0; width: 100%; height: 100%; background: #000; overflow: hidden; }
-        iframe { width: 100%; height: 100%; border: none; }
+        body { background: #000; color: #fff; font-family: 'Segoe UI', sans-serif; overflow: hidden; height: 100vh; }
+        .server-btn { transition: all 0.3s; border: 1px solid rgba(255,255,255,0.1); }
+        .server-btn:hover { background: rgba(59, 130, 246, 0.2); border-color: #3b82f6; }
+        .server-btn.active { background: #3b82f6; color: white; border-color: #3b82f6; }
+        iframe { width: 100%; height: 100%; border: none; background: #000; }
+        .custom-scroll::-webkit-scrollbar { width: 4px; }
+        .custom-scroll::-webkit-scrollbar-thumb { background: #3b82f6; border-radius: 10px; }
     </style>
 </head>
-<body>
+<body class="flex flex-col md:flex-row">
 
-    <div id="player-container" class="w-full h-full flex items-center justify-center">
-        <div id="loading" class="text-white font-bold animate-pulse">Cargando video...</div>
+    <div id="video-container" class="relative flex-1 bg-black">
+        <div id="player-loading" class="absolute inset-0 flex items-center justify-center bg-black z-10">
+            <div class="text-center">
+                <div class="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+                <p class="text-sm font-bold tracking-widest uppercase">Cargando Servidor...</p>
+            </div>
+        </div>
+        <div id="player-frame" class="w-full h-full"></div>
     </div>
 
-    <script>
-        const API_KEY = 'da8b836389708e0558de674492931977'; // Tu API de TMDB
-        
-        async function loadVideo() {
-            const params = new URLSearchParams(window.location.search);
-            const id = params.get('id');
-            const season = params.get('season');
-            const episode = params.get('episode');
-            const container = document.getElementById('player-container');
+    <aside class="w-full md:w-80 bg-[#0a0a0a] border-l border-white/5 flex flex-col h-64 md:h-screen shadow-2xl z-20">
+        <div class="p-4 border-b border-white/5">
+            <h2 class="text-lg font-black italic tracking-tighter">CINE<span class="text-blue-500">MAX</span> PLAYER</h2>
+        </div>
 
-            if (!id) {
-                container.innerHTML = "<div class='text-red-500'>Error: Falta ID</div>";
+        <div class="flex-1 overflow-y-auto p-4 space-y-6 custom-scroll">
+            
+            <section>
+                <h3 class="text-[10px] font-bold text-blue-400 mb-3 tracking-widest uppercase"><i class="fas fa-globe-americas mr-2"></i> Latino / Multi</h3>
+                <div class="grid grid-cols-1 gap-2" id="list-multi">
+                    </div>
+            </section>
+
+            <section>
+                <h3 class="text-[10px] font-bold text-gray-500 mb-3 tracking-widest uppercase"><i class="fas fa-closed-captioning mr-2"></i> Inglés (Subtítulos)</h3>
+                <div class="grid grid-cols-1 gap-2" id="list-english">
+                    </div>
+            </section>
+
+        </div>
+    </aside>
+
+    <script>
+        // --- CONFIGURACIÓN DE IDS ---
+        const params = new URLSearchParams(window.location.search);
+        const TMDB_ID = params.get('id'); // TMDB ID
+        const IMDB_ID = params.get('imdb') || TMDB_ID; // Si no hay IMDB usa el TMDB
+        const S = params.get('season') || '1';
+        const E = params.get('episode') || '1';
+        const isTV = params.get('season') ? true : false;
+
+        // --- DEFINICIÓN DE SERVIDORES ---
+        const servers = {
+            multi: [
+                { name: "UnlimPlay VIP", url: isTV ? `https://unlimplay.com/play/embed/tv/${TMDB_ID}/${S}/${E}` : `https://unlimplay.com/play/embed/movie/${TMDB_ID}`, icon: "fa-star" },
+                { name: "Embed.su", url: isTV ? `https://embed.su/embed/tv/${TMDB_ID}/${S}/${E}` : `https://embed.su/embed/movie/${TMDB_ID}`, icon: "fa-bolt" },
+                { name: "SmashyStream", url: isTV ? `https://embed.smashystream.com/playere.php?tmdb=${TMDB_ID}&s=${S}&e=${E}` : `https://embed.smashystream.com/playere.php?tmdb=${TMDB_ID}`, icon: "fa-play" },
+                { name: "SuperEmbed", url: isTV ? `https://superembed.stream/embed/tv/${TMDB_ID}/${S}/${E}` : `https://superembed.stream/embed/movie/${TMDB_ID}`, icon: "fa-shield-alt" },
+                { name: "AutoEmbed", url: isTV ? `https://autoembed.to/tv/imdb/${IMDB_ID}/${S}/${E}` : `https://autoembed.to/movie/imdb/${IMDB_ID}`, icon: "fa-robot" }
+            ],
+            english: [
+                { name: "VidSrc.to", url: isTV ? `https://vidsrc.to/embed/tv/${IMDB_ID}/${S}/${E}` : `https://vidsrc.to/embed/movie/${IMDB_ID}`, icon: "fa-check-circle" },
+                { name: "VidSrc.me", url: isTV ? `https://vidsrc.me/embed/tv?imdb=${IMDB_ID}&season=${S}&episode=${E}` : `https://vidsrc.me/embed/movie?imdb=${IMDB_ID}`, icon: "fa-link" },
+                { name: "VidSrc.cc", url: isTV ? `https://vidsrc.cc/v2/embed/tv/${IMDB_ID}/${S}/${E}` : `https://vidsrc.cc/v2/embed/movie/${IMDB_ID}`, icon: "fa-bolt" },
+                { name: "2Embed", url: isTV ? `https://www.2embed.cc/embedtv/${IMDB_ID}&s=${S}&e=${E}` : `https://www.2embed.cc/embed/${IMDB_ID}`, icon: "fa-layer-group" }
+            ]
+        };
+
+        // --- LÓGICA DE CARGA ---
+        function init() {
+            if (!TMDB_ID) {
+                document.body.innerHTML = "<div class='flex items-center justify-center w-full h-full text-red-500'>ERROR: ID NO PROPORCIONADO</div>";
                 return;
             }
-
-            // Estructura de Unlimplay que solicitaste
-            let embedUrl = "";
-            if (season && episode) {
-                // Es una Serie
-                embedUrl = `https://unlimplay.com/play/embed/tv/${id}/${season}/${episode}`;
-            } else {
-                // Es una Película
-                embedUrl = `https://unlimplay.com/play/embed/movie/${id}`;
-            }
-
-            // Insertar el iframe directamente para que ocupe todo el espacio
-            container.innerHTML = `
-                <iframe 
-                    src="${embedUrl}" 
-                    allowfullscreen 
-                    allow="autoplay; encrypted-media" 
-                    frameborder="0">
-                </iframe>`;
+            renderServers();
+            // Cargar primer servidor por defecto
+            changeServer(servers.multi[0].url, 0, 'multi');
         }
 
-        loadVideo();
+        function renderServers() {
+            const multiBox = document.getElementById('list-multi');
+            const englishBox = document.getElementById('list-english');
+
+            servers.multi.forEach((s, i) => {
+                multiBox.appendChild(createBtn(s, i, 'multi'));
+            });
+
+            servers.english.forEach((s, i) => {
+                englishBox.appendChild(createBtn(s, i, 'english'));
+            });
+        }
+
+        function createBtn(server, index, type) {
+            const btn = document.createElement('button');
+            btn.className = `server-btn p-3 rounded-lg text-left text-xs font-bold flex items-center gap-3 w-full`;
+            btn.id = `btn-${type}-${index}`;
+            btn.innerHTML = `<i class="fas ${server.icon} opacity-50"></i> <span>${server.name}</span>`;
+            btn.onclick = () => changeServer(server.url, index, type);
+            return btn;
+        }
+
+        function changeServer(url, index, type) {
+            // UI Update
+            document.querySelectorAll('.server-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(`btn-${type}-${index}`).classList.add('active');
+            
+            // Player Update
+            const loader = document.getElementById('player-loading');
+            const frame = document.getElementById('player-frame');
+            
+            loader.style.display = 'flex';
+            frame.innerHTML = `<iframe src="${url}" allowfullscreen allow="autoplay; encrypted-media"></iframe>`;
+            
+            // Ocultar loader tras unos segundos (el iframe tarda en cargar)
+            setTimeout(() => { loader.style.display = 'none'; }, 2000);
+        }
+
+        init();
     </script>
 </body>
 </html>
