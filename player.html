@@ -12,246 +12,198 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
 
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        brand: {
-                            DEFAULT: '#3b82f6',
-                            light: '#60a5fa',
-                            dark: '#2563eb',
-                        }
-                    },
-                    fontFamily: { sans: ['Outfit', 'sans-serif'] },
-                }
-            }
-        }
-    </script>
-
     <style>
-        body { background-color: #050505; color: white; overflow: hidden; height: 100vh; width: 100vw; }
-        .glass-panel { background: rgba(10, 10, 10, 0.85); backdrop-filter: blur(20px); border-left: 1px solid rgba(255, 255, 255, 0.05); }
+        body { background-color: #050505; color: white; overflow: hidden; height: 100vh; }
+        .glass-panel { background: rgba(10, 10, 10, 0.9); backdrop-filter: blur(20px); border-left: 1px solid rgba(255, 255, 255, 0.05); }
         .hidden-force { display: none !important; }
-        :root { --plyr-color-main: #3b82f6; --plyr-video-background: #000; }
-        
-        /* Animaciones y Estados */
+        :root { --plyr-color-main: #3b82f6; }
         .lang-flag { transition: all 0.3s ease; filter: grayscale(100%); opacity: 0.4; cursor: pointer; }
-        .lang-flag.active, .lang-flag:hover { filter: grayscale(0%); opacity: 1; transform: scale(1.1); }
-        
+        .lang-flag.active { filter: grayscale(0%); opacity: 1; transform: scale(1.1); border: 2px solid #3b82f6; border-radius: 8px; }
         .custom-scrollbar::-webkit-scrollbar { width: 4px; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #3b82f6; border-radius: 10px; }
-        
-        iframe { width: 100%; height: 100%; border: none; }
     </style>
 </head>
-<body class="font-sans antialiased">
+<body class="font-sans">
 
     <div id="initial-loader" class="fixed inset-0 z-[60] bg-[#050505] flex items-center justify-center">
         <div class="text-center">
-            <div class="animate-spin rounded-full h-14 w-14 border-t-2 border-b-2 border-brand mx-auto mb-4"></div>
-            <h2 class="text-xl font-bold tracking-wider animate-pulse">PREPARANDO STREAMING</h2>
+            <div class="animate-spin rounded-full h-14 w-14 border-t-2 border-brand mx-auto mb-4"></div>
+            <h2 class="text-xl font-bold animate-pulse">EXTRAYENDO FUENTES...</h2>
         </div>
     </div>
 
     <div class="flex h-screen w-screen overflow-hidden relative">
         <div id="player-bg-blur" class="absolute inset-0 bg-cover bg-center opacity-20 blur-[100px] scale-110 z-0"></div>
 
-        <main id="video-wrapper" class="relative flex-1 flex items-center justify-center z-10 bg-black/20 transition-all duration-500">
-            
+        <main id="video-wrapper" class="relative flex-1 flex items-center justify-center z-10 bg-black/20">
             <div class="absolute top-5 right-5 z-40">
-                <button onclick="toggleSidebar()" class="w-12 h-12 rounded-full bg-brand/80 hover:bg-brand text-white shadow-lg flex items-center justify-center transition-all active:scale-95">
-                    <i class="fas fa-bars text-lg"></i>
+                <button onclick="toggleSidebar()" class="w-12 h-12 rounded-full bg-brand/80 text-white flex items-center justify-center shadow-lg md:hidden">
+                    <i class="fas fa-bars"></i>
                 </button>
             </div>
 
             <div id="native-player-container" class="w-full h-full hidden-force">
-                <video id="player" class="w-full h-full" playsinline controls crossorigin></video>
+                <video id="player" class="w-full h-full" playsinline controls></video>
             </div>
-
             <div id="iframe-container" class="w-full h-full hidden-force"></div>
-            
-            <div id="error-display" class="hidden-force flex flex-col items-center">
-                <i class="fas fa-exclamation-circle text-5xl text-red-500 mb-4"></i>
-                <p id="error-text" class="text-lg font-semibold text-center px-4"></p>
-            </div>
         </main>
 
-        <aside id="server-panel" class="w-full md:w-[350px] h-full glass-panel z-20 flex flex-col transition-all duration-500 fixed right-0 md:relative translate-x-full md:translate-x-0">
-            
-            <div class="p-6 border-b border-white/10 bg-white/5">
-                <div class="flex items-center justify-between mb-6">
-                    <h3 class="text-xl font-extrabold tracking-tight italic">CINE<span class="text-brand">MAX</span></h3>
-                    <button onclick="toggleSidebar()" class="md:hidden text-gray-400"><i class="fas fa-times"></i></button>
-                </div>
-
-                <div class="flex justify-between items-center bg-black/40 p-2 rounded-xl border border-white/5">
-                    <button onclick="setLanguageFilter('latino')" class="lang-flag active" id="btn-latino" title="Latino">
-                        <img src="https://embed69.org/static/lang/LAT.png" class="w-8 h-auto" alt="LAT">
+        <aside id="server-panel" class="w-full md:w-[350px] h-full glass-panel z-20 flex flex-col fixed right-0 md:relative translate-x-full md:translate-x-0 transition-transform duration-500">
+            <div class="p-6 border-b border-white/10">
+                <h3 class="text-xl font-bold mb-4">SERVIDOR <span class="text-blue-500">LIST</span></h3>
+                <div class="flex justify-around bg-black/40 p-2 rounded-xl">
+                    <button onclick="setLanguageFilter('latino')" class="lang-flag active" id="btn-latino">
+                        <img src="https://embed69.org/static/lang/LAT.png" class="w-8" alt="LAT">
                     </button>
-                    <button onclick="setLanguageFilter('castellano')" class="lang-flag" id="btn-castellano" title="Español">
-                        <img src="https://embed69.org/static/lang/ESP.png" class="w-8 h-auto" alt="ESP">
+                    <button onclick="setLanguageFilter('castellano')" class="lang-flag" id="btn-castellano">
+                        <img src="https://embed69.org/static/lang/ESP.png" class="w-8" alt="ESP">
                     </button>
-                    <button onclick="setLanguageFilter('subtitulado')" class="lang-flag" id="btn-subtitulado" title="Subtitulado">
-                        <img src="https://embed69.org/static/lang/SUB.png" class="w-8 h-auto" alt="SUB">
+                    <button onclick="setLanguageFilter('subtitulado')" class="lang-flag" id="btn-subtitulado">
+                        <img src="https://embed69.org/static/lang/SUB.png" class="w-8" alt="SUB">
                     </button>
                 </div>
             </div>
 
             <div id="server-list-container" class="flex-1 overflow-y-auto p-4 space-y-3 custom-scrollbar">
-                <div class="flex flex-col items-center justify-center h-40 opacity-30">
-                    <div class="animate-bounce mb-2"><i class="fas fa-search"></i></div>
-                    <p class="text-xs">Buscando fuentes...</p>
                 </div>
-            </div>
-
-            <div id="content-info" class="p-4 bg-brand/10 border-t border-white/5">
-                <p id="display-title" class="text-sm font-bold truncate text-brand-light">Cargando...</p>
-                <p id="display-meta" class="text-[10px] uppercase tracking-widest opacity-60">Verificando Metadata</p>
-            </div>
         </aside>
     </div>
 
     <script>
-        // --- CONFIGURACIÓN ---
         const API_KEY = 'da8b836389708e0558de674492931977';
         const PROXY = 'https://api.codetabs.com/v1/proxy/?quest=';
         
-        let movieData = { id: null, type: 'movie', season: 1, episode: 1, title: '', backdrop: '' };
+        let movieData = { id: null, type: 'movie', season: 1, episode: 1, backdrop: '' };
         let sourcesList = [];
         let currentLanguage = 'latino';
         let playerInstance = null;
 
-        document.addEventListener('DOMContentLoaded', startApp);
+        document.addEventListener('DOMContentLoaded', init);
 
-        async function startApp() {
-            const urlParams = new URLSearchParams(window.location.search);
-            movieData.id = urlParams.get('id');
-            const s = urlParams.get('season');
-            const e = urlParams.get('episode');
+        async function init() {
+            const params = new URLSearchParams(window.location.search);
+            movieData.id = params.get('id');
+            movieData.season = params.get('season');
+            movieData.episode = params.get('episode');
+            movieData.type = movieData.season ? 'tv' : 'movie';
 
-            if (!movieData.id) {
-                showCriticalError("ID DE CONTENIDO NO ENCONTRADO");
-                return;
-            }
+            if (!movieData.id) return;
 
-            if (s && e) {
-                movieData.type = 'tv';
-                movieData.season = s;
-                movieData.episode = e;
-            }
+            // Obtener Metadata para el fondo y título
+            const tmdbUrl = `https://api.themoviedb.org/3/${movieData.type}/${movieData.id}?api_key=${API_KEY}&append_to_response=external_ids`;
+            const res = await fetch(tmdbUrl);
+            const data = await res.json();
+            movieData.backdrop = `https://image.tmdb.org/t/p/original${data.backdrop_path}`;
+            movieData.imdbId = data.external_ids ? data.external_ids.imdb_id : null;
+            
+            document.getElementById('player-bg-blur').style.backgroundImage = `url(${movieData.backdrop})`;
 
-            try {
-                // 1. Obtener Datos de TMDB
-                const tmdbUrl = movieData.type === 'movie' 
-                    ? `https://api.themoviedb.org/3/movie/${movieData.id}?api_key=${API_KEY}&language=es-MX`
-                    : `https://api.themoviedb.org/3/tv/${movieData.id}?api_key=${API_KEY}&language=es-MX`;
-                
-                const response = await fetch(tmdbUrl);
-                const data = await response.json();
-
-                movieData.title = data.title || data.name;
-                movieData.backdrop = `https://image.tmdb.org/t/p/original${data.backdrop_path}`;
-
-                // Actualizar Interfaz
-                document.getElementById('display-title').innerText = movieData.title;
-                document.getElementById('display-meta').innerText = movieData.type === 'movie' ? 'Película' : `Serie • T${movieData.season} E${movieData.episode}`;
-                document.getElementById('player-bg-blur').style.backgroundImage = `url(${movieData.backdrop})`;
-                
-                // 2. Cargar Servidores (Unlimplay es prioridad)
-                loadDefaultSources();
-                
-                // 3. Quitar Loader
-                setTimeout(() => {
-                    document.getElementById('initial-loader').classList.add('hidden-force');
-                }, 800);
-
-            } catch (error) {
-                console.error(error);
-                showCriticalError("ERROR AL CONECTAR CON EL SERVIDOR");
-            }
+            // Iniciar Scraping con tu lógica original
+            await startScraping();
+            
+            document.getElementById('initial-loader').classList.add('hidden-force');
         }
 
-        function loadDefaultSources() {
-            // Configuración Unlimplay basada en tu patrón
-            const base = "https://unlimplay.com/play/embed/";
-            const unlimUrl = movieData.type === 'movie'
-                ? `${base}movie/${movieData.id}`
-                : `${base}tv/${movieData.id}/${movieData.season}/${movieData.episode}`;
+        async function startScraping() {
+            if (!movieData.imdbId) return;
 
-            // Agregamos Servidores por defecto
-            addSource({ name: 'SERVIDOR VIP 1', lang: 'Latino', type: 'iframe', url: unlimUrl, icon: 'fa-crown' });
-            addSource({ name: 'SERVIDOR VIP 2', lang: 'Castellano', type: 'iframe', url: unlimUrl, icon: 'fa-star' });
-            addSource({ name: 'SERVIDOR VIP 3', lang: 'Subtitulado', type: 'iframe', url: unlimUrl, icon: 'fa-closed-captioning' });
-            
+            let url = movieData.type === 'tv' 
+                ? `https://embed69.org/f/${movieData.imdbId}-${movieData.season}x${movieData.episode.padStart(2, '0')}/`
+                : `https://embed69.org/f/${movieData.imdbId}/`;
+
+            try {
+                const res = await fetch(PROXY + encodeURIComponent(url));
+                const html = await res.text();
+                const match = html.match(/let dataLink\s*=\s*(\[[\s\S]*?\]);/);
+                
+                if (match) {
+                    const data = JSON.parse(match[1]);
+                    processEmbed69(data);
+                }
+            } catch (e) { console.error("Error scraping:", e); }
+        }
+
+        function processEmbed69(dataLink) {
+            dataLink.forEach(item => {
+                let lang = 'Latino';
+                if (item.video_language.includes('ESP') || item.video_language.includes('CAS')) lang = 'Castellano';
+                if (item.video_language.includes('SUB')) lang = 'Subtitulado';
+
+                item.sortedEmbeds.forEach(embed => {
+                    const host = mapHostName(embed.servername);
+                    if (!host) return; // Ignora los que no están en tu lista (voe, dood, etc)
+
+                    const decoded = decodeJWT(embed.link);
+                    if (decoded && decoded.link) {
+                        const videoId = extractIdFromLink(decoded.link);
+                        // Aplicar tu lógica de Unlimplay para estos hosts
+                        const finalUrl = `https://unlimplay.com/embed2/?host=${host}&id=${videoId}&poster=${encodeURIComponent(movieData.backdrop)}`;
+                        
+                        addSource({
+                            name: embed.servername,
+                            lang: lang,
+                            url: finalUrl,
+                            type: 'iframe',
+                            icon: 'fa-play-circle'
+                        });
+                    }
+                });
+            });
             updateServerUI();
         }
 
+        // --- TUS FUNCIONES DE MAPEÓ ORIGINALES ---
+        function mapHostName(name) {
+            let n = name.toLowerCase();
+            if (n.includes('voe')) return 'voe';
+            if (n.includes('streamwish')) return 'streamwish';
+            if (n.includes('dood')) return 'doodstream';
+            if (n.includes('filemoon')) return 'filemoon';
+            if (n.includes('vidhide')) return 'vidhide';
+            return null;
+        }
+
+        function extractIdFromLink(link) {
+            const patterns = [/\/e\/([a-zA-Z0-9]+)/, /filemoon\.sx\/d\/([a-zA-Z0-9]+)/, /voe\.sx\/([a-zA-Z0-9]+)/, /streamwish\.com\/([a-zA-Z0-9]+)/];
+            for (let p of patterns) { const m = link.match(p); if (m) return m[1]; }
+            return link.split('/').pop().replace('.html', '');
+        }
+
+        function decodeJWT(token) {
+            try {
+                const base64Url = token.split('.')[1];
+                const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+                return JSON.parse(atob(base64));
+            } catch (e) { return null; }
+        }
+
+        // --- LÓGICA DE INTERFAZ ---
         function addSource(source) {
-            if (!sourcesList.some(s => s.url === source.url && s.lang === source.lang)) {
-                sourcesList.push(source);
-            }
+            if (!sourcesList.some(s => s.url === source.url)) sourcesList.push(source);
         }
 
         function updateServerUI() {
             const container = document.getElementById('server-list-container');
-            const filtered = sourcesList.filter(s => s.lang.toLowerCase() === currentLanguage.toLowerCase());
-            
+            const filtered = sourcesList.filter(s => s.lang.toLowerCase().includes(currentLanguage.substring(0,3)));
             container.innerHTML = '';
 
-            if (filtered.length === 0) {
-                container.innerHTML = `<p class="text-center text-gray-500 text-xs mt-10">No hay fuentes en este idioma</p>`;
-                return;
-            }
-
-            filtered.forEach((src, index) => {
-                const card = document.createElement('div');
-                card.className = "flex items-center p-4 rounded-xl bg-white/5 border border-white/5 hover:border-brand/50 hover:bg-brand/5 cursor-pointer transition-all animate-fade-in-up shadow-sm";
-                card.innerHTML = `
-                    <div class="w-10 h-10 rounded-lg bg-black/40 flex items-center justify-center mr-4 text-brand">
-                        <i class="fas ${src.icon}"></i>
-                    </div>
-                    <div class="flex-1">
-                        <p class="text-xs font-bold uppercase tracking-wide">${src.name}</p>
-                        <p class="text-[9px] opacity-50 uppercase tracking-tighter">${src.lang} • Full HD</p>
-                    </div>
-                `;
-                card.onclick = () => play(src);
-                container.appendChild(card);
-
-                // Auto reproducir la primera fuente encontrada
-                if (index === 0 && !document.querySelector('iframe')) play(src);
+            filtered.forEach((src, idx) => {
+                const div = document.createElement('div');
+                div.className = "p-3 bg-white/5 border border-white/10 rounded-xl cursor-pointer hover:border-blue-500 transition-all";
+                div.innerHTML = `<div class="text-sm font-bold truncate"><i class="fas ${src.icon} mr-2 text-blue-400"></i>${src.name}</div>
+                                 <div class="text-[10px] opacity-50 uppercase">${src.lang} • HD</div>`;
+                div.onclick = () => play(src);
+                container.appendChild(div);
+                if (idx === 0 && !document.querySelector('iframe')) play(src);
             });
         }
 
         function play(src) {
-            const video = document.getElementById('player');
             const nativeCont = document.getElementById('native-player-container');
             const iframeCont = document.getElementById('iframe-container');
-
-            // Reset total de reproductores
-            if (playerInstance) playerInstance.destroy();
-            video.src = "";
-            iframeCont.innerHTML = "";
+            iframeCont.innerHTML = `<iframe src="${src.url}" allowfullscreen allow="autoplay"></iframe>`;
+            iframeCont.classList.remove('hidden-force');
             nativeCont.classList.add('hidden-force');
-            iframeCont.classList.add('hidden-force');
-
-            if (src.type === 'direct' || src.url.includes('.m3u8') || src.url.includes('.mp4')) {
-                nativeCont.classList.remove('hidden-force');
-                if (src.url.includes('.m3u8') && Hls.isSupported()) {
-                    const hls = new Hls();
-                    hls.loadSource(src.url);
-                    hls.attachMedia(video);
-                } else {
-                    video.src = src.url;
-                }
-                playerInstance = new Plyr(video, { autoplay: true });
-            } else {
-                iframeCont.classList.remove('hidden-force');
-                iframeCont.innerHTML = `<iframe src="${src.url}" allowfullscreen allow="autoplay; encrypted-media"></iframe>`;
-            }
-
-            // En móviles, cerrar el panel al seleccionar servidor
             if (window.innerWidth < 768) toggleSidebar();
         }
 
@@ -263,24 +215,7 @@
         }
 
         function toggleSidebar() {
-            const panel = document.getElementById('server-panel');
-            const isHidden = panel.classList.contains('translate-x-full');
-            if (isHidden) {
-                panel.classList.remove('translate-x-full');
-            } else {
-                panel.classList.add('translate-x-full');
-            }
-        }
-
-        function showCriticalError(msg) {
-            const loader = document.getElementById('initial-loader');
-            loader.innerHTML = `
-                <div class="text-center p-10">
-                    <i class="fas fa-bug text-red-500 text-5xl mb-4"></i>
-                    <h2 class="text-xl font-bold">${msg}</h2>
-                    <p class="text-gray-500 text-sm mt-2">Verifica el ID de la película o serie.</p>
-                </div>
-            `;
+            document.getElementById('server-panel').classList.toggle('translate-x-full');
         }
     </script>
 </body>
