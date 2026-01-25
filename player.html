@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TITAN GATEWAY V2</title>
+    <title>TITAN GATEWAY V2.1</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
@@ -13,8 +13,7 @@
             --bg-gradient: radial-gradient(circle at top right, #1e1b4b, #0f172a, #000);
             --glass-bg: rgba(255, 255, 255, 0.05);
             --glass-border: rgba(255, 255, 255, 0.1);
-            --accent: #6366f1; /* Indigo */
-            --accent-glow: #818cf8;
+            --accent: #6366f1;
         }
 
         body {
@@ -27,7 +26,6 @@
             margin: 0;
         }
 
-        /* EFECTOS DE CRISTAL (GLASSMORPHISM) */
         .glass-panel {
             background: var(--glass-bg);
             backdrop-filter: blur(12px);
@@ -35,62 +33,24 @@
             border: 1px solid var(--glass-border);
         }
 
-        /* SCROLLBAR MODERNA */
+        /* SCROLLBAR */
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.4); }
-
-        /* INPUTS Y BOTONES */
-        .custom-input {
-            background: rgba(0,0,0,0.3);
-            border: 1px solid rgba(255,255,255,0.1);
-            transition: 0.3s;
-        }
-        .custom-input:focus {
-            border-color: var(--accent);
-            box-shadow: 0 0 15px rgba(99, 102, 241, 0.3);
-        }
 
         .category-btn {
-            text-align: left;
-            padding: 12px 20px;
-            border-radius: 12px;
-            transition: all 0.2s ease;
-            opacity: 0.7;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 10px;
+            text-align: left; padding: 12px 20px; border-radius: 12px; transition: all 0.2s ease;
+            opacity: 0.7; font-weight: 600; display: flex; align-items: center; gap: 10px;
         }
         .category-btn:hover { background: rgba(255,255,255,0.05); opacity: 1; transform: translateX(5px); }
-        .category-btn.active {
-            background: linear-gradient(90deg, var(--accent), transparent);
-            opacity: 1;
-            border-left: 4px solid #fff;
-        }
+        .category-btn.active { background: linear-gradient(90deg, var(--accent), transparent); opacity: 1; border-left: 4px solid #fff; }
 
         .server-card {
-            background: rgba(255,255,255,0.03);
-            border: 1px solid rgba(255,255,255,0.05);
-            border-radius: 8px;
-            padding: 12px;
-            cursor: pointer;
-            transition: 0.2s;
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
+            background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 8px; padding: 12px; cursor: pointer; transition: 0.2s; display: flex; flex-direction: column; gap: 4px;
         }
-        .server-card:hover {
-            background: rgba(255,255,255,0.08);
-            transform: translateY(-2px);
-            border-color: var(--accent);
-        }
-        .server-card.active {
-            background: var(--accent);
-            border-color: var(--accent-glow);
-            box-shadow: 0 4px 20px rgba(99, 102, 241, 0.4);
-        }
+        .server-card:hover { background: rgba(255,255,255,0.08); transform: translateY(-2px); border-color: var(--accent); }
+        .server-card.active { background: var(--accent); border-color: #818cf8; box-shadow: 0 4px 20px rgba(99, 102, 241, 0.4); }
 
         /* SWITCH TOGGLE */
         .switch { position: relative; display: inline-block; width: 40px; height: 20px; }
@@ -100,19 +60,8 @@
         input:checked + .slider { background-color: var(--accent); }
         input:checked + .slider:before { transform: translateX(20px); }
 
-        /* LAYOUT */
-        .layout-grid {
-            display: grid;
-            grid-template-columns: 260px 1fr;
-            width: 100%;
-            height: 100%;
-        }
-        .right-panel {
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-            overflow: hidden;
-        }
+        .layout-grid { display: grid; grid-template-columns: 260px 1fr; width: 100%; height: 100%; }
+        .right-panel { display: flex; flex-direction: column; height: 100%; overflow: hidden; }
     </style>
 </head>
 <body>
@@ -124,37 +73,29 @@
                 <h1 class="text-2xl font-black tracking-tight flex items-center gap-2">
                     <i class="fas fa-layer-group text-indigo-500"></i> TITAN
                 </h1>
-                <p class="text-xs text-gray-400 font-medium ml-8">Gateway V2</p>
+                <p class="text-xs text-gray-400 font-medium ml-8">Gateway V2.1</p>
             </div>
 
             <div class="p-4">
                 <div class="bg-black/20 p-3 rounded-xl border border-white/5 mb-6">
                     <label class="text-[10px] uppercase font-bold text-gray-500 block mb-2">ID Objetivo (IMDB)</label>
                     <div class="flex gap-2">
-                        <input type="text" id="imdbInput" value="tt0133093" class="w-full bg-transparent text-white text-sm font-mono outline-none placeholder-gray-600" placeholder="tt...">
-                        <button onclick="updateID()" class="text-indigo-400 hover:text-white transition"><i class="fas fa-sync-alt"></i></button>
+                        <input type="text" id="imdbInput" class="w-full bg-transparent text-white text-sm font-mono outline-none placeholder-gray-600" placeholder="Ej: tt10366206">
+                        <button onclick="updateID()" class="text-indigo-400 hover:text-white transition" title="Cargar"><i class="fas fa-sync-alt"></i></button>
                     </div>
                 </div>
 
                 <div class="space-y-1">
                     <div class="text-[10px] uppercase font-bold text-gray-500 mb-2 px-3">Categorías</div>
-                    <button class="category-btn active w-full" onclick="changeCategory('Estándar', this)">
-                        <i class="fas fa-star w-5"></i> Estándar
-                    </button>
-                    <button class="category-btn w-full" onclick="changeCategory('Latino/Español', this)">
-                        <i class="fas fa-globe-americas w-5"></i> Latino / ES
-                    </button>
-                    <button class="category-btn w-full" onclick="changeCategory('Nuevas', this)">
-                        <i class="fas fa-flask w-5"></i> Nuevas / Beta
-                    </button>
+                    <button class="category-btn active w-full" onclick="changeCategory('Estándar', this)"><i class="fas fa-star w-5"></i> Estándar</button>
+                    <button class="category-btn w-full" onclick="changeCategory('Latino/Español', this)"><i class="fas fa-globe-americas w-5"></i> Latino / ES</button>
+                    <button class="category-btn w-full" onclick="changeCategory('Nuevas', this)"><i class="fas fa-flask w-5"></i> Nuevas</button>
                 </div>
             </div>
 
             <div class="mt-auto p-6 border-t border-white/5">
                 <div class="flex items-center justify-between">
-                    <span class="text-xs font-bold text-gray-400 flex items-center gap-2">
-                        <i class="fas fa-shield-alt"></i> ADBLOCK
-                    </span>
+                    <span class="text-xs font-bold text-gray-400 flex items-center gap-2"><i class="fas fa-shield-alt"></i> ADBLOCK</span>
                     <label class="switch">
                         <input type="checkbox" id="adblockToggle" checked onchange="toggleAdblock()">
                         <span class="slider"></span>
@@ -164,172 +105,152 @@
         </aside>
 
         <main class="right-panel relative">
-            
             <div class="absolute top-0 left-0 w-full p-4 z-10 flex justify-between items-start pointer-events-none">
                 <div class="glass-panel px-4 py-2 rounded-full pointer-events-auto flex items-center gap-3">
                     <span id="current-server-name" class="text-xs font-bold text-indigo-300">Selecciona Servidor</span>
                     <span class="w-px h-3 bg-white/20"></span>
-                    <span id="current-id-display" class="text-[10px] font-mono text-gray-400">tt0133093</span>
+                    <span id="current-id-display" class="text-[10px] font-mono text-gray-400">---</span>
                 </div>
                 <div class="pointer-events-auto">
-                    <button onclick="openExternal()" class="glass-panel w-10 h-10 rounded-full flex items-center justify-center hover:bg-white/10 transition text-gray-300 hover:text-white" title="Abrir en pestaña nueva">
-                        <i class="fas fa-external-link-alt"></i>
-                    </button>
+                    <button onclick="openExternal()" class="glass-panel w-10 h-10 rounded-full flex items-center justify-center hover:bg-white/10 transition text-gray-300 hover:text-white" title="Abrir en pestaña nueva"><i class="fas fa-external-link-alt"></i></button>
                 </div>
             </div>
 
             <div class="flex-1 bg-black relative flex items-center justify-center overflow-hidden">
                 <iframe id="videoFrame" class="w-full h-full border-none" allowfullscreen></iframe>
-                
-                <div id="placeholder" class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-                    <div class="w-20 h-20 rounded-full bg-indigo-500/10 flex items-center justify-center mb-4 animate-pulse">
-                        <i class="fas fa-play text-3xl text-indigo-500"></i>
+                <div id="placeholder" class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none bg-black">
+                    <div class="w-20 h-20 rounded-full bg-indigo-500/10 flex items-center justify-center mb-4">
+                        <i class="fas fa-search text-3xl text-indigo-500"></i>
                     </div>
-                    <h2 class="text-xl font-bold text-gray-300">Listo para reproducir</h2>
-                    <p class="text-sm text-gray-500 mt-2">Selecciona una fuente del panel inferior</p>
+                    <h2 class="text-xl font-bold text-gray-300">Ingresa un ID</h2>
+                    <p class="text-sm text-gray-500 mt-2">Pon un ID de IMDB (ej: tt4154796) y dale al botón de recargar</p>
                 </div>
             </div>
 
             <div class="glass-panel h-48 flex flex-col z-20 border-l-0 border-b-0 border-r-0">
                 <div class="p-3 px-6 border-b border-white/5 flex justify-between items-center bg-black/20">
                     <span class="text-xs font-bold text-gray-400 uppercase tracking-widest">Fuentes Disponibles</span>
-                    <span class="text-[10px] text-gray-600" id="server-count">0 encontrados</span>
+                    <span class="text-[10px] text-gray-600" id="server-count">0 fuentes</span>
                 </div>
-                <div class="flex-1 overflow-y-auto p-4 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3" id="server-grid">
-                    </div>
+                <div class="flex-1 overflow-y-auto p-4 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3" id="server-grid"></div>
             </div>
-
         </main>
     </div>
 
     <script>
-        // --- TUS DATOS EXACTOS ---
+        /* HE CAMBIADO LA BASE DE DATOS.
+           Ahora en lugar de un enlace fijo, uso "[[ID]]" como marcador.
+        */
         const DB = {
           "Estándar": [
-            { "nombre": "VidSrc", "dominios": ["vidsrc.in", "vidsrc.pm", "vidsrc.xyz", "vidsrc.net"], "url_prueba": "https://v2.vidsrc.me/embed/tt0133093/color-15006D" },
-            { "nombre": "2Embed", "dominios": ["2embed.cc", "2embed.to"], "url_prueba": "https://2embed.cc/embed/tt0133093" },
-            { "nombre": "Vidbinge", "dominios": ["vidbinge.com"], "url_prueba": "https://vidbinge.com/embed/tt0133093" },
-            { "nombre": "StreamTape", "dominios": ["streamtape.com"], "url_prueba": "https://streamtape.com/e/tt0133093/The-Matrix" }
+            { "nombre": "VidSrc.me", "dominios": ["vidsrc.me"], "url_prueba": "https://vidsrc.me/embed/movie?imdb=[[ID]]" },
+            { "nombre": "VidSrc.to", "dominios": ["vidsrc.to"], "url_prueba": "https://vidsrc.to/embed/movie/[[ID]]" },
+            { "nombre": "VidSrc.cc", "dominios": ["vidsrc.cc"], "url_prueba": "https://vidsrc.cc/v2/embed/movie/[[ID]]" },
+            { "nombre": "2Embed", "dominios": ["2embed.cc"], "url_prueba": "https://www.2embed.cc/embed/[[ID]]" },
+            { "nombre": "Vidbinge", "dominios": ["vidbinge.com"], "url_prueba": "https://vidbinge.com/embed/[[ID]]" },
+            { "nombre": "StreamTape", "dominios": ["streamtape.com"], "url_prueba": "https://streamtape.com/e/[[ID]]" }
           ],
           "Latino/Español": [
-            { "nombre": "Alfa Addon", "dominios": ["pelisplus.lat", "pelisplushd.nz"], "url_prueba": "https://pelisplus.lat/ver/the-matrix-tt0133093" },
-            { "nombre": "Balandro", "dominios": ["cuevana3.mu", "cuevana3.io"], "url_prueba": "https://cuevana3.mu/pelicula/the-matrix-tt0133093/" },
-            { "nombre": "PelisPlus API", "dominios": ["api.pelisplus.lat"], "url_prueba": "https://api.pelisplus.lat/embed/tt0133093" },
-            { "nombre": "Cinecalidad", "dominios": ["cinecalidad.is"], "url_prueba": "https://cinecalidad.is/pelicula/the-matrix/" }
+            { "nombre": "Alfa Addon", "dominios": ["pelisplus.lat"], "url_prueba": "https://pelisplus.lat/ver/pelicula-[[ID]]" },
+            { "nombre": "Balandro", "dominios": ["cuevana3.mu"], "url_prueba": "https://cuevana3.mu/pelicula/ver-[[ID]]/" },
+            { "nombre": "PelisPlus API", "dominios": ["api.pelisplus.lat"], "url_prueba": "https://api.pelisplus.lat/embed/[[ID]]" },
+            { "nombre": "Cinecalidad", "dominios": ["cinecalidad.is"], "url_prueba": "https://cinecalidad.is/pelicula/[[ID]]/" }
           ],
           "Nuevas": [
-            { "nombre": "Vidhide", "dominios": ["vidhide.com", "vidhide.pro"], "url_prueba": "https://vidhide.com/embed/tt0133093" },
-            { "nombre": "Filelions", "dominios": ["filelions.to"], "url_prueba": "https://filelions.to/v/tt0133093" },
-            { "nombre": "Uqload", "dominios": ["uqload.com"], "url_prueba": "https://uqload.com/embed-tt0133093.html" },
-            { "nombre": "Doodstream", "dominios": ["dood.to"], "url_prueba": "https://dood.to/e/tt0133093" }
+            { "nombre": "Vidhide", "dominios": ["vidhide.com"], "url_prueba": "https://vidhide.com/embed/[[ID]]" },
+            { "nombre": "Filelions", "dominios": ["filelions.to"], "url_prueba": "https://filelions.to/v/[[ID]]" },
+            { "nombre": "Uqload", "dominios": ["uqload.com"], "url_prueba": "https://uqload.com/embed-[[ID]].html" },
+            { "nombre": "Doodstream", "dominios": ["dood.to"], "url_prueba": "https://dood.to/e/[[ID]]" }
           ]
         };
 
         let currentCategory = 'Estándar';
-        let currentID = 'tt0133093';
+        let currentID = ''; // VACÍO AL INICIO
         let currentUrl = '';
 
-        function init() {
-            renderServers();
-        }
+        function init() { renderServers(); }
 
         function updateID() {
             const val = document.getElementById('imdbInput').value.trim();
-            if(!val) return;
+            if(!val) return alert("Por favor ingresa un ID");
+            
             currentID = val;
             document.getElementById('current-id-display').innerText = currentID;
+            document.getElementById('placeholder').style.display = 'none';
             
-            // Recargar servidor activo si existe
+            // Si hay un botón activo, recargarlo con el nuevo ID
             const active = document.querySelector('.server-card.active');
-            if(active) active.click();
-            else alert("ID Actualizado: " + currentID);
+            if(active) {
+                active.click();
+            } else {
+                // Si no, sugerir que pulse uno
+                alert("ID Guardado. Ahora haz clic en un servidor abajo.");
+            }
         }
 
         function changeCategory(catName, btnElement) {
             currentCategory = catName;
-            
-            // UI Update Sidebar
             document.querySelectorAll('.category-btn').forEach(b => b.classList.remove('active'));
             btnElement.classList.add('active');
-            
             renderServers();
         }
 
         function renderServers() {
             const grid = document.getElementById('server-grid');
             grid.innerHTML = '';
-            
             const list = DB[currentCategory];
             document.getElementById('server-count').innerText = list.length + " fuentes";
 
             list.forEach(item => {
                 const card = document.createElement('div');
                 card.className = 'server-card';
-                
-                // Extraer dominios para mostrar
-                const doms = item.dominios.slice(0, 2).join(", ");
-                
                 card.innerHTML = `
                     <div class="flex items-center justify-between">
                         <span class="text-xs font-bold text-white">${item.nombre}</span>
                         <i class="fas fa-play-circle text-indigo-400"></i>
                     </div>
-                    <div class="text-[10px] text-gray-500 truncate">${doms}</div>
+                    <div class="text-[10px] text-gray-500 truncate">${item.dominios[0]}</div>
                 `;
 
                 card.onclick = () => {
+                    if(!currentID) return alert("¡Primero escribe un ID arriba a la izquierda!");
+                    
                     document.querySelectorAll('.server-card').forEach(c => c.classList.remove('active'));
                     card.classList.add('active');
                     loadSource(item.url_prueba, item.nombre);
                 };
-
                 grid.appendChild(card);
             });
         }
 
         function loadSource(templateUrl, name) {
-            // LÓGICA DE REEMPLAZO INTELIGENTE
-            // Buscamos 'tt0133093' en la URL template y lo cambiamos por el ID actual
-            let finalUrl = templateUrl.replace('tt0133093', currentID);
-            
-            // Ajuste especial para slugs (ej: pelisplus/ver/the-matrix-tt...)
-            // Si el usuario cambia solo el ID, intentamos mantener el slug si es posible, 
-            // pero para APIs puras el reemplazo directo funciona.
-            
+            // REEMPLAZO DINÁMICO: Cambia [[ID]] por lo que escribiste
+            let finalUrl = templateUrl.replace('[[ID]]', currentID);
             currentUrl = finalUrl;
             
             const iframe = document.getElementById('videoFrame');
             const adblock = document.getElementById('adblockToggle').checked;
 
-            document.getElementById('placeholder').style.display = 'none';
             document.getElementById('current-server-name').innerText = name;
 
-            // SANDBOX LOGIC (ADBLOCK)
-            if(adblock) {
-                iframe.setAttribute('sandbox', 'allow-forms allow-scripts allow-same-origin allow-presentation');
-            } else {
-                iframe.removeAttribute('sandbox');
-            }
+            if(adblock) iframe.setAttribute('sandbox', 'allow-forms allow-scripts allow-same-origin allow-presentation');
+            else iframe.removeAttribute('sandbox');
 
             iframe.src = finalUrl;
         }
 
         function toggleAdblock() {
-            // Recargar iframe con nueva configuración
             if(document.getElementById('videoFrame').src) {
                 const active = document.querySelector('.server-card.active');
-                if(active) active.click(); // Simular click para recargar con nuevos atributos
+                if(active) active.click();
             }
         }
 
         function openExternal() {
             if(currentUrl) window.open(currentUrl, '_blank');
-            else alert("Selecciona un video primero");
         }
 
-        // Init
         init();
-
     </script>
 </body>
 </html>
