@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TITAN GATEWAY: MULTI-SERVER API</title>
+    <title>TITAN GATEWAY: AD-BLOCK EDITION</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -12,6 +12,8 @@
         
         /* IFRAME CONTAINER */
         .screen-container { flex: 1; position: relative; background: black; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+        
+        /* EL SECRETO: sandbox impide popups */
         iframe { width: 100%; height: 100%; border: none; }
         
         /* CONTROLES */
@@ -34,10 +36,15 @@
         input:focus { border-color: var(--accent); }
         .btn-load { background: var(--accent); color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 12px; }
 
-        .status-badge { font-size: 10px; padding: 2px 6px; border-radius: 4px; margin-left: auto; }
-        .badge-std { background: #2563eb; color: white; }
-        .badge-lat { background: #ea580c; color: white; }
-        .badge-new { background: #16a34a; color: white; }
+        /* SWITCH TOGGLE */
+        .switch { position: relative; display: inline-block; width: 34px; height: 20px; margin-left: auto; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #333; transition: .4s; border-radius: 34px; }
+        .slider:before { position: absolute; content: ""; height: 14px; width: 14px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
+        input:checked + .slider { background-color: var(--accent); }
+        input:checked + .slider:before { transform: translateX(14px); }
+        
+        .shield-label { font-size: 10px; color: #aaa; margin-right: 5px; font-weight: bold; }
 
         /* MODO CINE */
         .theater-mode .controls { display: none; }
@@ -48,42 +55,47 @@
 <body>
 
     <div class="input-area">
-        <div class="font-bold text-lg text-purple-400"><i class="fas fa-play-circle"></i> TITAN</div>
+        <div class="font-bold text-lg text-purple-400"><i class="fas fa-shield-alt"></i> TITAN</div>
         <input type="text" id="imdbInput" placeholder="tt0133093" value="tt0133093">
-        <button class="btn-load" onclick="changeMovie()">CARGAR ID</button>
-        <span id="current-srv" class="text-xs text-gray-500 ml-4">Esperando selección...</span>
+        <button class="btn-load" onclick="changeMovie()">CARGAR</button>
+        <span id="current-srv" class="text-xs text-gray-500 ml-4 hidden md:inline">Selecciona servidor...</span>
+
+        <div class="flex items-center ml-auto">
+            <span class="shield-label"><i class="fas fa-ban text-red-500"></i> BLOQUEAR ADS</span>
+            <label class="switch">
+                <input type="checkbox" id="adblockToggle" checked onchange="reloadCurrent()">
+                <span class="slider"></span>
+            </label>
+        </div>
     </div>
 
     <div class="screen-container">
         <button class="theater-btn" onclick="toggleTheater()"><i class="fas fa-expand"></i></button>
-        <iframe id="player" src="" allowfullscreen></iframe>
-        <div id="placeholder" class="absolute text-center text-gray-600">
+        <iframe id="player" allowfullscreen></iframe>
+        <div id="placeholder" class="absolute text-center text-gray-600 pointer-events-none">
             <i class="fas fa-film text-6xl mb-4"></i>
-            <p>Selecciona un servidor abajo</p>
+            <p>Selecciona un servidor</p>
         </div>
     </div>
 
     <div class="controls" id="controlPanel">
         <div class="tabs">
-            <div class="tab active" onclick="setTab('Estándar')"><i class="fas fa-star"></i> ESTÁNDAR</div>
-            <div class="tab" onclick="setTab('Latino/Español')"><i class="fas fa-language"></i> LATINO / ES</div>
-            <div class="tab" onclick="setTab('Nuevas')"><i class="fas fa-flask"></i> NUEVAS / TEST</div>
+            <div class="tab active" onclick="setTab('Estándar')">ESTÁNDAR</div>
+            <div class="tab" onclick="setTab('Latino/Español')">LATINO</div>
+            <div class="tab" onclick="setTab('Nuevas')">NUEVAS</div>
         </div>
-        <div class="servers" id="serverGrid">
-            </div>
+        <div class="servers" id="serverGrid"></div>
     </div>
 
     <script>
-        // --- TU BASE DE DATOS JSON ---
         const DB = {
             "Estándar": [
                 { "api": "vidsrc.me", "link": "https://vidsrc.me/embed/ID" },
                 { "api": "vidsrc.to", "link": "https://vidsrc.to/embed/ID" },
-                { "api": "vidsrc.pro", "link": "https://vidsrc.pro/embed/ID" },
-                { "api": "vidsrc.cc", "link": "https://vidsrc.cc/embed/ID" },
-                { "api": "embed.su", "link": "https://embed.su/embed/movie/ID" }, /* Fix URL pattern */
-                { "api": "2embed.cc", "link": "https://www.2embed.cc/embed/ID" }, /* Fix URL pattern */
-                { "api": "fsapi.xyz", "link": "https://fsapi.xyz/embed/movie/ID" }
+                { "api": "vidsrc.cc", "link": "https://vidsrc.cc/v2/embed/movie/ID" },
+                { "api": "embed.su", "link": "https://embed.su/embed/movie/ID" },
+                { "api": "2embed.cc", "link": "https://www.2embed.cc/embed/ID" },
+                { "api": "superembed", "link": "https://superembed.stream/embed/movie/ID" }
             ],
             "Latino/Español": [
                 { "api": "pelisplushd.nz", "link": "https://pelisplushd.nz/embed/ID" },
@@ -94,30 +106,21 @@
                 { "api": "vidsrc.xyz", "link": "https://vidsrc.xyz/embed/ID" },
                 { "api": "multiembed.mov", "link": "https://multiembed.mov/embed/ID" },
                 { "api": "smashy.stream", "link": "https://player.smashy.stream/embed/ID" },
-                { "api": "godriveplayer", "link": "https://godriveplayer.com/embed/ID" },
-                { "api": "moviesapi.club", "link": "https://moviesapi.club/embed/ID" }
+                { "api": "godriveplayer", "link": "https://godriveplayer.com/embed/ID" }
             ]
         };
 
         let currentTab = 'Estándar';
-        let currentID = 'tt0133093'; // Matrix por defecto
+        let currentID = 'tt0133093'; 
+        let currentUrl = '';
 
-        function init() {
-            renderServers();
-        }
+        function init() { renderServers(); }
 
         function changeMovie() {
             const val = document.getElementById('imdbInput').value.trim();
-            if(!val.startsWith('tt')) { alert("El ID debe empezar por tt (ej: tt123456)"); return; }
+            if(!val.startsWith('tt')) return alert("ID inválido");
             currentID = val;
-            
-            // Recargar el servidor actual si hay uno activo
-            const activeBtn = document.querySelector('.server-btn.active');
-            if(activeBtn) {
-                activeBtn.click();
-            } else {
-                alert("ID Actualizado. Elige un servidor.");
-            }
+            reloadCurrent();
         }
 
         function setTab(tabName) {
@@ -130,51 +133,46 @@
         function renderServers() {
             const grid = document.getElementById('serverGrid');
             grid.innerHTML = '';
-            
-            const list = DB[currentTab];
-            
-            list.forEach(item => {
+            DB[currentTab].forEach(item => {
                 const btn = document.createElement('button');
                 btn.className = 'server-btn';
-                
-                // Icono según categoría
-                let icon = 'fa-play';
-                if(currentTab.includes('Latino')) icon = 'fa-globe-americas';
-                if(currentTab.includes('Nuevas')) icon = 'fa-vial';
-
-                btn.innerHTML = `<i class="fas ${icon}"></i> ${item.api}`;
-                
+                btn.innerHTML = `<i class="fas fa-play"></i> ${item.api}`;
                 btn.onclick = () => {
-                    // Quitar activo anterior
                     document.querySelectorAll('.server-btn').forEach(b => b.classList.remove('active'));
                     btn.classList.add('active');
-                    
-                    // Cargar Iframe
-                    loadVideo(item.link, item.api);
+                    currentUrl = item.link;
+                    loadVideo();
                 };
-                
                 grid.appendChild(btn);
             });
         }
 
-        function loadVideo(template, name) {
-            // Reemplazar el ID en la URL
-            // NOTA: Algunas APIs usan el formato raw, otras necesitan ajustes
-            // Aquí usamos un reemplazo simple del string "ID"
-            const finalUrl = template.replace('ID', currentID).replace('tt0133093', currentID); // Doble check
+        function loadVideo() {
+            if(!currentUrl) return;
+            const finalUrl = currentUrl.replace('ID', currentID);
+            const player = document.getElementById('player');
+            const adblock = document.getElementById('adblockToggle').checked;
             
+            // CONFIGURACIÓN DEL ESCUDO (SANDBOX)
+            if(adblock) {
+                // Permitimos scripts y formularios, pero BLOQUEAMOS popups, modales y orientación
+                player.setAttribute('sandbox', 'allow-forms allow-scripts allow-same-origin allow-presentation');
+            } else {
+                // Si el usuario desactiva el bloqueo, quitamos el sandbox (modo inseguro)
+                player.removeAttribute('sandbox');
+            }
+
             document.getElementById('placeholder').style.display = 'none';
-            document.getElementById('player').src = finalUrl;
-            document.getElementById('current-srv').innerHTML = `Reproduciendo: <span class="text-white font-bold">${name}</span> (${currentID})`;
+            player.src = finalUrl;
         }
 
-        function toggleTheater() {
-            document.body.classList.toggle('theater-mode');
+        function reloadCurrent() {
+            if(document.querySelector('.server-btn.active')) loadVideo();
         }
 
-        // Iniciar
+        function toggleTheater() { document.body.classList.toggle('theater-mode'); }
+
         init();
-
     </script>
 </body>
 </html>
