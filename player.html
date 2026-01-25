@@ -3,129 +3,134 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CineMax Multi-Player</title>
+    <title>CineMax Ultimate Player</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        body { background: #000; color: #fff; font-family: 'Segoe UI', sans-serif; overflow: hidden; height: 100vh; }
-        .server-btn { transition: all 0.3s; border: 1px solid rgba(255,255,255,0.1); }
-        .server-btn:hover { background: rgba(59, 130, 246, 0.2); border-color: #3b82f6; }
-        .server-btn.active { background: #3b82f6; color: white; border-color: #3b82f6; }
+        body { background: #050505; color: #fff; font-family: 'Outfit', sans-serif; overflow: hidden; height: 100vh; }
+        .server-btn { transition: all 0.2s; border: 1px solid rgba(255,255,255,0.05); background: rgba(255,255,255,0.02); }
+        .server-btn:hover { background: rgba(59, 130, 246, 0.1); border-color: #3b82f6; transform: translateX(5px); }
+        .server-btn.active { background: #3b82f6; color: white; border-color: #3b82f6; box-shadow: 0 0 15px rgba(59, 130, 246, 0.4); }
         iframe { width: 100%; height: 100%; border: none; background: #000; }
         .custom-scroll::-webkit-scrollbar { width: 4px; }
         .custom-scroll::-webkit-scrollbar-thumb { background: #3b82f6; border-radius: 10px; }
+        .category-title { font-size: 10px; font-weight: 900; letter-spacing: 0.2em; color: #666; margin-bottom: 10px; display: block; }
     </style>
 </head>
 <body class="flex flex-col md:flex-row">
 
-    <div id="video-container" class="relative flex-1 bg-black">
-        <div id="player-loading" class="absolute inset-0 flex items-center justify-center bg-black z-10">
+    <div id="main-video" class="relative flex-1 bg-black group">
+        <div id="loader" class="absolute inset-0 flex items-center justify-center bg-black z-30 transition-opacity duration-500">
             <div class="text-center">
-                <div class="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-                <p class="text-sm font-bold tracking-widest uppercase">Cargando Servidor...</p>
+                <div class="w-14 h-14 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+                <p class="text-xs font-black tracking-widest text-blue-500">CONECTANDO SERVIDOR...</p>
             </div>
         </div>
-        <div id="player-frame" class="w-full h-full"></div>
+        <div id="iframe-slot" class="w-full h-full"></div>
     </div>
 
-    <aside class="w-full md:w-80 bg-[#0a0a0a] border-l border-white/5 flex flex-col h-64 md:h-screen shadow-2xl z-20">
-        <div class="p-4 border-b border-white/5">
-            <h2 class="text-lg font-black italic tracking-tighter">CINE<span class="text-blue-500">MAX</span> PLAYER</h2>
+    <aside id="sidebar" class="w-full md:w-[320px] bg-[#0a0a0a] border-l border-white/5 flex flex-col h-[40vh] md:h-screen transition-all duration-500">
+        <div class="p-5 border-b border-white/5 flex justify-between items-center bg-black/20">
+            <h2 class="text-xl font-black italic tracking-tighter">CINE<span class="text-blue-500">MAX</span></h2>
+            <div id="server-indicator" class="text-[10px] bg-blue-500/10 text-blue-500 px-2 py-1 rounded border border-blue-500/20 font-bold">AUTO</div>
         </div>
 
-        <div class="flex-1 overflow-y-auto p-4 space-y-6 custom-scroll">
+        <div class="flex-1 overflow-y-auto p-4 space-y-8 custom-scroll">
             
             <section>
-                <h3 class="text-[10px] font-bold text-blue-400 mb-3 tracking-widest uppercase"><i class="fas fa-globe-americas mr-2"></i> Latino / Multi</h3>
-                <div class="grid grid-cols-1 gap-2" id="list-multi">
-                    </div>
+                <span class="category-title text-yellow-500"><i class="fas fa-flag mr-2"></i> LATINO / ESPAÑOL</span>
+                <div class="grid gap-2" id="cat-latino"></div>
             </section>
 
             <section>
-                <h3 class="text-[10px] font-bold text-gray-500 mb-3 tracking-widest uppercase"><i class="fas fa-closed-captioning mr-2"></i> Inglés (Subtítulos)</h3>
-                <div class="grid grid-cols-1 gap-2" id="list-english">
-                    </div>
+                <span class="category-title text-blue-400"><i class="fas fa-star mr-2"></i> ESTÁNDAR (SUB)</span>
+                <div class="grid gap-2" id="cat-estandar"></div>
+            </section>
+
+            <section>
+                <span class="category-title text-purple-400"><i class="fas fa-plus-circle mr-2"></i> NUEVAS / EXPERIMENTAL</span>
+                <div class="grid gap-2" id="cat-nuevas"></div>
             </section>
 
         </div>
     </aside>
 
     <script>
-        // --- CONFIGURACIÓN DE IDS ---
+        // --- PARÁMETROS Y PROXY ---
         const params = new URLSearchParams(window.location.search);
-        const TMDB_ID = params.get('id'); // TMDB ID
-        const IMDB_ID = params.get('imdb') || TMDB_ID; // Si no hay IMDB usa el TMDB
+        const TMDB_ID = params.get('id');
+        const IMDB_ID = params.get('imdb') || TMDB_ID; 
         const S = params.get('season') || '1';
         const E = params.get('episode') || '1';
         const isTV = params.get('season') ? true : false;
+        const PROXY_URL = 'https://api.codetabs.com/v1/proxy/?quest='; // Tu bloqueador/proxy
 
-        // --- DEFINICIÓN DE SERVIDORES ---
-        const servers = {
-            multi: [
-                { name: "UnlimPlay VIP", url: isTV ? `https://unlimplay.com/play/embed/tv/${TMDB_ID}/${S}/${E}` : `https://unlimplay.com/play/embed/movie/${TMDB_ID}`, icon: "fa-star" },
-                { name: "Embed.su", url: isTV ? `https://embed.su/embed/tv/${TMDB_ID}/${S}/${E}` : `https://embed.su/embed/movie/${TMDB_ID}`, icon: "fa-bolt" },
-                { name: "SmashyStream", url: isTV ? `https://embed.smashystream.com/playere.php?tmdb=${TMDB_ID}&s=${S}&e=${E}` : `https://embed.smashystream.com/playere.php?tmdb=${TMDB_ID}`, icon: "fa-play" },
-                { name: "SuperEmbed", url: isTV ? `https://superembed.stream/embed/tv/${TMDB_ID}/${S}/${E}` : `https://superembed.stream/embed/movie/${TMDB_ID}`, icon: "fa-shield-alt" },
-                { name: "AutoEmbed", url: isTV ? `https://autoembed.to/tv/imdb/${IMDB_ID}/${S}/${E}` : `https://autoembed.to/movie/imdb/${IMDB_ID}`, icon: "fa-robot" }
+        // --- TODAS TUS FUENTES ---
+        const sources = {
+            latino: [
+                { api: "PelisPlus NZ", url: `https://pelisplushd.nz/embed/${IMDB_ID}`, icon: "fa-play" },
+                { api: "PelisPlus Net", url: `https://pelisplus.net/embed/${IMDB_ID}`, icon: "fa-compact-disc" },
+                { api: "Cuevana 3", url: `https://cuevana3.io/embed/${IMDB_ID}`, icon: "fa-moon" },
+                { api: "UnlimPlay (Lat)", url: isTV ? `https://unlimplay.com/play/embed/tv/${TMDB_ID}/${S}/${E}` : `https://unlimplay.com/play/embed/movie/${TMDB_ID}`, icon: "fa-crown" }
             ],
-            english: [
-                { name: "VidSrc.to", url: isTV ? `https://vidsrc.to/embed/tv/${IMDB_ID}/${S}/${E}` : `https://vidsrc.to/embed/movie/${IMDB_ID}`, icon: "fa-check-circle" },
-                { name: "VidSrc.me", url: isTV ? `https://vidsrc.me/embed/tv?imdb=${IMDB_ID}&season=${S}&episode=${E}` : `https://vidsrc.me/embed/movie?imdb=${IMDB_ID}`, icon: "fa-link" },
-                { name: "VidSrc.cc", url: isTV ? `https://vidsrc.cc/v2/embed/tv/${IMDB_ID}/${S}/${E}` : `https://vidsrc.cc/v2/embed/movie/${IMDB_ID}`, icon: "fa-bolt" },
-                { name: "2Embed", url: isTV ? `https://www.2embed.cc/embedtv/${IMDB_ID}&s=${S}&e=${E}` : `https://www.2embed.cc/embed/${IMDB_ID}`, icon: "fa-layer-group" }
+            estandar: [
+                { api: "VidSrc.me", url: isTV ? `https://vidsrc.me/embed/tv?imdb=${IMDB_ID}&season=${S}&episode=${E}` : `https://vidsrc.me/embed/movie?imdb=${IMDB_ID}`, icon: "fa-link" },
+                { api: "VidSrc.to", url: isTV ? `https://vidsrc.to/embed/tv/${IMDB_ID}/${S}/${E}` : `https://vidsrc.to/embed/movie/${IMDB_ID}`, icon: "fa-check" },
+                { api: "VidSrc.pro", url: `https://vidsrc.pro/embed/${isTV?'tv':'movie'}/${IMDB_ID}${isTV?`/${S}/${E}`:''}`, icon: "fa-shield" },
+                { api: "VidSrc.cc", url: isTV ? `https://vidsrc.cc/v2/embed/tv/${IMDB_ID}/${S}/${E}` : `https://vidsrc.cc/v2/embed/movie/${IMDB_ID}`, icon: "fa-bolt" },
+                { api: "Embed.su", url: isTV ? `https://embed.su/embed/tv/${TMDB_ID}/${S}/${E}` : `https://embed.su/embed/movie/${TMDB_ID}`, icon: "fa-fire" },
+                { api: "2Embed.cc", url: isTV ? `https://2embed.cc/embedtv/${IMDB_ID}&s=${S}&e=${E}` : `https://2embed.cc/embed/${IMDB_ID}`, icon: "fa-box" },
+                { api: "FsApi XYZ", url: `https://fsapi.xyz/embed/${IMDB_ID}`, icon: "fa-atom" }
+            ],
+            nuevas: [
+                { api: "VidSrc XYZ", url: `https://vidsrc.xyz/embed/${IMDB_ID}`, icon: "fa-rocket" },
+                { api: "MultiEmbed", url: `https://multiembed.mov/embed/${IMDB_ID}`, icon: "fa-random" },
+                { api: "Smashy Stream", url: isTV ? `https://player.smashy.stream/embed/tv/${TMDB_ID}/${S}/${E}` : `https://player.smashy.stream/embed/movie/${TMDB_ID}`, icon: "fa-play-circle" },
+                { api: "GoDrive Player", url: `https://godriveplayer.com/embed/${IMDB_ID}`, icon: "fa-hdd" },
+                { api: "MoviesAPI Club", url: `https://moviesapi.club/embed/${IMDB_ID}`, icon: "fa-gem" }
             ]
         };
 
-        // --- LÓGICA DE CARGA ---
-        function init() {
-            if (!TMDB_ID) {
-                document.body.innerHTML = "<div class='flex items-center justify-center w-full h-full text-red-500'>ERROR: ID NO PROPORCIONADO</div>";
-                return;
-            }
-            renderServers();
-            // Cargar primer servidor por defecto
-            changeServer(servers.multi[0].url, 0, 'multi');
+        // --- LÓGICA DE RENDER ---
+        function start() {
+            if (!TMDB_ID) return;
+            renderCat('latino', sources.latino);
+            renderCat('estandar', sources.estandar);
+            renderCat('nuevas', sources.nuevas);
+            
+            // Auto-reproducir la primera opción de Latino por defecto
+            loadServer(sources.latino[0].url, 'latino', 0);
         }
 
-        function renderServers() {
-            const multiBox = document.getElementById('list-multi');
-            const englishBox = document.getElementById('list-english');
-
-            servers.multi.forEach((s, i) => {
-                multiBox.appendChild(createBtn(s, i, 'multi'));
+        function renderCat(catId, list) {
+            const container = document.getElementById(`cat-${catId}`);
+            list.forEach((s, i) => {
+                const btn = document.createElement('button');
+                btn.className = `server-btn p-3 rounded-xl text-left text-[11px] font-bold flex items-center gap-3 w-full`;
+                btn.id = `btn-${catId}-${i}`;
+                btn.innerHTML = `<i class="fas ${s.icon} opacity-40"></i> <span>${s.api}</span>`;
+                btn.onclick = () => loadServer(s.url, catId, i);
+                container.appendChild(btn);
             });
-
-            servers.english.forEach((s, i) => {
-                englishBox.appendChild(createBtn(s, i, 'english'));
-            });
         }
 
-        function createBtn(server, index, type) {
-            const btn = document.createElement('button');
-            btn.className = `server-btn p-3 rounded-lg text-left text-xs font-bold flex items-center gap-3 w-full`;
-            btn.id = `btn-${type}-${index}`;
-            btn.innerHTML = `<i class="fas ${server.icon} opacity-50"></i> <span>${server.name}</span>`;
-            btn.onclick = () => changeServer(server.url, index, type);
-            return btn;
-        }
-
-        function changeServer(url, index, type) {
-            // UI Update
+        function loadServer(url, cat, index) {
+            // UI
             document.querySelectorAll('.server-btn').forEach(b => b.classList.remove('active'));
-            document.getElementById(`btn-${type}-${index}`).classList.add('active');
+            document.getElementById(`btn-${cat}-${index}`).classList.add('active');
             
-            // Player Update
-            const loader = document.getElementById('player-loading');
-            const frame = document.getElementById('player-frame');
+            const loader = document.getElementById('loader');
+            const slot = document.getElementById('iframe-slot');
             
-            loader.style.display = 'flex';
-            frame.innerHTML = `<iframe src="${url}" allowfullscreen allow="autoplay; encrypted-media"></iframe>`;
+            loader.style.opacity = '1';
+            // Aquí podrías envolver la URL con el PROXY si el servidor lo permite, 
+            // pero para iframes directos los usamos limpios para evitar bloqueos de seguridad del navegador.
+            slot.innerHTML = `<iframe src="${url}" allowfullscreen allow="autoplay; encrypted-media"></iframe>`;
             
-            // Ocultar loader tras unos segundos (el iframe tarda en cargar)
-            setTimeout(() => { loader.style.display = 'none'; }, 2000);
+            setTimeout(() => { loader.style.opacity = '0'; }, 1500);
         }
 
-        init();
+        start();
     </script>
 </body>
 </html>
