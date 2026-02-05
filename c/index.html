@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
-  <title>JJFUTBOL PREMIUM DOBLE</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>JJFUTBOL ULTRA</title>
   
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/luxon@3.4.4/build/global/luxon.min.js"></script>
@@ -12,12 +12,11 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
   <style>
-    /* --- ESTILOS PREMIUM (TEMA GOLD/DARK) --- */
     :root {
       --bg-dark: #000000;
-      --card-bg: rgba(20, 25, 40, 0.85);
-      --card-border: rgba(255, 255, 255, 0.1);
-      --accent: #D4AF37; /* Dorado JJ */
+      --card-bg: rgba(20, 25, 40, 0.9);
+      --card-border: rgba(255, 255, 255, 0.15);
+      --accent: #D4AF37;
       --text-main: #ffffff;
       --text-muted: #9ca3af;
     }
@@ -26,286 +25,222 @@
 
     body {
       font-family: 'Open Sans', sans-serif;
-      background: linear-gradient(135deg, #0f172a 0%, #000000 100%);
+      background: linear-gradient(180deg, #0f172a 0%, #000000 100%);
       margin: 0; padding: 0; color: var(--text-main);
       min-height: 100vh; overflow-x: hidden;
     }
 
     /* HEADER */
     header {
-      text-align: center; padding: 20px 0 10px;
-      background: linear-gradient(to bottom, rgba(0,0,0,0.9), transparent);
-      position: sticky; top: 0; z-index: 50; backdrop-filter: blur(8px);
+      text-align: center; padding: 15px 0;
+      background: rgba(0,0,0,0.8); backdrop-filter: blur(10px);
+      position: sticky; top: 0; z-index: 50; border-bottom: 1px solid var(--card-border);
     }
     .app-title {
-      font-family: 'Poppins', sans-serif; font-size: 26px; font-weight: 800;
-      margin: 0; text-transform: uppercase; letter-spacing: 1px;
-      background: linear-gradient(to right, #fff, #D4AF37);
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+      font-family: 'Poppins', sans-serif; font-size: 24px; font-weight: 800;
+      margin: 0; color: white; letter-spacing: 1px;
     }
-    .app-subtitle { 
-      font-size: 10px; color: var(--accent); letter-spacing: 4px; font-weight: 700; margin-top: -5px; 
-      text-shadow: 0 0 10px rgba(212, 175, 55, 0.4);
-    }
+    .app-subtitle { font-size: 10px; color: var(--accent); font-weight: 700; letter-spacing: 3px; }
 
-    .container { max-width: 800px; margin: 0 auto; padding: 10px 15px 80px; }
+    .container { max-width: 800px; margin: 0 auto; padding: 15px; padding-bottom: 80px; }
     .hidden { display: none !important; }
 
-    /* --- BUSCADOR --- */
-    .search-box {
-      position: relative; margin-bottom: 20px;
-    }
+    /* BUSCADOR */
+    .search-box { position: relative; margin-bottom: 20px; }
     .search-input {
-      width: 100%;
-      background: rgba(255,255,255,0.1);
-      border: 1px solid var(--accent);
-      padding: 12px 15px 12px 45px;
-      border-radius: 25px;
-      color: white;
-      font-family: 'Poppins', sans-serif;
-      font-size: 14px;
-      outline: none;
-      transition: all 0.3s;
+      width: 100%; background: rgba(255,255,255,0.1); border: 1px solid var(--accent);
+      padding: 12px 15px 12px 40px; border-radius: 25px; color: white; outline: none;
     }
-    .search-input:focus {
-      box-shadow: 0 0 15px rgba(212, 175, 55, 0.3);
-      background: rgba(0,0,0,0.8);
-    }
-    .search-icon {
-      position: absolute; left: 15px; top: 50%; transform: translateY(-50%);
-      color: var(--accent); font-size: 16px;
-    }
+    .search-icon { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: var(--accent); }
 
-    /* BANNER PROMO */
-    .promo-box {
-      background: linear-gradient(135deg, #1a0d0d, #2a0f0f); color: white;
-      padding: 15px; text-align: center; border-radius: 16px;
-      border: 1px solid rgba(204, 51, 0, 0.4); margin-bottom: 20px;
-      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5); position: relative;
-    }
-    .promo-badge {
-      position: absolute; top: -10px; right: -10px; width: 40px; height: 40px;
-      background: #ff3300; border-radius: 50%; display: flex; align-items: center; justify-content: center;
-      font-weight: bold; font-size: 16px; box-shadow: 0 0 10px rgba(255, 51, 0, 0.6);
-    }
-    .btn-promo {
-      display: inline-block; background: linear-gradient(to right, #cc3300, #ff5500);
-      color: white; font-weight: 700; padding: 6px 15px; border-radius: 20px;
-      text-decoration: none; font-size: 12px; margin-top: 5px;
-    }
-
-    /* TARJETAS PARTIDOS */
-    #menu { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 12px; }
+    /* TARJETAS */
+    #menu { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 10px; }
 
     .match-card {
       background: var(--card-bg); border: 1px solid var(--card-border);
-      border-radius: 14px; overflow: hidden; backdrop-filter: blur(10px);
-      transition: transform 0.2s, border-color 0.2s;
+      border-radius: 12px; overflow: hidden; position: relative;
     }
-    .match-card.active { border-color: var(--accent); background: rgba(30, 35, 50, 0.95); }
+    .match-card.active { border-color: var(--accent); background: rgba(40, 45, 60, 1); }
 
-    .card-header { padding: 12px 15px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; }
+    .card-header { padding: 12px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; }
     
     .time-badge {
-      background: rgba(255,255,255,0.05); padding: 4px 8px; border-radius: 6px;
-      font-weight: 700; color: #10b981; font-size: 12px; min-width: 50px; text-align: center;
-      border: 1px solid rgba(255,255,255,0.1);
+      background: #111; padding: 5px 0; width: 50px; text-align: center; border-radius: 6px; border: 1px solid #333;
+      display: flex; flex-direction: column; justify-content: center;
     }
-    
-    .match-info { flex: 1; display: flex; align-items: center; margin: 0 12px; overflow: hidden; }
-    .league-flag { width: 24px; height: 24px; border-radius: 50%; margin-right: 10px; flex-shrink: 0; border: 1px solid rgba(255,255,255,0.2); }
-    .match-title { font-size: 13px; font-weight: 600; color: #e2e8f0; line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .source-badge { font-size: 9px; padding: 2px 6px; border-radius: 4px; background: #333; color: #aaa; margin-left: 5px; }
+    .time-badge span { color: var(--accent); font-weight: 700; font-size: 13px; }
+    .time-badge small { color: #666; font-size: 8px; }
 
-    .toggle-icon { color: var(--text-muted); font-size: 12px; transition: transform 0.3s; }
-    .match-card.active .toggle-icon { transform: rotate(180deg); color: var(--accent); }
+    .match-info { flex: 1; display: flex; align-items: center; margin: 0 12px; overflow: hidden; }
+    .league-flag { width: 28px; height: 28px; border-radius: 50%; margin-right: 10px; border: 1px solid rgba(255,255,255,0.2); }
+    .match-title { font-size: 13px; font-weight: 600; color: #fff; line-height: 1.2; }
 
     /* CANALES */
-    .channels-container { display: none; padding: 0 15px 15px; background: rgba(0,0,0,0.2); border-top: 1px solid rgba(255,255,255,0.05); }
-    .channels-list { list-style: none; padding: 10px 0 0; margin: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 8px; }
+    .channels-container { display: none; padding: 0 12px 12px; background: rgba(0,0,0,0.3); border-top: 1px solid #333; }
+    .channels-list { list-style: none; padding: 10px 0 0; margin: 0; display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
 
     .channel-btn {
-      display: flex; align-items: center; justify-content: center; gap: 6px;
-      padding: 10px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+      display: flex; align-items: center; justify-content: center; gap: 5px;
+      padding: 10px; background: #222; border: 1px solid #444;
       border-radius: 8px; color: white; font-size: 11px; font-weight: 600; cursor: pointer;
-      transition: all 0.2s; text-transform: uppercase;
     }
-    .channel-btn:hover { background: var(--accent); color: black; border-color: var(--accent); }
+    .channel-btn:active { background: var(--accent); color: black; }
 
     /* REPRODUCTOR */
     #view-player { background: black; position: fixed; inset: 0; z-index: 100; display: flex; flex-direction: column; }
-    .player-header { padding: 10px 15px; display: flex; align-items: center; max-width: 900px; margin: 0 auto; }
-    .btn-back {
-      background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.1);
-      color: white; padding: 8px 20px; border-radius: 20px; font-size: 13px;
-      font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px;
-    }
+    .player-header { padding: 10px; display: flex; align-items: center; background: #111; }
+    .btn-back { background: none; border: none; color: white; font-size: 18px; cursor: pointer; padding: 5px 15px; }
 
-    .viewer-wrapper { width: 100%; max-width: 900px; margin: 10px auto; padding: 0 15px; position: relative; z-index: 10; }
-    .video-box {
-      position: relative; width: 100%; padding-bottom: 56.25%; background: #000; border-radius: 12px; overflow: hidden;
-      box-shadow: 0 10px 40px rgba(0,0,0,0.8); border: 1px solid rgba(212, 175, 55, 0.2);
-    }
-    iframe#viewer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; z-index: 1; }
+    .viewer-wrapper { width: 100%; max-width: 900px; margin: auto; padding: 0; }
+    .video-box { position: relative; width: 100%; padding-bottom: 56.25%; background: #000; }
+    iframe#viewer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
 
     /* ESCUDO */
-    .click-shield { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 10; background: transparent; cursor: pointer; }
+    .click-shield { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 10; background: transparent; }
     .unlock-btn {
-      position: absolute; top: 10px; right: 10px; z-index: 50; background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(4px);
-      border: 1px solid #ff4444; color: #ffcccc; padding: 6px 12px; border-radius: 30px; font-size: 10px; font-weight: 700;
-      text-transform: uppercase; cursor: pointer; display: none; align-items: center; gap: 5px;
+      position: absolute; top: 10px; right: 10px; z-index: 50; background: rgba(255,0,0,0.6);
+      color: white; padding: 5px 10px; border-radius: 20px; font-size: 10px; cursor: pointer; display: none;
     }
 
-    .loading-container { text-align: center; padding: 60px 0; color: #666; }
-    .spinner { width: 35px; height: 35px; border: 3px solid rgba(255,255,255,0.1); border-left-color: var(--accent); border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 10px; }
-    @keyframes spin { 100% { transform: rotate(360deg); } }
-
+    .loading-container { text-align: center; padding: 50px 0; color: #888; font-size: 12px; }
+    .error-log { color: #f87171; font-size: 10px; margin-top: 10px; font-family: monospace; }
   </style>
 </head>
 <body>
 
   <header>
-    <h1 class="app-title">JJFUTBOL</h1>
-    <div class="app-subtitle">DOBLE AGENDA</div>
+    <div class="app-title">JJFUTBOL</div>
+    <div class="app-subtitle">PREMIUM</div>
   </header>
 
   <div id="view-agenda">
     <div class="container">
-      
       <div class="search-box">
         <i class="fas fa-search search-icon"></i>
-        <input type="text" id="searchInput" class="search-input" placeholder="Buscar equipo, liga...">
+        <input type="text" id="searchInput" class="search-input" placeholder="Buscar partido...">
       </div>
 
-      <div class="promo-box">
-        <div class="promo-badge">🎬</div>
-        <h3 style="font-family:'Poppins'; margin:0 0 5px; color:#ff4d00; font-size:16px;">Películas Gratis 2026</h3>
-        <a href="https://jjmovies.lat" target="_blank" class="btn-promo">Entrar a JJMOVIES</a>
-      </div>
-
-      <h3 id="agenda-date" style="text-align:center; color:var(--text-main); font-family:'Poppins'; margin:0 0 15px; font-size:14px; opacity:0.8;">CARGANDO EVENTOS...</h3>
-
+      <h3 id="status-text" style="text-align:center; color:white; font-size:12px; margin-bottom:15px; opacity:0.7;">CARGANDO...</h3>
+      
       <ul id="menu"></ul>
+      <div id="debug-area"></div>
     </div>
   </div>
 
   <div id="view-player" class="hidden">
     <div class="player-header">
-      <button class="btn-back" onclick="closePlayer()">
-        <i class="fas fa-arrow-left"></i> VOLVER
-      </button>
+      <button class="btn-back" onclick="closePlayer()"><i class="fas fa-arrow-left"></i> Volver</button>
     </div>
-
     <div class="viewer-wrapper">
-      <div class="video-box" id="player-box">
-        <button class="unlock-btn" id="unlock-btn" onclick="desbloquearReproductor()">
-          <i class="fas fa-lock-open"></i> Desbloquear
-        </button>
-        <div id="click-shield" class="click-shield" onclick="removeShield()"></div>
-        <iframe id="viewer" src="" allowfullscreen allow="autoplay; encrypted-media"></iframe>
+      <div class="video-box">
+        <button class="unlock-btn" id="unlock-btn" onclick="desbloquear()">Desbloquear</button>
+        <div id="click-shield" class="click-shield" onclick="hideShield()"></div>
+        <iframe id="viewer" src="" allowfullscreen></iframe>
       </div>
     </div>
   </div>
 
   <script>
-    // ==========================================
-    // ⚙️ CONFIGURACIÓN DOBLE FUENTE
-    // ==========================================
-    const FUENTES = [
-      { 
-        nombre: "GOOL",
-        url: "https://goolhd.com/agenda.json?v=1.07", 
-        imgBase: "https://img.goolhd.com" 
-      },
-      { 
-        nombre: "PLTV",
-        url: "https://pltvhd.com/diaries.json", 
-        imgBase: "https://cdn.pltvhd.com" 
-      }
+    // ============================================================
+    // 🚀 SISTEMA TITAN MULTI-PROXY
+    // ============================================================
+    
+    // Fuentes originales
+    const SOURCES = [
+      { name: "GOOL", url: "https://goolhd.com/agenda.json?v=1.07", img: "https://img.goolhd.com" },
+      { name: "PLTV", url: "https://pltvhd.com/diaries.json", img: "https://cdn.pltvhd.com" }
+    ];
+
+    // Proxies Públicos (Se prueban en orden)
+    // 1. AllOrigins (Estable)
+    // 2. CodeTabs (Backup)
+    const PROXIES = [
+      url => `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
+      url => `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`
     ];
 
     document.addEventListener("DOMContentLoaded", () => {
-      cargarAgendaDoble();
+      iniciarCarga();
       
-      // BUSCADOR EN TIEMPO REAL
+      // Buscador
       $('#searchInput').on('keyup', function() {
         var value = $(this).val().toLowerCase();
-        $("#menu li.match-card").filter(function() {
+        $("#menu li").filter(function() {
           $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
         });
       });
 
-      // Expandir tarjeta
       $(document).on("click", ".match-card", function() {
-        const $this = $(this);
-        const $submenu = $this.find(".channels-container");
-        $(".match-card").not($this).removeClass("active").find(".channels-container").slideUp(200);
-        $this.toggleClass("active");
-        $submenu.slideToggle(200);
+        const card = $(this);
+        $('.match-card').not(card).removeClass('active').find('.channels-container').slideUp(200);
+        card.toggleClass('active').find('.channels-container').slideToggle(200);
       });
-
+      
       $(document).on("click", ".channel-btn", e => e.stopPropagation());
-      setInterval(cargarAgendaDoble, 60000);
     });
 
-    async function cargarAgendaDoble() {
+    async function iniciarCarga() {
       const menu = document.getElementById("menu");
-      if(menu.innerHTML.trim() === "") menu.innerHTML = '<div class="loading-container"><div class="spinner"></div><p>Sincronizando fuentes...</p></div>';
-
-      let todosEventos = [];
-
-      // CARGAMOS AMBAS FUENTES USANDO PROXY
-      const promesas = FUENTES.map(fuente => {
-        // Usamos AllOrigins para saltar bloqueo de ambas webs
-        const proxyUrl = "https://api.allorigins.win/raw?url=" + encodeURIComponent(fuente.url);
-        
-        return fetch(proxyUrl + "&t=" + Date.now())
-          .then(r => r.json())
-          .then(d => {
-            return (d.data || []).map(item => ({
-              ...item, 
-              _imgBase: fuente.imgBase,
-              _sourceName: fuente.nombre
-            }));
-          })
-          .catch(e => {
-            console.error("Error cargando " + fuente.nombre, e);
-            return [];
-          });
-      });
-
-      const resultados = await Promise.all(promesas);
+      const status = document.getElementById("status-text");
       
-      // UNIMOS TODO (SIN FILTRAR DUPLICADOS)
-      todosEventos = resultados.flat();
+      menu.innerHTML = '<div class="loading-container"><i class="fas fa-satellite-dish fa-spin"></i><br>Conectando satélites...</div>';
+      
+      let allEvents = [];
+      let errors = [];
 
-      if(todosEventos.length === 0) {
-        menu.innerHTML = '<div style="text-align:center; padding:40px; color:#ef4444;"><i class="fas fa-exclamation-circle"></i> No hay eventos disponibles.</div>';
-        document.getElementById("agenda-date").textContent = "SIN DATOS";
-        return;
-      }
-
-      // Ordenar por hora
-      todosEventos.sort((a,b) => {
-        const da = (a.attributes?.date_diary || "") + (a.attributes?.diary_hour || "");
-        const db = (b.attributes?.date_diary || "") + (b.attributes?.diary_hour || "");
-        return da.localeCompare(db);
-      });
-
-      // Fecha Título
-      if(todosEventos.length > 0) {
-        const d = todosEventos[0].attributes?.date_diary;
-        if(d) {
-          const [y,m,dia] = d.split('-').map(Number);
-          const fecha = new Date(y, m-1, dia);
-          document.getElementById("agenda-date").textContent = fecha.toLocaleDateString("es-ES", {weekday:'long', day:'numeric', month:'long'}).toUpperCase();
+      // Intentar cargar fuentes
+      for (const source of SOURCES) {
+        let loaded = false;
+        
+        // Probar cada proxy
+        for (const proxyFn of PROXIES) {
+          try {
+            const finalUrl = proxyFn(source.url) + "&t=" + Date.now();
+            console.log(`Intentando ${source.name} vía Proxy...`);
+            
+            const resp = await fetch(finalUrl);
+            if (!resp.ok) throw new Error("Status " + resp.status);
+            
+            const json = await resp.json();
+            
+            if (json && json.data && json.data.length > 0) {
+              const items = json.data.map(i => ({...i, _imgBase: source.img, _src: source.name}));
+              allEvents = [...allEvents, ...items];
+              loaded = true;
+              break; // Éxito con este proxy, salir del loop de proxies
+            }
+          } catch (e) {
+            errors.push(`${source.name}: ${e.message}`);
+          }
         }
       }
 
+      // RESULTADO FINAL
+      if (allEvents.length > 0) {
+        status.textContent = "AGENDA ACTUALIZADA";
+        renderizar(allEvents);
+      } else {
+        menu.innerHTML = `
+          <div class="loading-container">
+            <i class="fas fa-exclamation-triangle" style="color:#ef4444; font-size:20px;"></i><br><br>
+            NO HAY EVENTOS O BLOQUEO ACTIVO<br>
+            <div class="error-log">${errors.join("<br>")}</div>
+          </div>`;
+        status.textContent = "ERROR DE CONEXIÓN";
+      }
+    }
+
+    function renderizar(list) {
+      const menu = document.getElementById("menu");
+      
+      // Ordenar
+      list.sort((a,b) => (a.attributes.diary_hour || "00:00").localeCompare(b.attributes.diary_hour || "00:00"));
+
       let html = "";
-      todosEventos.forEach((item, i) => {
+      list.forEach((item, i) => {
         const attr = item.attributes || {};
+        
+        // Hora
         let hora = "--:--";
         if(attr.diary_hour) {
            try {
@@ -314,46 +249,41 @@
               else hora = attr.diary_hour.substring(0,5);
            } catch(e) { hora = attr.diary_hour; }
         }
-        
-        // Imagen con fallback
-        const imgPath = attr.country?.data?.attributes?.image?.data?.attributes?.url;
-        const img = imgPath ? item._imgBase + imgPath : "https://via.placeholder.com/24?text=TV";
-        
-        let botones = "";
-        (attr.embeds?.data || []).forEach(em => {
-          const name = em.attributes.embed_name || "Ver Canal";
-          const rawUrl = em.attributes.embed_iframe || "";
-          
-          let finalR = "";
-          try {
-            if(rawUrl.includes("?r=")) finalR = rawUrl.split("?r=")[1].split("&")[0];
-            else if(rawUrl.startsWith("http")) finalR = btoa(rawUrl);
-          } catch(e){}
 
-          if(finalR) {
-            botones += `<li><div class="channel-btn" onclick="openPlayer('${finalR}')"><i class="fas fa-play"></i> ${name}</div></li>`;
+        // Imagen
+        const imgPath = attr.country?.data?.attributes?.image?.data?.attributes?.url;
+        const img = imgPath ? item._imgBase + imgPath : "https://via.placeholder.com/24";
+
+        // Canales
+        let btns = "";
+        (attr.embeds?.data || []).forEach(em => {
+          let raw = em.attributes.embed_iframe || "";
+          let r = "";
+          
+          if(raw.includes("?r=")) r = raw.split("?r=")[1].split("&")[0];
+          else if(raw.startsWith("http")) r = btoa(raw);
+
+          if(r) {
+            btns += `<li><div class="channel-btn" onclick="play('${r}')"><i class="fas fa-play"></i> ${em.attributes.embed_name}</div></li>`;
           }
         });
 
-        if(!botones) botones = '<li style="text-align:center; color:#666; font-size:11px; padding:10px;">Próximamente...</li>';
+        if(!btns) btns = '<li style="text-align:center;font-size:10px;opacity:0.5;padding:10px;">Sin enlaces</li>';
 
         html += `
-          <li class="match-card" style="animation: fadeIn 0.5s ease forwards; animation-delay: ${Math.min(i*0.05, 1)}s; opacity:0;">
+          <li class="match-card" style="animation:fadeIn 0.5s ease forwards; animation-delay:${i*0.05}s; opacity:0">
             <div class="card-header">
-              <div class="time-badge">${hora}</div>
+              <div class="time-badge"><span>${hora}</span><small>Hora</small></div>
               <div class="match-info">
                 <img class="league-flag" src="${img}">
-                <div>
-                   <span class="match-title">${attr.diary_description}</span>
-                   </div>
+                <span class="match-title">${attr.diary_description}</span>
               </div>
               <i class="fas fa-chevron-down toggle-icon"></i>
             </div>
             <div class="channels-container">
-              <ul class="channels-list">${botones}</ul>
+              <ul class="channels-list">${btns}</ul>
             </div>
-          </li>
-        `;
+          </li>`;
       });
       menu.innerHTML = html;
     }
@@ -362,20 +292,20 @@
     const viewer = document.getElementById('viewer');
     const shield = document.getElementById('click-shield');
     const unlockBtn = document.getElementById('unlock-btn');
-    let currentUrl = '';
+    let currR = "";
+    const EMBED = "https://www.jjfutbol.lat/f/embed/eventos.html?r=";
 
-    function openPlayer(encodedR) {
+    function play(r) {
+      currR = r;
       document.getElementById('view-agenda').classList.add('hidden');
       document.getElementById('view-player').classList.remove('hidden');
-      window.scrollTo(0,0);
-
-      try {
-        currentUrl = atob(decodeURIComponent(encodedR));
-        viewer.setAttribute('sandbox', 'allow-forms allow-scripts allow-same-origin allow-pointer-lock allow-presentation');
-        viewer.src = currentUrl;
-        shield.style.display = 'block';
-        unlockBtn.style.display = 'flex';
-      } catch(e) { alert("Error al cargar."); closePlayer(); }
+      
+      // Sandbox activado
+      viewer.setAttribute('sandbox', 'allow-forms allow-scripts allow-same-origin allow-pointer-lock allow-presentation');
+      viewer.src = EMBED + r;
+      
+      shield.style.display = 'block';
+      unlockBtn.style.display = 'flex';
     }
 
     function closePlayer() {
@@ -385,19 +315,14 @@
       document.getElementById('view-agenda').classList.remove('hidden');
     }
 
-    function removeShield() { shield.style.display = 'none'; }
-    function desbloquearReproductor() {
-      if(confirm("⚠️ ¿PANTALLA NEGRA?\n\nAl desbloquear, el video recargará sin filtro de anuncios.")) {
-        viewer.removeAttribute('sandbox');
-        viewer.src = currentUrl;
-        unlockBtn.style.display = 'none';
-        shield.style.display = 'none';
-      }
+    function hideShield() { shield.style.display = 'none'; }
+    function desbloquear() {
+      viewer.removeAttribute('sandbox');
+      viewer.src = EMBED + currR;
+      shield.style.display = 'none';
+      unlockBtn.style.display = 'none';
     }
   </script>
-
-  <style>
-    @keyframes fadeIn { to { opacity: 1; transform: translateY(0); } from { opacity: 0; transform: translateY(10px); } }
-  </style>
+  <style>@keyframes fadeIn { to{opacity:1;transform:translateY(0)} from{opacity:0;transform:translateY(10px)} }</style>
 </body>
 </html>
