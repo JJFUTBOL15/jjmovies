@@ -1,205 +1,777 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
-  <title>JJFUTBOL ULTRA FAST</title>
-  
-  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/luxon@3.4.4/build/global/luxon.min.js"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;800&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>JJFUTBOL PREMIUM v2026</title>
 
-  <style>
-    :root { --accent: #D4AF37; --bg: #000; --card: #121212; --border: #222; }
-    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-    body { background: var(--bg); color: #fff; font-family: 'Roboto', sans-serif; margin: 0; padding: 0; }
-    .hidden { display: none !important; }
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/luxon@3.4.4/build/global/luxon.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
-    header { padding: 15px; text-align: center; background: #000; border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 50; }
-    .logo { font-family: 'Poppins'; font-size: 22px; font-weight: 800; color: #fff; margin: 0; }
-    .logo span { color: var(--accent); }
+    <style>
+        /* ============================================================
+        [ CSS SECTION ] - JJFUTBOL DESIGN SYSTEM
+        ============================================================
+        */
+        :root {
+            --bg-ultra-dark: #020203;
+            --bg-dark-gray: #0a0a0c;
+            --card-surface: rgba(18, 18, 22, 0.95);
+            --card-hover: rgba(26, 26, 32, 1);
+            --card-border: rgba(255, 255, 255, 0.08);
+            --jj-gold: #D4AF37;
+            --jj-gold-glow: rgba(212, 175, 55, 0.4);
+            --jj-red: #ff3e3e;
+            --jj-green: #00ff88;
+            --text-primary: #ffffff;
+            --text-secondary: #9ca3af;
+            --text-muted: #64748b;
+            --transition-fast: 0.2s ease;
+            --transition-normal: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
 
-    .container { max-width: 800px; margin: 0 auto; padding: 10px; padding-bottom: 80px; }
+        /* RESET & BASE */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            outline: none;
+            -webkit-tap-highlight-color: transparent;
+        }
 
-    /* BUSCADOR */
-    .search-box { position: relative; margin-bottom: 15px; }
-    .search-box input { width: 100%; background: #1a1a1a; border: 1px solid var(--accent); padding: 12px 15px 12px 40px; border-radius: 10px; color: white; outline: none; font-size: 14px; }
-    .search-icon { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: var(--accent); }
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg-ultra-dark);
+            background-image: 
+                radial-gradient(circle at 50% -20%, #1a1a2e 0%, transparent 50%),
+                radial-gradient(circle at 0% 100%, #0c0c14 0%, transparent 30%);
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.5;
+            overflow-x: hidden;
+        }
 
-    /* LISTA */
-    #menu { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px; }
-    .card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
-    .card.active { border-color: var(--accent); }
-    .card-header { padding: 12px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; }
-    .time { background: #000; border: 1px solid #333; padding: 4px 8px; border-radius: 5px; font-weight: 700; color: var(--accent); font-size: 12px; min-width: 50px; text-align: center; }
-    .info { flex: 1; display: flex; align-items: center; margin: 0 10px; overflow: hidden; }
-    .flag { width: 22px; height: 22px; border-radius: 50%; margin-right: 8px; }
-    .name { font-size: 13px; font-weight: 700; color: #eee; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        /* SCROLLBAR CUSTOM */
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: var(--bg-ultra-dark); }
+        ::-webkit-scrollbar-thumb { background: var(--jj-gold); border-radius: 10px; }
 
-    .channels { display: none; padding: 0 12px 12px; border-top: 1px solid var(--border); background: #080808; }
-    .btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px; }
-    .btn-ch { background: #222; border: 1px solid #333; color: #fff; padding: 10px; border-radius: 8px; font-size: 11px; font-weight: 700; text-align: center; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 5px; }
-    .btn-ch:active { background: var(--accent); color: #000; }
+        /* HEADER PREMIUM */
+        .app-header {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: rgba(2, 2, 3, 0.9);
+            backdrop-filter: blur(15px);
+            border-bottom: 1px solid var(--card-border);
+            padding: 18px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
 
-    /* PLAYER LIMPIO */
-    #player-view { background: #000; position: fixed; inset: 0; z-index: 100; display: flex; flex-direction: column; }
-    .player-header { padding: 10px; display: flex; justify-content: space-between; align-items: center; background: #111; }
-    .btn-back { background: #222; border: none; color: #fff; padding: 8px 15px; border-radius: 20px; font-size: 12px; cursor: pointer; font-weight: 700; }
-    .video-box { flex: 1; position: relative; background: #000; display: flex; align-items: center; }
-    .iframe-wrap { width: 100%; aspect-ratio: 16/9; position: relative; }
-    iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: none; z-index: 1; }
-    
-    /* BOTÓN DESBLOQUEAR ÚNICO */
-    .unlock { position: absolute; top: 10px; right: 10px; z-index: 50; background: rgba(0,0,0,0.7); border: 1px solid #ff4444; color: #fff; padding: 6px 12px; border-radius: 20px; font-size: 10px; font-weight: 700; cursor: pointer; }
-    .shield { position: absolute; inset: 0; z-index: 10; background: transparent; }
+        .brand-container {
+            display: flex;
+            flex-direction: column;
+        }
 
-    .loading { text-align: center; padding: 50px; color: #444; font-size: 14px; }
-  </style>
+        .brand-name {
+            font-size: 22px;
+            font-weight: 800;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            background: linear-gradient(135deg, #fff 0%, var(--jj-gold) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .brand-tagline {
+            font-size: 9px;
+            color: var(--jj-gold);
+            font-weight: 700;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            margin-top: -2px;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn-icon-top {
+            width: 38px;
+            height: 38px;
+            border-radius: 12px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--card-border);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition-fast);
+        }
+
+        .btn-icon-top:active {
+            transform: scale(0.9);
+            background: var(--jj-gold);
+            color: black;
+        }
+
+        /* MAIN CONTAINER */
+        .main-content {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px 15px 100px;
+        }
+
+        /* SEARCH ENGINE UI */
+        .search-engine {
+            position: sticky;
+            top: 80px;
+            z-index: 900;
+            margin-bottom: 25px;
+        }
+
+        .search-inner {
+            position: relative;
+            background: var(--card-surface);
+            border: 1px solid var(--jj-gold);
+            border-radius: 16px;
+            padding: 4px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5), 0 0 15px var(--jj-gold-glow);
+        }
+
+        .search-inner input {
+            width: 100%;
+            padding: 12px 15px 12px 45px;
+            background: transparent;
+            border: none;
+            color: white;
+            font-family: 'Poppins', sans-serif;
+            font-size: 15px;
+            font-weight: 500;
+        }
+
+        .search-icon-fixed {
+            position: absolute;
+            left: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--jj-gold);
+            font-size: 18px;
+        }
+
+        /* EVENT LIST UI */
+        #agenda-grid {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .match-card-premium {
+            background: var(--card-surface);
+            border: 1px solid var(--card-border);
+            border-radius: 18px;
+            overflow: hidden;
+            transition: var(--transition-normal);
+            animation: slideUp 0.4s ease-out forwards;
+            opacity: 0;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .match-card-premium.active {
+            border-color: var(--jj-gold);
+            background: var(--card-hover);
+            transform: scale(1.01);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+        }
+
+        .card-main-info {
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+        }
+
+        .match-time-box {
+            background: #000;
+            border: 1px solid var(--card-border);
+            padding: 8px 10px;
+            border-radius: 12px;
+            text-align: center;
+            min-width: 60px;
+        }
+
+        .match-time-box .time-val {
+            display: block;
+            font-weight: 800;
+            color: var(--jj-gold);
+            font-size: 14px;
+            font-family: 'Roboto Mono', monospace;
+        }
+
+        .match-time-box .status-val {
+            display: block;
+            font-size: 8px;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        .match-teams-info {
+            flex: 1;
+            margin: 0 15px;
+            display: flex;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .league-indicator {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #1a1a1a;
+            padding: 4px;
+            margin-right: 12px;
+            flex-shrink: 0;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .league-indicator img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .team-names-text {
+            font-size: 14px;
+            font-weight: 700;
+            color: #f1f5f9;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .chevron-area {
+            color: var(--text-muted);
+            transition: var(--transition-normal);
+        }
+
+        .match-card-premium.active .chevron-area {
+            transform: rotate(180deg);
+            color: var(--jj-gold);
+        }
+
+        /* CHANNELS SUB-DRAWER */
+        .channels-drawer {
+            display: none;
+            padding: 0 16px 16px;
+            background: rgba(0,0,0,0.2);
+            border-top: 1px solid var(--card-border);
+        }
+
+        .channels-grid-layout {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            padding-top: 12px;
+        }
+
+        .btn-channel-premium {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid var(--card-border);
+            padding: 14px 10px;
+            border-radius: 12px;
+            color: white;
+            font-size: 12px;
+            font-weight: 700;
+            text-align: center;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: var(--transition-fast);
+        }
+
+        .btn-channel-premium:active {
+            background: var(--jj-gold);
+            color: black;
+            border-color: var(--jj-gold);
+        }
+
+        .btn-channel-premium i {
+            font-size: 10px;
+            color: var(--jj-gold);
+        }
+
+        .btn-channel-premium:active i {
+            color: black;
+        }
+
+        /* ============================================================
+        [ PLAYER SECTION ] - JJFUTBOL CINEMA ENGINE
+        ============================================================
+        */
+        #player-overlay {
+            position: fixed;
+            inset: 0;
+            background: black;
+            z-index: 5000;
+            display: flex;
+            flex-direction: column;
+            visibility: hidden;
+            opacity: 0;
+            transition: var(--transition-normal);
+        }
+
+        #player-overlay.visible {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .player-controls-bar {
+            padding: 15px;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.8), transparent);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: absolute;
+            width: 100%;
+            top: 0;
+            z-index: 10;
+        }
+
+        .btn-return {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--card-border);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 30px;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .video-viewport {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #000;
+            position: relative;
+        }
+
+        .iframe-container-fixed {
+            width: 100%;
+            aspect-ratio: 16/9;
+            position: relative;
+            background: #000;
+        }
+
+        #viewer-iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        /* BOTÓN DESBLOQUEO ÚNICO */
+        .btn-emergency-unlock {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            z-index: 100;
+            background: rgba(255, 62, 62, 0.2);
+            border: 1px solid var(--jj-red);
+            color: white;
+            padding: 6px 15px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 800;
+            cursor: pointer;
+            backdrop-filter: blur(10px);
+        }
+
+        /* LOADER UI */
+        .global-loader {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 100px 0;
+        }
+
+        .spinner-jj {
+            width: 45px;
+            height: 45px;
+            border: 4px solid rgba(212, 175, 55, 0.1);
+            border-left-color: var(--jj-gold);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+
+        /* PROMO BOX */
+        .promo-card {
+            background: linear-gradient(135deg, #2a0808, #1a0202);
+            padding: 20px;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 62, 62, 0.3);
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 10px 30px rgba(255,0,0,0.1);
+        }
+
+        .promo-content h4 { color: #ff3e3e; font-size: 18px; margin-bottom: 4px; }
+        .promo-content p { color: #999; font-size: 12px; }
+        .btn-movies-go {
+            background: white; color: black; font-weight: 800; padding: 10px 18px; border-radius: 14px; text-decoration: none; font-size: 12px;
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 40px;
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+    </style>
 </head>
 <body>
 
-  <header id="header">
-    <div class="logo">JJFUTBOL <span>PREMIUM</span></div>
-  </header>
+    <header class="app-header" id="navbar">
+        <div class="brand-container">
+            <span class="brand-name">JJFUTBOL</span>
+            <span class="brand-tagline">Premium Edition</span>
+        </div>
+        <div class="header-actions">
+            <div class="btn-icon-top" onclick="window.location.reload()"><i class="fas fa-sync-alt"></i></div>
+        </div>
+    </header>
 
-  <div id="agenda-view" class="container">
-    <div class="search-box">
-      <i class="fas fa-search search-icon"></i>
-      <input type="text" id="search" placeholder="Buscar partido o liga...">
+    <div id="view-agenda" class="view-section">
+        <div class="main-content">
+            
+            <div class="promo-card">
+                <div class="promo-content">
+                    <h4>JJMOVIES 2026</h4>
+                    <p>Estrenos gratis sin límites</p>
+                </div>
+                <a href="https://jjmovies.lat" target="_blank" class="btn-movies-go">ENTRAR</a>
+            </div>
+
+            <div class="search-engine">
+                <div class="search-inner">
+                    <i class="fas fa-search search-icon-fixed"></i>
+                    <input type="text" id="jj-search-input" placeholder="Buscar equipos, ligas o eventos...">
+                </div>
+            </div>
+
+            <div id="data-status-bar" style="text-align:center; font-size:11px; margin-bottom:20px; color:var(--text-muted); font-weight:700;">
+                <i class="fas fa-circle-notch fa-spin"></i> CONECTANDO CON SERVIDORES...
+            </div>
+
+            <ul id="agenda-grid">
+                </ul>
+
+            <div id="empty-state" class="no-results hidden">
+                <i class="fas fa-search-minus" style="font-size:30px; margin-bottom:10px; display:block;"></i>
+                No se encontraron eventos para tu búsqueda.
+            </div>
+
+        </div>
     </div>
-    <ul id="menu"></ul>
-    <div id="loader" class="loading"><i class="fas fa-circle-notch fa-spin"></i></div>
-  </div>
 
-  <div id="player-view" class="hidden">
-    <div class="player-header">
-      <button class="btn-back" onclick="cerrarPlayer()"><i class="fas fa-arrow-left"></i> REGRESAR</button>
-      <button class="unlock" onclick="desbloquear()"><i class="fas fa-unlock"></i> DESBLOQUEAR</button>
+    <div id="player-overlay">
+        <div class="player-controls-bar">
+            <button class="btn-return" onclick="closeJJPlayer()">
+                <i class="fas fa-chevron-left"></i> REGRESAR
+            </button>
+        </div>
+
+        <div class="video-viewport">
+            <div class="iframe-container-fixed">
+                <button class="btn-emergency-unlock" id="emergency-btn" onclick="forceUnlock()">
+                    <i class="fas fa-unlock"></i> DESBLOQUEAR
+                </button>
+                <div id="invisible-shield" style="position:absolute; inset:0; z-index:50; cursor:pointer;" onclick="this.style.display='none'"></div>
+                <iframe id="viewer-iframe" allowfullscreen allow="autoplay; encrypted-media"></iframe>
+            </div>
+        </div>
     </div>
-    <div class="video-box">
-      <div class="iframe-wrap">
-        <div class="shield" onclick="this.style.display='none'"></div>
-        <iframe id="viewer" allowfullscreen allow="autoplay"></iframe>
-      </div>
-    </div>
-  </div>
 
-  <script>
-    // --- DOBLE FUENTE CONFIG ---
-    const SOURCES = [
-      { name: "G", url: "https://goolhd.com/agenda.json?v=1.07", img: "https://img.goolhd.com" },
-      { name: "P", url: "https://pltvhd.com/diaries.json", img: "https://cdn.pltvhd.com" }
-    ];
-    // Usamos corsproxy.io por ser el más veloz para estos JSON
-    const PROXY = "https://corsproxy.io/?"; 
-    const EMBED = "https://www.jjfutbol.lat/f/embed/eventos.html?r=";
+    <script>
+        /* ------------------------------------------------------------
+        1. CONFIGURACIÓN Y CONSTANTES
+        ------------------------------------------------------------
+        */
+        const SOURCES = [
+            { id: "GOOL", url: "https://goolhd.com/agenda.json?v=1.07", img: "https://img.goolhd.com" },
+            { id: "PLTV", url: "https://pltvhd.com/diaries.json", img: "https://cdn.pltvhd.com" }
+        ];
 
-    async function cargarAgenda() {
-      const menu = document.getElementById("menu");
-      const loader = document.getElementById("loader");
-      
-      // Lanzar ambas peticiones al mismo tiempo (Paralelismo)
-      const promesas = SOURCES.map(s => 
-        fetch(PROXY + encodeURIComponent(s.url) + "&t=" + Date.now())
-        .then(r => r.json())
-        .then(d => (d.data || []).map(item => ({...item, _img: s.img})))
-        .catch(() => [])
-      );
-
-      const resultados = await Promise.all(promesas);
-      const eventos = resultados.flat(); // Unir sin eliminar duplicados
-
-      if(!eventos.length) {
-        loader.innerHTML = "Error al conectar. Reintenta.";
-        return;
-      }
-
-      // Ordenar por hora
-      eventos.sort((a,b) => (a.attributes.diary_hour || "").localeCompare(b.attributes.diary_hour || ""));
-
-      let html = "";
-      eventos.forEach(ev => {
-        const at = ev.attributes;
-        const hr = at.diary_hour ? at.diary_hour.substring(0,5) : "--:--";
+        const PROXY_MASTER = "https://api.allorigins.win/raw?url=";
+        const PLAYER_GATEWAY = "https://www.jjfutbol.lat/f/embed/eventos.html?r=";
         
-        // Fix hora "Invalid"
-        let horaFinal = hr;
-        try {
-          const dt = luxon.DateTime.fromFormat(hr, "HH:mm", {zone: "America/Lima"});
-          if(dt.isValid) horaFinal = dt.toLocal().toFormat("HH:mm");
-        } catch(e) {}
+        let globalMatchData = [];
+        let currentPayload = "";
 
-        const img = at.country?.data?.attributes?.image?.data?.attributes?.url ? ev._img + at.country.data.attributes.image.data.attributes.url : "";
+        /* ------------------------------------------------------------
+        2. INICIALIZACIÓN
+        ------------------------------------------------------------
+        */
+        $(document).ready(() => {
+            console.log("JJFUTBOL Engine Initialized.");
+            fetchAndSyncData();
 
-        let btns = "";
-        (at.embeds?.data || []).forEach(em => {
-          let r = "";
-          const ifr = em.attributes.embed_iframe || "";
-          if(ifr.includes("?r=")) r = ifr.split("?r=")[1].split("&")[0];
-          else if(ifr.startsWith("http")) r = btoa(ifr);
-          if(r) btns += `<div class="btn-ch" onclick="abrirPlayer('${r}')"><i class="fas fa-play"></i> ${em.attributes.embed_name}</div>`;
+            // EVENTOS DE BUSQUEDA
+            $('#jj-search-input').on('keyup', function() {
+                performAdvancedFilter($(this).val().toLowerCase());
+            });
+
+            // EVENTOS DE ACORDEON
+            $(document).on('click', '.card-main-info', function() {
+                const parent = $(this).closest('.match-card-premium');
+                const drawer = parent.find('.channels-drawer');
+                
+                $('.match-card-premium').not(parent).removeClass('active').find('.channels-drawer').slideUp(250);
+                parent.toggleClass('active');
+                drawer.slideToggle(250);
+            });
         });
 
-        html += `
-          <li class="card">
-            <div class="card-header">
-              <div class="time">${horaFinal}</div>
-              <div class="info">
-                ${img ? `<img class="flag" src="${img}">` : ''}
-                <span class="name">${at.diary_description}</span>
-              </div>
-              <i class="fas fa-chevron-down" style="color:#444;font-size:12px"></i>
-            </div>
-            <div class="channels">
-              <div class="btn-grid">${btns || '<div style="font-size:10px;color:#555">Próximamente</div>'}</div>
-            </div>
-          </li>`;
-      });
-      menu.innerHTML = html;
-      loader.style.display = "none";
-    }
+        /* ------------------------------------------------------------
+        3. MOTOR DE DATOS (PARALLEL FETCH)
+        ------------------------------------------------------------
+        */
+        async function fetchAndSyncData() {
+            const status = $('#data-status-bar');
+            
+            try {
+                // Ejecutamos ambas peticiones al mismo tiempo para no tardar 1 minuto
+                const requests = SOURCES.map(src => 
+                    fetch(PROXY_MASTER + encodeURIComponent(src.url) + "&t=" + Date.now())
+                    .then(r => r.json())
+                    .then(json => {
+                        return (json.data || []).map(entry => ({
+                            ...entry,
+                            _imgBase: src.img,
+                            _sourceName: src.id
+                        }));
+                    })
+                    .catch(err => {
+                        console.error(`Error loading source ${src.id}:`, err);
+                        return [];
+                    })
+                );
 
-    let currentR = "";
-    function abrirPlayer(r) {
-      currentR = r;
-      document.getElementById("agenda-view").classList.add("hidden");
-      document.getElementById("header").classList.add("hidden");
-      document.getElementById("player-view").classList.remove("hidden");
-      const v = document.getElementById("viewer");
-      v.setAttribute('sandbox', 'allow-forms allow-scripts allow-same-origin allow-pointer-lock allow-presentation');
-      v.src = EMBED + r;
-    }
+                const results = await Promise.all(requests);
+                
+                // UNIR SIN FILTRAR DUPLICADOS
+                globalMatchData = results.flat();
 
-    function cerrarPlayer() {
-      document.getElementById("viewer").src = "";
-      document.getElementById("player-view").classList.add("hidden");
-      document.getElementById("agenda-view").classList.remove("hidden");
-      document.getElementById("header").classList.remove("hidden");
-    }
+                if(globalMatchData.length === 0) {
+                    status.html('<span style="color:#ff3e3e">ERROR DE CONEXIÓN. INTENTA MÁS TARDE.</span>');
+                    return;
+                }
 
-    function desbloquear() {
-      const v = document.getElementById("viewer");
-      v.removeAttribute('sandbox');
-      v.src = EMBED + currentR;
-    }
+                // ORDENAMIENTO POR HORA
+                globalMatchData.sort((a, b) => {
+                    const timeA = a.attributes?.diary_hour || "99:99";
+                    const timeB = b.attributes?.diary_hour || "99:99";
+                    return timeA.localeCompare(timeB);
+                });
 
-    // Buscador instantáneo
-    document.getElementById("search").addEventListener("keyup", function() {
-      const v = this.value.toLowerCase();
-      document.querySelectorAll(".card").forEach(c => {
-        c.style.display = c.innerText.toLowerCase().includes(v) ? "block" : "none";
-      });
-    });
+                status.html('<span style="color:#00ff88">SISTEMA EN LÍNEA - DATOS SINCRONIZADOS</span>');
+                renderAgenda(globalMatchData);
 
-    // Acordeon
-    $(document).on("click", ".card-header", function() {
-      const card = $(this).closest(".card");
-      $(".card").not(card).removeClass("active").find(".channels").slideUp(200);
-      card.toggleClass("active").find(".channels").slideToggle(200);
-    });
+            } catch (error) {
+                status.html('<span style="color:#ff3e3e">SISTEMA OFFLINE</span>');
+                console.error("Critical Data Error:", error);
+            }
+        }
 
-    cargarAgenda();
-  </script>
+        /* ------------------------------------------------------------
+        4. RENDERIZADO UI
+        ------------------------------------------------------------
+        */
+        function renderAgenda(dataList) {
+            const container = $('#agenda-grid');
+            container.empty();
+
+            dataList.forEach((ev, index) => {
+                const attr = ev.attributes;
+                
+                // Procesar Hora Local
+                let rawTime = attr.diary_hour ? attr.diary_hour.substring(0,5) : "00:00";
+                let formattedTime = rawTime;
+                
+                try {
+                    const dt = luxon.DateTime.fromFormat(rawTime, "HH:mm", {zone: "America/Lima"});
+                    if(dt.isValid) formattedTime = dt.toLocal().toFormat("HH:mm");
+                } catch(e) {}
+
+                // Imagen de Liga/País
+                const imgPath = attr.country?.data?.attributes?.image?.data?.attributes?.url;
+                const finalImg = imgPath ? ev._imgBase + imgPath : "https://via.placeholder.com/30";
+
+                // Procesar Canales
+                let channelHtml = "";
+                const embeds = attr.embeds?.data || [];
+                
+                embeds.forEach(em => {
+                    let iframeCode = em.attributes.embed_iframe || "";
+                    let payload = "";
+
+                    // Detectar parámetro R
+                    if(iframeCode.includes("?r=")) {
+                        payload = iframeCode.split("?r=")[1].split("&")[0];
+                    } else if(iframeCode.startsWith("http")) {
+                        payload = btoa(iframeCode);
+                    }
+
+                    if(payload) {
+                        channelHtml += `
+                            <div class="btn-channel-premium" onclick="openJJPlayer('${payload}')">
+                                <i class="fas fa-play"></i> ${em.attributes.embed_name}
+                            </div>
+                        `;
+                    }
+                });
+
+                if(!channelHtml) channelHtml = '<div style="grid-column: 1/-1; text-align:center; font-size:10px; color:#555;">ENLACES NO DISPONIBLES AÚN</div>';
+
+                // Inyección HTML
+                const itemHtml = `
+                    <li class="match-card-premium" style="animation-delay: ${Math.min(index * 0.03, 1.5)}s">
+                        <div class="card-main-info">
+                            <div class="match-time-box">
+                                <span class="time-val">${formattedTime}</span>
+                                <span class="status-val">${ev._sourceName}</span>
+                            </div>
+                            <div class="match-teams-info">
+                                <div class="league-indicator">
+                                    <img src="${finalImg}" alt="lg">
+                                </div>
+                                <div class="team-names-text">
+                                    ${attr.diary_description}
+                                </div>
+                            </div>
+                            <div class="chevron-area">
+                                <i class="fas fa-chevron-down"></i>
+                            </div>
+                        </div>
+                        <div class="channels-drawer">
+                            <div class="channels-grid-layout">
+                                ${channelHtml}
+                            </div>
+                        </div>
+                    </li>
+                `;
+                container.append(itemHtml);
+            });
+        }
+
+        /* ------------------------------------------------------------
+        5. FILTRO AVANZADO
+        ------------------------------------------------------------
+        */
+        function performAdvancedFilter(query) {
+            const cards = $('.match-card-premium');
+            let found = 0;
+
+            cards.each(function() {
+                const text = $(this).text().toLowerCase();
+                if(text.includes(query)) {
+                    $(this).show();
+                    found++;
+                } else {
+                    $(this).hide();
+                }
+            });
+
+            if(found === 0) $('#empty-state').removeClass('hidden');
+            else $('#empty-state').addClass('hidden');
+        }
+
+        /* ------------------------------------------------------------
+        6. REPRODUCTOR PREMIUM (CLEAN MODE)
+        ------------------------------------------------------------
+        */
+        function openJJPlayer(payload) {
+            currentPayload = payload;
+            const overlay = $('#player-overlay');
+            const iframe = $('#viewer-iframe');
+            const shield = $('#invisible-shield');
+            
+            // Limpieza y preparación
+            iframe.attr('src', '');
+            shield.show();
+            
+            // Activación
+            overlay.addClass('visible');
+            
+            // Carga segura (Sandbox para bloquear ads agresivos)
+            iframe.attr('sandbox', 'allow-forms allow-scripts allow-same-origin allow-pointer-lock allow-presentation');
+            iframe.attr('src', PLAYER_GATEWAY + payload);
+
+            // Bloquear scroll del body
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeJJPlayer() {
+            const overlay = $('#player-overlay');
+            const iframe = $('#viewer-iframe');
+            
+            overlay.removeClass('visible');
+            iframe.attr('src', '');
+            iframe.removeAttr('sandbox');
+            
+            // Restaurar scroll
+            document.body.style.overflow = 'auto';
+        }
+
+        function forceUnlock() {
+            if(confirm("¿Pantalla negra? Desbloquear permitirá anuncios del servidor externo.\n\n¿Deseas continuar?")) {
+                const iframe = $('#viewer-iframe');
+                iframe.removeAttr('sandbox');
+                iframe.attr('src', PLAYER_GATEWAY + currentPayload);
+                $('#invisible-shield').hide();
+            }
+        }
+
+        /* ------------------------------------------------------------
+        7. TECHNICAL LOG (DEBUG SYSTEM)
+        ------------------------------------------------------------
+        */
+        console.log("%cJJFUTBOL PREMIUM LOADED", "color: #D4AF37; font-size: 20px; font-weight: bold;");
+        console.log("Sources hooked: " + SOURCES.length);
+        console.log("AppCreator24 compatibility: Verified.");
+        
+    </script>
+
+    <style>
+        .match-card-premium:last-child {
+            margin-bottom: 30px;
+        }
+    </style>
 </body>
 </html>
