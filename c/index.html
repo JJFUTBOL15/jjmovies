@@ -1,300 +1,182 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>JJFUTBOL TURBO</title>
-  
-  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/luxon@3.4.4/build/global/luxon.min.js"></script>
-  
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+/* global luxon, jQuery */
+$ = jQuery;
 
-  <style>
-    /* ESTILOS PREMIUM */
-    :root {
-      --bg-dark: #000000;
-      --card-bg: rgba(20, 25, 40, 0.95);
-      --card-border: rgba(255, 255, 255, 0.15);
-      --accent: #D4AF37;
-      --text-main: #ffffff;
-      --text-muted: #9ca3af;
+// ============================================================
+// ✅ URLS BASE
+// ============================================================
+const AGENDA_URL = "https://pltvhd.com/diaries.json";
+const IMG_BASE   = "https://cdn.pltvhd.com";
+
+// ============================================================
+// DOM listo
+// ============================================================
+document.addEventListener("DOMContentLoaded", function () {
+  obtenerAgenda();
+
+  $(document).on("click", ".submenu-item", function (event) {
+    event.stopPropagation();
+  });
+
+  $(document).on("click", ".toggle-submenu", function () {
+    const $submenuElement = $(this).closest("li").find("ul");
+    if (!$submenuElement.is(":visible")) {
+      $(".toggle-submenu").not(this).closest("li").find("ul").slideUp();
+      $submenuElement.slideDown();
+    } else {
+      $submenuElement.slideUp();
     }
+  });
 
-    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  setInterval(upgrade, 60000);
+  window.scrollTo({ top: 0, behavior: "smooth" });
+});
 
-    body {
-      font-family: 'Open Sans', sans-serif;
-      background: linear-gradient(180deg, #0f172a 0%, #000000 100%);
-      margin: 0; padding: 0; color: var(--text-main);
-      min-height: 100vh; overflow-x: hidden;
-    }
+// ============================================================
+// Refresco automático
+// ============================================================
+function upgrade() {
+  const menuElement = document.getElementById("menu");
+  const titleAgendaElement = document.getElementById("title-agenda");
+  refrescarAgenda(menuElement, titleAgendaElement);
+  console.info("♻️ Agenda actualizada automáticamente");
+}
 
-    /* HEADER */
-    header {
-      text-align: center; padding: 15px 0;
-      background: rgba(0,0,0,0.9); backdrop-filter: blur(10px);
-      position: sticky; top: 0; z-index: 50; border-bottom: 1px solid var(--card-border);
-    }
-    .app-title { font-family: 'Poppins', sans-serif; font-size: 22px; font-weight: 800; margin: 0; color: white; letter-spacing: 1px; }
-    .app-subtitle { font-size: 10px; color: var(--accent); font-weight: 700; letter-spacing: 3px; }
+// ============================================================
+// Utilidades
+// ============================================================
+function convertToUserTimeZone(utcHour) {
+  const DateTime   = luxon.DateTime;
+  const utcDate    = DateTime.fromISO(utcHour, { zone: "America/Lima" });
+  return utcDate.toLocal().toFormat("HH:mm");
+}
 
-    .container { max-width: 800px; margin: 0 auto; padding: 15px; padding-bottom: 80px; }
-    .hidden { display: none !important; }
+// Evita desfases: construye Date local a partir de YYYY-MM-DD
+function formatLocalISODateToEs(dateStr) {
+  const [y, m, d] = (dateStr || "").split("-").map(Number);
+  if (!y || !m || !d) return null;
+  const dt = new Date(y, m - 1, d);
+  return dt.toLocaleDateString("es-ES", { year: "numeric", month: "long", day: "numeric" });
+}
 
-    /* BUSCADOR */
-    .search-box { position: relative; margin-bottom: 15px; }
-    .search-input {
-      width: 100%; background: rgba(255,255,255,0.1); border: 1px solid #444;
-      padding: 10px 15px 10px 40px; border-radius: 20px; color: white; outline: none; font-size: 14px;
-    }
-    .search-input:focus { border-color: var(--accent); }
-    .search-icon { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: var(--accent); }
+function formatTodayEs() {
+  return new Date().toLocaleDateString("es-ES", { year: "numeric", month: "long", day: "numeric" });
+}
 
-    /* TARJETAS */
-    #menu { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px; }
+// Toma la fecha más frecuente en el JSON (por si llegan varios días)
+function extractDiaryDate(result) {
+  const arr = (result && result.data) ? result.data : [];
+  const dates = arr.map(it => it?.attributes?.date_diary).filter(Boolean);
+  if (dates.length === 0) return null;
+  const counts = Object.create(null);
+  let best = dates[0], max = 0;
+  for (const d of dates) {
+    counts[d] = (counts[d] || 0) + 1;
+    if (counts[d] > max) { max = counts[d]; best = d; }
+  }
+  return best; // YYYY-MM-DD
+}
 
-    .match-card {
-      background: var(--card-bg); border: 1px solid var(--card-border);
-      border-radius: 12px; overflow: hidden; position: relative;
-    }
-    .match-card.active { border-color: var(--accent); background: #1a1a2e; }
+function setAgendaTitle(result, titleAgendaElement) {
+  const dd   = extractDiaryDate(result);
+  const text = dd ? formatLocalISODateToEs(dd) : formatTodayEs();
+  if (titleAgendaElement) titleAgendaElement.innerHTML = "Agenda - " + (text || formatTodayEs());
+}
 
-    .card-header { padding: 10px 15px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; }
-    
-    .time-badge {
-      background: #111; padding: 4px 0; width: 45px; text-align: center; border-radius: 6px; border: 1px solid #333;
-      display: flex; flex-direction: column; justify-content: center;
-    }
-    .time-badge span { color: var(--accent); font-weight: 700; font-size: 12px; }
-    .time-badge small { color: #666; font-size: 8px; }
+// ============================================================
+// Refrescar (NO limpia bruscamente el DOM)
+// ============================================================
+async function refrescarAgenda(menuElement, titleAgendaElement) {
+  // fallback si no te los pasan
+  menuElement       = menuElement       || document.getElementById("menu");
+  titleAgendaElement= titleAgendaElement|| document.getElementById("title-agenda");
 
-    .match-info { flex: 1; display: flex; align-items: center; margin: 0 12px; overflow: hidden; }
-    .league-flag { width: 25px; height: 25px; border-radius: 50%; margin-right: 10px; border: 1px solid rgba(255,255,255,0.2); }
-    .match-title { font-size: 13px; font-weight: 600; color: #fff; line-height: 1.2; }
+  try {
+    const response = await fetch(AGENDA_URL, { cache: "no-store" });
+    const result   = await response.json();
+    renderAgenda(result, menuElement, titleAgendaElement);
+  } catch (error) {
+    console.error("Error al refrescar agenda:", error);
+  }
+}
 
-    /* CANALES */
-    .channels-container { display: none; padding: 0 12px 12px; background: rgba(0,0,0,0.3); border-top: 1px solid #333; }
-    .channels-list { list-style: none; padding: 10px 0 0; margin: 0; display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+// ============================================================
+// Carga inicial
+// ============================================================
+async function obtenerAgenda() {
+  const menuElement        = document.getElementById("menu");
+  const titleAgendaElement = document.getElementById("title-agenda");
 
-    .channel-btn {
-      display: flex; align-items: center; justify-content: center; gap: 5px;
-      padding: 10px; background: #222; border: 1px solid #444;
-      border-radius: 8px; color: white; font-size: 11px; font-weight: 600; cursor: pointer;
-    }
-    .channel-btn:active { background: var(--accent); color: black; }
+  try {
+    const response = await fetch(AGENDA_URL, { cache: "no-store" });
+    const result   = await response.json();
+    renderAgenda(result, menuElement, titleAgendaElement);
+  } catch (error) {
+    console.error("❌ Error al cargar la agenda:", error);
+  }
+}
 
-    /* REPRODUCTOR */
-    #view-player { background: black; position: fixed; inset: 0; z-index: 100; display: flex; flex-direction: column; }
-    .player-header { padding: 10px; display: flex; align-items: center; background: #111; }
-    .btn-back { background: none; border: none; color: white; font-size: 14px; cursor: pointer; padding: 5px 15px; border: 1px solid #333; border-radius: 20px; }
+// ============================================================
+// Renderizar HTML de la agenda
+// ============================================================
+function renderAgenda(result, menuElement, titleAgendaElement) {
+  if (!result || !result.data) {
+    if (titleAgendaElement) titleAgendaElement.innerHTML = "Agenda - Sin datos";
+    if (menuElement) menuElement.innerHTML = "";
+    return;
+  }
 
-    .viewer-wrapper { width: 100%; max-width: 900px; margin: auto; padding: 0; position:relative; }
-    .video-box { position: relative; width: 100%; padding-bottom: 56.25%; background: #000; }
-    iframe#viewer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
+  // Título desde JSON (fecha más frecuente) con fallback
+  setAgendaTitle(result, titleAgendaElement);
 
-    .click-shield { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 10; background: transparent; }
-    .unlock-btn {
-      position: absolute; top: 10px; right: 10px; z-index: 50; background: rgba(255,0,0,0.6);
-      color: white; padding: 5px 10px; border-radius: 20px; font-size: 10px; cursor: pointer; display: none; border: 1px solid red;
-    }
+  // Ordenar por fecha + hora (siempre que existan ambas)
+  const data = (result.data || []).slice().sort((a, b) => {
+    const A = (a?.attributes?.date_diary || "") + " " + (a?.attributes?.diary_hour || "");
+    const B = (b?.attributes?.date_diary || "") + " " + (b?.attributes?.diary_hour || "");
+    return A.localeCompare(B);
+  });
 
-    .loading-container { text-align: center; padding: 80px 0; color: #888; font-size: 12px; }
-  </style>
-</head>
-<body>
+  // Construcción del HTML
+  let html = "";
+  data.forEach((value) => {
+    const attr   = value.attributes || {};
+    const embeds = (attr.embeds && attr.embeds.data) || [];
 
-  <header>
-    <div class="app-title">JJFUTBOL</div>
-    <div class="app-subtitle">TURBO</div>
-  </header>
+    let imageUrl = `${IMG_BASE}/uploads/sin_imagen_d36205f0e8.png`;
+    const flag   = attr.country?.data?.attributes?.image?.data?.attributes?.url;
+    if (flag) imageUrl = `${IMG_BASE}${flag}`;
 
-  <div id="view-agenda">
-    <div class="container">
-      <div class="search-box">
-        <i class="fas fa-search search-icon"></i>
-        <input type="text" id="searchInput" class="search-input" placeholder="Buscar partido...">
-      </div>
+    html += `
+      <li class="toggle-submenu" style="padding: 0.5rem; border-radius: 0.5rem; cursor: pointer; list-style: none;">
+        <div style="display: flex; align-items: center; justify-content: space-between;">
+          <div style="display: flex; align-items: center;">
+            <time datetime="${attr.diary_hour || ""}" style="width: 3rem; text-align: center; font-weight: 700; font-size: 15px; font-family: Arial, Helvetica, sans-serif;">
+              ${attr.diary_hour ? convertToUserTimeZone(attr.diary_hour) : "--:--"}
+            </time>
+            <img loading="lazy" src="${imageUrl}" alt="bandera" style="margin-left: 0.5rem; object-fit: cover; height: 1.5rem; width: 1.5rem;">
+            <span style="flex: 1; margin-left: 1rem; text-align: left; font-weight: 700; color: #2d3748; font-family: Arial, Helvetica, sans-serif; font-size: 15px;">
+              ${attr.diary_description || "Evento sin título"}
+            </span>
+          </div>
+        </div>
+        <ul style="margin-left: 1rem; border-radius: 0.5rem; display: none;">
+          ${embeds.map((embed) => {
+            if (!embed || !embed.attributes) return "";
+            const urlComplete = embed.attributes.embed_iframe || "/star-plus";
+            return `
+              <div class="submenu" style="padding-top: 8px;">
+                <a href="${urlComplete}" class="submenu-item" style="font-size: 0.875rem; color: #4a5568; text-decoration: none; transition: color 0.3s;">
+                  <li style="padding: 0.5rem 0; width: 100%; display: flex; align-items: center; list-style: none;">
+                    <img src="https://img.icons8.com/?size=10&id=59862&format=png&color=000000" style="margin-right: 0.5rem;" alt="play">
+                    <span style="font-family: Arial, Helvetica, sans-serif; font-size: 15px;">
+                      ${embed.attributes.embed_name || "Ver enlace"}
+                    </span>
+                  </li>
+                </a>
+              </div>`;
+          }).join("")}
+        </ul>
+      </li>`;
+  });
 
-      <h3 id="status-text" style="text-align:center; color:white; font-size:10px; margin-bottom:10px; opacity:0.5;">CONECTANDO...</h3>
-      
-      <ul id="menu"></ul>
-    </div>
-  </div>
-
-  <div id="view-player" class="hidden">
-    <div class="player-header">
-      <button class="btn-back" onclick="closePlayer()"><i class="fas fa-arrow-left"></i> Volver</button>
-    </div>
-    <div class="viewer-wrapper">
-      <div class="video-box">
-        <button class="unlock-btn" id="unlock-btn" onclick="desbloquear()">Desbloquear</button>
-        <div id="click-shield" class="click-shield" onclick="hideShield()"></div>
-        <iframe id="viewer" src="" allowfullscreen></iframe>
-      </div>
-    </div>
-  </div>
-
-  <script>
-    // ============================================================
-    // ⚡ SISTEMA TITAN TURBO (Race Mode)
-    // ============================================================
-    
-    // Lista de URLs a probar SIMULTÁNEAMENTE
-    // El script lanzará las 3 a la vez y usará la primera que responda.
-    const TARGET_URL = "https://goolhd.com/agenda.json?v=1.07";
-    const SOURCES = [
-      "https://corsproxy.io/?" + TARGET_URL,  // Suele ser el más rápido
-      "https://api.allorigins.win/raw?url=" + encodeURIComponent(TARGET_URL),
-      "https://api.codetabs.com/v1/proxy?quest=" + encodeURIComponent(TARGET_URL)
-    ];
-
-    const IMG_BASE = "https://img.goolhd.com";
-
-    document.addEventListener("DOMContentLoaded", () => {
-      iniciarCargaTurbo();
-      
-      // Buscador
-      $('#searchInput').on('keyup', function() {
-        var value = $(this).val().toLowerCase();
-        $("#menu li").filter(function() {
-          $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
-        });
-      });
-
-      $(document).on("click", ".match-card", function() {
-        const card = $(this);
-        $('.match-card').not(card).removeClass('active').find('.channels-container').slideUp(200);
-        card.toggleClass('active').find('.channels-container').slideToggle(200);
-      });
-      
-      $(document).on("click", ".channel-btn", e => e.stopPropagation());
-    });
-
-    // Esta función lanza todas las peticiones a la vez (Carrera)
-    async function iniciarCargaTurbo() {
-      const menu = document.getElementById("menu");
-      const status = document.getElementById("status-text");
-      
-      menu.innerHTML = '<div class="loading-container"><i class="fas fa-bolt fa-spin"></i><br>Buscando señal rápida...</div>';
-      
-      try {
-        // Lanzar la carrera (Promise.any toma el PRIMERO que funcione)
-        const response = await Promise.any(
-          SOURCES.map(url => fetch(url + "&t=" + Date.now()).then(res => {
-            if (!res.ok) throw new Error("Fallo");
-            return res.json();
-          }))
-        );
-
-        if (response && response.data) {
-          status.textContent = "CONECTADO";
-          renderizar(response.data);
-        } else {
-          throw new Error("Datos vacíos");
-        }
-
-      } catch (error) {
-        menu.innerHTML = `
-          <div class="loading-container">
-            <i class="fas fa-wifi" style="color:#ef4444; font-size:20px;"></i><br><br>
-            NO SE PUDO CONECTAR<br>
-            <small style="font-size:9px">GoolHD bloqueó todas las conexiones.</small>
-          </div>`;
-        status.textContent = "OFFLINE";
-      }
-    }
-
-    function renderizar(list) {
-      const menu = document.getElementById("menu");
-      
-      // Ordenar
-      list.sort((a,b) => (a.attributes.diary_hour || "00:00").localeCompare(b.attributes.diary_hour || "00:00"));
-
-      let html = "";
-      list.forEach((item, i) => {
-        const attr = item.attributes || {};
-        
-        let hora = "--:--";
-        if(attr.diary_hour) {
-           try {
-              const dt = luxon.DateTime.fromFormat(attr.diary_hour.substring(0,5), "HH:mm", {zone:"America/Lima"});
-              if(dt.isValid) hora = dt.toLocal().toFormat("HH:mm");
-              else hora = attr.diary_hour.substring(0,5);
-           } catch(e) { hora = attr.diary_hour; }
-        }
-
-        const imgPath = attr.country?.data?.attributes?.image?.data?.attributes?.url;
-        const img = imgPath ? IMG_BASE + imgPath : "https://via.placeholder.com/24";
-
-        let btns = "";
-        (attr.embeds?.data || []).forEach(em => {
-          let raw = em.attributes.embed_iframe || "";
-          let r = "";
-          
-          if(raw.includes("?r=")) r = raw.split("?r=")[1].split("&")[0];
-          else if(raw.startsWith("http")) r = btoa(raw);
-
-          if(r) {
-            btns += `<li><div class="channel-btn" onclick="play('${r}')"><i class="fas fa-play"></i> ${em.attributes.embed_name}</div></li>`;
-          }
-        });
-
-        if(!btns) btns = '<li style="text-align:center;font-size:10px;opacity:0.5;padding:10px;">Sin enlaces</li>';
-
-        html += `
-          <li class="match-card" style="animation:fadeIn 0.5s ease forwards; animation-delay:${Math.min(i*0.05, 1)}s; opacity:0">
-            <div class="card-header">
-              <div class="time-badge"><span>${hora}</span><small>Hora</small></div>
-              <div class="match-info">
-                <img class="league-flag" src="${img}">
-                <span class="match-title">${attr.diary_description}</span>
-              </div>
-              <i class="fas fa-chevron-down toggle-icon"></i>
-            </div>
-            <div class="channels-container">
-              <ul class="channels-list">${btns}</ul>
-            </div>
-          </li>`;
-      });
-      menu.innerHTML = html;
-    }
-
-    // --- REPRODUCTOR ---
-    const viewer = document.getElementById('viewer');
-    const shield = document.getElementById('click-shield');
-    const unlockBtn = document.getElementById('unlock-btn');
-    let currR = "";
-    const EMBED = "https://www.jjfutbol.lat/f/embed/eventos.html?r=";
-
-    function play(r) {
-      currR = r;
-      document.getElementById('view-agenda').classList.add('hidden');
-      document.getElementById('view-player').classList.remove('hidden');
-      
-      viewer.setAttribute('sandbox', 'allow-forms allow-scripts allow-same-origin allow-pointer-lock allow-presentation');
-      viewer.src = EMBED + r;
-      
-      shield.style.display = 'block';
-      unlockBtn.style.display = 'flex';
-    }
-
-    function closePlayer() {
-      viewer.src = "";
-      viewer.removeAttribute('sandbox');
-      document.getElementById('view-player').classList.add('hidden');
-      document.getElementById('view-agenda').classList.remove('hidden');
-    }
-
-    function hideShield() { shield.style.display = 'none'; }
-    function desbloquear() {
-      viewer.removeAttribute('sandbox');
-      viewer.src = EMBED + currR;
-      shield.style.display = 'none';
-      unlockBtn.style.display = 'none';
-    }
-  </script>
-  <style>@keyframes fadeIn { to{opacity:1;transform:translateY(0)} from{opacity:0;transform:translateY(10px)} }</style>
-</body>
-</html>
+  if (menuElement) menuElement.innerHTML = html;
+}
