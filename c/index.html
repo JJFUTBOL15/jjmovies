@@ -1,182 +1,243 @@
-/* global luxon, jQuery */
-$ = jQuery;
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>JJFUTBOL FAST</title>
+  
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/luxon@3.4.4/build/global/luxon.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
-// ============================================================
-// ✅ URLS BASE
-// ============================================================
-const AGENDA_URL = "https://pltvhd.com/diaries.json";
-const IMG_BASE   = "https://cdn.pltvhd.com";
+  <style>
+    :root { --bg:#0a0a0a; --card:#141414; --border:#222; --accent:#eab308; --text:#fff; }
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    body { background: var(--bg); color: var(--text); font-family: 'Roboto', sans-serif; margin: 0; padding: 0; }
+    .hidden { display: none !important; }
 
-// ============================================================
-// DOM listo
-// ============================================================
-document.addEventListener("DOMContentLoaded", function () {
-  obtenerAgenda();
+    /* HEADER */
+    header { background: #000; padding: 15px; border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 50; text-align: center; }
+    .brand { font-family: 'Oswald'; font-size: 22px; font-weight: 700; letter-spacing: 1px; }
+    .brand span { color: var(--accent); }
 
-  $(document).on("click", ".submenu-item", function (event) {
-    event.stopPropagation();
-  });
+    .container { padding: 10px; max-width: 800px; margin: 0 auto; padding-bottom: 60px; }
 
-  $(document).on("click", ".toggle-submenu", function () {
-    const $submenuElement = $(this).closest("li").find("ul");
-    if (!$submenuElement.is(":visible")) {
-      $(".toggle-submenu").not(this).closest("li").find("ul").slideUp();
-      $submenuElement.slideDown();
-    } else {
-      $submenuElement.slideUp();
+    /* BUSCADOR */
+    .search-wrap { position: relative; margin-bottom: 15px; }
+    .search-input { width: 100%; background: #1a1a1a; border: 1px solid #333; padding: 12px 15px 12px 40px; border-radius: 8px; color: white; outline: none; font-size: 14px; }
+    .search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #666; }
+
+    /* LISTA */
+    #menu { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px; }
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+    .card.active { border-color: var(--accent); background: #1a1a1a; }
+    .card-head { padding: 12px; display: flex; align-items: center; gap: 10px; cursor: pointer; }
+    .time { font-family: 'Oswald'; font-size: 14px; color: var(--accent); min-width: 45px; text-align: center; }
+    .info { flex: 1; overflow: hidden; }
+    .title { font-size: 13px; font-weight: 600; line-height: 1.2; margin-bottom: 2px; }
+    .league { font-size: 10px; color: #888; text-transform: uppercase; font-weight: 700; display: flex; align-items: center; gap: 5px; }
+    .flag { width: 16px; height: 16px; object-fit: contain; border-radius: 50%; }
+    
+    /* BOTONES */
+    .channels { display: none; padding: 0 12px 12px; border-top: 1px solid #222; }
+    .grid-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px; }
+    .btn { background: #222; color: white; padding: 10px; border-radius: 6px; text-align: center; font-size: 11px; font-weight: 600; cursor: pointer; border: 1px solid #333; display: flex; align-items: center; justify-content: center; gap: 6px; }
+    .btn:active { background: var(--accent); color: black; border-color: var(--accent); }
+
+    /* REPRODUCTOR */
+    #player-view { position: fixed; inset: 0; background: black; z-index: 100; display: flex; flex-direction: column; }
+    .player-nav { padding: 10px; background: #111; display: flex; justify-content: space-between; align-items: center; }
+    .btn-back { background: none; border: none; color: white; font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 5px; cursor: pointer; }
+    .video-area { flex: 1; display: flex; align-items: center; justify-content: center; position: relative; width: 100%; background: #000; }
+    .iframe-box { width: 100%; aspect-ratio: 16/9; position: relative; background: #000; }
+    iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
+    
+    /* PROTECCIÓN INVISIBLE */
+    .invisible-shield { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 20; background: transparent; }
+    .unlock-icon { background: rgba(255,255,255,0.1); width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; color: #666; }
+    .loading { text-align: center; padding: 40px; color: #444; font-size: 12px; }
+  </style>
+</head>
+<body>
+
+  <div id="agenda-view">
+    <header>
+      <div class="brand">JJFUTBOL <span>MAX</span></div>
+    </header>
+    <div class="container">
+      <div class="search-wrap">
+        <i class="fas fa-search search-icon"></i>
+        <input type="text" id="search" class="search-input" placeholder="Buscar evento...">
+      </div>
+      <ul id="menu"></ul>
+      <div id="loader" class="loading"><i class="fas fa-circle-notch fa-spin"></i> Conectando...</div>
+    </div>
+  </div>
+
+  <div id="player-view" class="hidden">
+    <div class="player-nav">
+      <button class="btn-back" onclick="cerrar()"><i class="fas fa-arrow-left"></i> Regresar</button>
+      <div class="unlock-icon" onclick="desbloquear()"><i class="fas fa-lock"></i></div>
+    </div>
+    <div class="video-area">
+      <div class="iframe-box">
+        <div id="shield" class="invisible-shield" onclick="this.style.display='none'"></div>
+        <iframe id="viewer" allowfullscreen></iframe>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ==========================================
+    // CONFIGURACIÓN DE VELOCIDAD
+    // ==========================================
+    const TARGET = "https://pltvhd.com/diaries.json";
+    const IMG_BASE = "https://cdn.pltvhd.com";
+    const EMBED_BASE = "https://www.jjfutbol.lat/f/embed/eventos.html?r=";
+
+    // Lanzamos 3 peticiones a la vez. La primera que llegue se usa.
+    const ENDPOINTS = [
+      "https://corsproxy.io/?" + TARGET, // Opción 1: Proxy Rápido
+      "https://api.allorigins.win/raw?url=" + encodeURIComponent(TARGET), // Opción 2: Proxy Estable
+      "https://api.codetabs.com/v1/proxy?quest=" + encodeURIComponent(TARGET) // Opción 3: Respaldo
+    ];
+
+    $(document).ready(() => {
+      cargarRapido();
+
+      $('#search').on('keyup', function() {
+        var v = $(this).val().toLowerCase();
+        $(".card").toggle(function() { return $(this).text().toLowerCase().indexOf(v) > -1 });
+      });
+
+      $(document).on('click', '.card-head', function() {
+        var p = $(this).parent();
+        $('.card').not(p).removeClass('active').find('.channels').hide();
+        p.toggleClass('active').find('.channels').toggle();
+      });
+
+      $(document).on('click', '.btn', function(e) {
+        e.stopPropagation();
+        abrir($(this).data('r'));
+      });
+    });
+
+    async function cargarRapido() {
+      const loader = $('#loader');
+      
+      try {
+        // Promise.any espera a que la PRIMERA promesa tenga éxito
+        const response = await Promise.any(
+          ENDPOINTS.map(url => fetch(url + "&t=" + Date.now()).then(res => {
+            if (!res.ok) throw new Error("Fallo");
+            return res.json();
+          }))
+        );
+
+        if(response && response.data) {
+          render(response.data);
+          loader.hide();
+        } else {
+          throw new Error("Datos vacíos");
+        }
+
+      } catch (e) {
+        loader.html("Error de conexión. Reintentando...");
+        // Reintento automático en 3 seg
+        setTimeout(cargarRapido, 3000);
+      }
     }
-  });
 
-  setInterval(upgrade, 60000);
-  window.scrollTo({ top: 0, behavior: "smooth" });
-});
+    function render(list) {
+      const menu = $('#menu');
+      menu.empty();
 
-// ============================================================
-// Refresco automático
-// ============================================================
-function upgrade() {
-  const menuElement = document.getElementById("menu");
-  const titleAgendaElement = document.getElementById("title-agenda");
-  refrescarAgenda(menuElement, titleAgendaElement);
-  console.info("♻️ Agenda actualizada automáticamente");
-}
+      if(list.length === 0) {
+        menu.html('<div class="loading">No hay eventos hoy.</div>');
+        return;
+      }
 
-// ============================================================
-// Utilidades
-// ============================================================
-function convertToUserTimeZone(utcHour) {
-  const DateTime   = luxon.DateTime;
-  const utcDate    = DateTime.fromISO(utcHour, { zone: "America/Lima" });
-  return utcDate.toLocal().toFormat("HH:mm");
-}
+      // Ordenar por hora
+      list.sort((a,b) => (a.attributes.diary_hour||"").localeCompare(b.attributes.diary_hour||""));
+      
+      let html = "";
+      list.forEach((ev) => {
+        const at = ev.attributes;
+        
+        // Hora local
+        let time = at.diary_hour ? at.diary_hour.substring(0,5) : "--:--";
+        try { time = luxon.DateTime.fromFormat(time, "HH:mm", {zone:"America/Lima"}).toLocal().toFormat("HH:mm"); } catch(e){}
+        
+        // Imagen
+        const imgPath = at.country?.data?.attributes?.image?.data?.attributes?.url;
+        const img = imgPath ? IMG_BASE + imgPath : "https://via.placeholder.com/20";
 
-// Evita desfases: construye Date local a partir de YYYY-MM-DD
-function formatLocalISODateToEs(dateStr) {
-  const [y, m, d] = (dateStr || "").split("-").map(Number);
-  if (!y || !m || !d) return null;
-  const dt = new Date(y, m - 1, d);
-  return dt.toLocaleDateString("es-ES", { year: "numeric", month: "long", day: "numeric" });
-}
+        // Botones
+        let btns = "";
+        (at.embeds?.data || []).forEach(em => {
+          let url = em.attributes.embed_iframe || "";
+          let r = "";
+          
+          if(url.includes("?r=")) r = url.split("?r=")[1].split("&")[0];
+          else if(url.startsWith("http")) r = btoa(url);
+          
+          if(r) btns += `<div class="btn" data-r="${r}"><i class="fas fa-play"></i> ${em.attributes.embed_name}</div>`;
+        });
 
-function formatTodayEs() {
-  return new Date().toLocaleDateString("es-ES", { year: "numeric", month: "long", day: "numeric" });
-}
+        if(!btns) btns = '<div style="text-align:center;font-size:10px;color:#555;">Sin señal</div>';
 
-// Toma la fecha más frecuente en el JSON (por si llegan varios días)
-function extractDiaryDate(result) {
-  const arr = (result && result.data) ? result.data : [];
-  const dates = arr.map(it => it?.attributes?.date_diary).filter(Boolean);
-  if (dates.length === 0) return null;
-  const counts = Object.create(null);
-  let best = dates[0], max = 0;
-  for (const d of dates) {
-    counts[d] = (counts[d] || 0) + 1;
-    if (counts[d] > max) { max = counts[d]; best = d; }
-  }
-  return best; // YYYY-MM-DD
-}
+        html += `
+          <li class="card">
+            <div class="card-head">
+              <div class="time">${time}</div>
+              <div class="info">
+                <div class="title">${at.diary_description}</div>
+                <div class="league">
+                  <img class="flag" src="${img}"> ${at.league_name || "Mundo"}
+                </div>
+              </div>
+              <i class="fas fa-chevron-down" style="font-size:12px;color:#666"></i>
+            </div>
+            <div class="channels">
+              <div class="grid-btns">${btns}</div>
+            </div>
+          </li>`;
+      });
 
-function setAgendaTitle(result, titleAgendaElement) {
-  const dd   = extractDiaryDate(result);
-  const text = dd ? formatLocalISODateToEs(dd) : formatTodayEs();
-  if (titleAgendaElement) titleAgendaElement.innerHTML = "Agenda - " + (text || formatTodayEs());
-}
+      menu.html(html);
+    }
 
-// ============================================================
-// Refrescar (NO limpia bruscamente el DOM)
-// ============================================================
-async function refrescarAgenda(menuElement, titleAgendaElement) {
-  // fallback si no te los pasan
-  menuElement       = menuElement       || document.getElementById("menu");
-  titleAgendaElement= titleAgendaElement|| document.getElementById("title-agenda");
+    // --- REPRODUCTOR ---
+    const v = document.getElementById('viewer');
+    const s = document.getElementById('shield');
+    let savedR = "";
 
-  try {
-    const response = await fetch(AGENDA_URL, { cache: "no-store" });
-    const result   = await response.json();
-    renderAgenda(result, menuElement, titleAgendaElement);
-  } catch (error) {
-    console.error("Error al refrescar agenda:", error);
-  }
-}
+    function abrir(r) {
+      savedR = r;
+      $('#agenda-view').addClass('hidden');
+      $('#player-view').removeClass('hidden');
+      
+      // Sandbox activado (bloquea popups)
+      v.setAttribute('sandbox', 'allow-forms allow-scripts allow-same-origin allow-pointer-lock allow-presentation');
+      v.src = EMBED_BASE + r;
+      s.style.display = 'block'; 
+    }
 
-// ============================================================
-// Carga inicial
-// ============================================================
-async function obtenerAgenda() {
-  const menuElement        = document.getElementById("menu");
-  const titleAgendaElement = document.getElementById("title-agenda");
+    function cerrar() {
+      v.src = "";
+      v.removeAttribute('sandbox');
+      $('#player-view').addClass('hidden');
+      $('#agenda-view').removeClass('hidden');
+    }
 
-  try {
-    const response = await fetch(AGENDA_URL, { cache: "no-store" });
-    const result   = await response.json();
-    renderAgenda(result, menuElement, titleAgendaElement);
-  } catch (error) {
-    console.error("❌ Error al cargar la agenda:", error);
-  }
-}
-
-// ============================================================
-// Renderizar HTML de la agenda
-// ============================================================
-function renderAgenda(result, menuElement, titleAgendaElement) {
-  if (!result || !result.data) {
-    if (titleAgendaElement) titleAgendaElement.innerHTML = "Agenda - Sin datos";
-    if (menuElement) menuElement.innerHTML = "";
-    return;
-  }
-
-  // Título desde JSON (fecha más frecuente) con fallback
-  setAgendaTitle(result, titleAgendaElement);
-
-  // Ordenar por fecha + hora (siempre que existan ambas)
-  const data = (result.data || []).slice().sort((a, b) => {
-    const A = (a?.attributes?.date_diary || "") + " " + (a?.attributes?.diary_hour || "");
-    const B = (b?.attributes?.date_diary || "") + " " + (b?.attributes?.diary_hour || "");
-    return A.localeCompare(B);
-  });
-
-  // Construcción del HTML
-  let html = "";
-  data.forEach((value) => {
-    const attr   = value.attributes || {};
-    const embeds = (attr.embeds && attr.embeds.data) || [];
-
-    let imageUrl = `${IMG_BASE}/uploads/sin_imagen_d36205f0e8.png`;
-    const flag   = attr.country?.data?.attributes?.image?.data?.attributes?.url;
-    if (flag) imageUrl = `${IMG_BASE}${flag}`;
-
-    html += `
-      <li class="toggle-submenu" style="padding: 0.5rem; border-radius: 0.5rem; cursor: pointer; list-style: none;">
-        <div style="display: flex; align-items: center; justify-content: space-between;">
-          <div style="display: flex; align-items: center;">
-            <time datetime="${attr.diary_hour || ""}" style="width: 3rem; text-align: center; font-weight: 700; font-size: 15px; font-family: Arial, Helvetica, sans-serif;">
-              ${attr.diary_hour ? convertToUserTimeZone(attr.diary_hour) : "--:--"}
-            </time>
-            <img loading="lazy" src="${imageUrl}" alt="bandera" style="margin-left: 0.5rem; object-fit: cover; height: 1.5rem; width: 1.5rem;">
-            <span style="flex: 1; margin-left: 1rem; text-align: left; font-weight: 700; color: #2d3748; font-family: Arial, Helvetica, sans-serif; font-size: 15px;">
-              ${attr.diary_description || "Evento sin título"}
-            </span>
-          </div>
-        </div>
-        <ul style="margin-left: 1rem; border-radius: 0.5rem; display: none;">
-          ${embeds.map((embed) => {
-            if (!embed || !embed.attributes) return "";
-            const urlComplete = embed.attributes.embed_iframe || "/star-plus";
-            return `
-              <div class="submenu" style="padding-top: 8px;">
-                <a href="${urlComplete}" class="submenu-item" style="font-size: 0.875rem; color: #4a5568; text-decoration: none; transition: color 0.3s;">
-                  <li style="padding: 0.5rem 0; width: 100%; display: flex; align-items: center; list-style: none;">
-                    <img src="https://img.icons8.com/?size=10&id=59862&format=png&color=000000" style="margin-right: 0.5rem;" alt="play">
-                    <span style="font-family: Arial, Helvetica, sans-serif; font-size: 15px;">
-                      ${embed.attributes.embed_name || "Ver enlace"}
-                    </span>
-                  </li>
-                </a>
-              </div>`;
-          }).join("")}
-        </ul>
-      </li>`;
-  });
-
-  if (menuElement) menuElement.innerHTML = html;
-}
+    function desbloquear() {
+      if(confirm("¿Pantalla negra? Desbloquear permitirá anuncios.")) {
+        v.removeAttribute('sandbox');
+        v.src = EMBED_BASE + savedR;
+        s.style.display = 'none';
+      }
+    }
+  </script>
+</body>
+</html>
