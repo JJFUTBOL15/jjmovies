@@ -1,243 +1,227 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>JJFUTBOL FAST</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+  <title>JJFUTBOL PREMIUM DOBLE</title>
   
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/luxon@3.4.4/build/global/luxon.min.js"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
   <style>
-    :root { --bg:#0a0a0a; --card:#141414; --border:#222; --accent:#eab308; --text:#fff; }
+    :root {
+      --bg-dark: #000000;
+      --card-bg: rgba(20, 25, 40, 0.85);
+      --card-border: rgba(255, 255, 255, 0.1);
+      --accent: #D4AF37;
+      --text-main: #ffffff;
+      --text-muted: #9ca3af;
+    }
+
     * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-    body { background: var(--bg); color: var(--text); font-family: 'Roboto', sans-serif; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #0f172a 0%, #000000 100%);
+      margin: 0; padding: 0; color: var(--text-main);
+      min-height: 100vh; overflow-x: hidden;
+    }
+
+    header {
+      text-align: center; padding: 20px 0 10px;
+      background: linear-gradient(to bottom, rgba(0,0,0,0.9), transparent);
+      position: sticky; top: 0; z-index: 50; backdrop-filter: blur(8px);
+    }
+    .app-title { font-size: 26px; font-weight: 800; margin: 0; text-transform: uppercase; background: linear-gradient(to right, #fff, #D4AF37); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .app-subtitle { font-size: 10px; color: var(--accent); letter-spacing: 4px; font-weight: 700; margin-top: -5px; }
+
+    .container { max-width: 800px; margin: 0 auto; padding: 10px 15px 80px; }
     .hidden { display: none !important; }
 
-    /* HEADER */
-    header { background: #000; padding: 15px; border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 50; text-align: center; }
-    .brand { font-family: 'Oswald'; font-size: 22px; font-weight: 700; letter-spacing: 1px; }
-    .brand span { color: var(--accent); }
-
-    .container { padding: 10px; max-width: 800px; margin: 0 auto; padding-bottom: 60px; }
-
     /* BUSCADOR */
-    .search-wrap { position: relative; margin-bottom: 15px; }
-    .search-input { width: 100%; background: #1a1a1a; border: 1px solid #333; padding: 12px 15px 12px 40px; border-radius: 8px; color: white; outline: none; font-size: 14px; }
-    .search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #666; }
+    .search-box { position: relative; margin-bottom: 20px; }
+    .search-input { width: 100%; background: rgba(255,255,255,0.1); border: 1px solid var(--accent); padding: 12px 15px 12px 45px; border-radius: 25px; color: white; outline: none; }
+    .search-icon { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: var(--accent); }
 
-    /* LISTA */
-    #menu { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px; }
-    .card { background: var(--card); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
-    .card.active { border-color: var(--accent); background: #1a1a1a; }
-    .card-head { padding: 12px; display: flex; align-items: center; gap: 10px; cursor: pointer; }
-    .time { font-family: 'Oswald'; font-size: 14px; color: var(--accent); min-width: 45px; text-align: center; }
-    .info { flex: 1; overflow: hidden; }
-    .title { font-size: 13px; font-weight: 600; line-height: 1.2; margin-bottom: 2px; }
-    .league { font-size: 10px; color: #888; text-transform: uppercase; font-weight: 700; display: flex; align-items: center; gap: 5px; }
-    .flag { width: 16px; height: 16px; object-fit: contain; border-radius: 50%; }
-    
-    /* BOTONES */
-    .channels { display: none; padding: 0 12px 12px; border-top: 1px solid #222; }
-    .grid-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px; }
-    .btn { background: #222; color: white; padding: 10px; border-radius: 6px; text-align: center; font-size: 11px; font-weight: 600; cursor: pointer; border: 1px solid #333; display: flex; align-items: center; justify-content: center; gap: 6px; }
-    .btn:active { background: var(--accent); color: black; border-color: var(--accent); }
+    /* AGENDA */
+    #menu { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 12px; }
+    .match-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 14px; overflow: hidden; transition: 0.2s; }
+    .match-card.active { border-color: var(--accent); }
+    .card-header { padding: 12px 15px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; }
+    .time-badge { background: rgba(255,255,255,0.05); padding: 4px 8px; border-radius: 6px; font-weight: 700; color: #10b981; font-size: 12px; min-width: 55px; text-align: center; border: 1px solid rgba(255,255,255,0.1); }
+    .match-info { flex: 1; display: flex; align-items: center; margin: 0 12px; overflow: hidden; }
+    .league-flag { width: 24px; height: 24px; border-radius: 50%; margin-right: 10px; flex-shrink: 0; }
+    .match-title { font-size: 13px; font-weight: 600; color: #e2e8f0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+    .channels-container { display: none; padding: 0 15px 15px; background: rgba(0,0,0,0.2); border-top: 1px solid var(--card-border); }
+    .channels-list { list-style: none; padding: 10px 0 0; margin: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 8px; }
+    .channel-btn { display: flex; align-items: center; justify-content: center; gap: 6px; padding: 10px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: white; font-size: 11px; font-weight: 600; cursor: pointer; }
+    .channel-btn:hover { background: var(--accent); color: black; }
 
     /* REPRODUCTOR */
-    #player-view { position: fixed; inset: 0; background: black; z-index: 100; display: flex; flex-direction: column; }
-    .player-nav { padding: 10px; background: #111; display: flex; justify-content: space-between; align-items: center; }
-    .btn-back { background: none; border: none; color: white; font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 5px; cursor: pointer; }
-    .video-area { flex: 1; display: flex; align-items: center; justify-content: center; position: relative; width: 100%; background: #000; }
-    .iframe-box { width: 100%; aspect-ratio: 16/9; position: relative; background: #000; }
-    iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
-    
-    /* PROTECCIÓN INVISIBLE */
-    .invisible-shield { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 20; background: transparent; }
-    .unlock-icon { background: rgba(255,255,255,0.1); width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; color: #666; }
-    .loading { text-align: center; padding: 40px; color: #444; font-size: 12px; }
+    #view-player { background: black; position: fixed; inset: 0; z-index: 100; display: flex; flex-direction: column; }
+    .player-header { padding: 10px 15px; display: flex; align-items: center; }
+    .btn-back { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.1); color: white; padding: 8px 20px; border-radius: 20px; font-size: 13px; cursor: pointer; }
+
+    .video-box { position: relative; width: 100%; max-width: 900px; margin: auto; aspect-ratio: 16/9; background: #000; border: 1px solid rgba(212,175,55,0.2); }
+    iframe#viewer { width: 100%; height: 100%; border: none; }
+
+    /* BOTÓN DESBLOQUEAR ÚNICO Y DISCRETO */
+    .unlock-btn {
+      position: absolute; top: 10px; right: 10px; z-index: 100;
+      background: rgba(0, 0, 0, 0.7); border: 1px solid #ff4444; color: #ffcccc;
+      padding: 5px 10px; border-radius: 20px; font-size: 10px; font-weight: 700;
+      cursor: pointer; display: flex; align-items: center; gap: 5px;
+    }
+
+    .loading-container { text-align: center; padding: 60px 0; color: #666; }
+    .spinner { width: 35px; height: 35px; border: 3px solid rgba(255,255,255,0.1); border-left-color: var(--accent); border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 10px; }
+    @keyframes spin { 100% { transform: rotate(360deg); } }
   </style>
 </head>
 <body>
 
-  <div id="agenda-view">
-    <header>
-      <div class="brand">JJFUTBOL <span>MAX</span></div>
-    </header>
-    <div class="container">
-      <div class="search-wrap">
-        <i class="fas fa-search search-icon"></i>
-        <input type="text" id="search" class="search-input" placeholder="Buscar evento...">
-      </div>
-      <ul id="menu"></ul>
-      <div id="loader" class="loading"><i class="fas fa-circle-notch fa-spin"></i> Conectando...</div>
+  <header id="app-header">
+    <h1 class="app-title">JJFUTBOL</h1>
+    <div class="app-subtitle">PREMIUM</div>
+  </header>
+
+  <div id="view-agenda" class="container">
+    <div class="search-box">
+      <i class="fas fa-search search-icon"></i>
+      <input type="text" id="searchInput" class="search-input" placeholder="Buscar equipo o liga...">
     </div>
+    <h3 id="agenda-date" style="text-align:center; font-size:14px; margin-bottom:15px; opacity:0.8;">CARGANDO...</h3>
+    <ul id="menu"></ul>
   </div>
 
-  <div id="player-view" class="hidden">
-    <div class="player-nav">
-      <button class="btn-back" onclick="cerrar()"><i class="fas fa-arrow-left"></i> Regresar</button>
-      <div class="unlock-icon" onclick="desbloquear()"><i class="fas fa-lock"></i></div>
+  <div id="view-player" class="hidden">
+    <div class="player-header">
+      <button class="btn-back" onclick="closePlayer()"><i class="fas fa-arrow-left"></i> REGRESAR</button>
     </div>
-    <div class="video-area">
-      <div class="iframe-box">
-        <div id="shield" class="invisible-shield" onclick="this.style.display='none'"></div>
-        <iframe id="viewer" allowfullscreen></iframe>
-      </div>
+    <div class="video-box">
+      <button class="unlock-btn" onclick="desbloquearReproductor()">
+        <i class="fas fa-unlock"></i> DESBLOQUEAR / OPCIÓN 2
+      </button>
+      <iframe id="viewer" src="" allowfullscreen allow="autoplay; encrypted-media"></iframe>
     </div>
   </div>
 
   <script>
-    // ==========================================
-    // CONFIGURACIÓN DE VELOCIDAD
-    // ==========================================
-    const TARGET = "https://pltvhd.com/diaries.json";
-    const IMG_BASE = "https://cdn.pltvhd.com";
-    const EMBED_BASE = "https://www.jjfutbol.lat/f/embed/eventos.html?r=";
-
-    // Lanzamos 3 peticiones a la vez. La primera que llegue se usa.
-    const ENDPOINTS = [
-      "https://corsproxy.io/?" + TARGET, // Opción 1: Proxy Rápido
-      "https://api.allorigins.win/raw?url=" + encodeURIComponent(TARGET), // Opción 2: Proxy Estable
-      "https://api.codetabs.com/v1/proxy?quest=" + encodeURIComponent(TARGET) // Opción 3: Respaldo
+    const FUENTES = [
+      { nombre: "GOOL", url: "https://goolhd.com/agenda.json?v=1.07", img: "https://img.goolhd.com" },
+      { nombre: "PLTV", url: "https://pltvhd.com/diaries.json", img: "https://cdn.pltvhd.com" }
     ];
 
-    $(document).ready(() => {
-      cargarRapido();
+    async function cargarAgenda() {
+      const menu = document.getElementById("menu");
+      if(!menu.innerHTML) menu.innerHTML = '<div class="loading-container"><div class="spinner"></div></div>';
 
-      $('#search').on('keyup', function() {
-        var v = $(this).val().toLowerCase();
-        $(".card").toggle(function() { return $(this).text().toLowerCase().indexOf(v) > -1 });
-      });
+      const promesas = FUENTES.map(f => 
+        fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent(f.url)}&t=${Date.now()}`)
+        .then(r => r.json())
+        .then(d => (d.data || []).map(i => ({...i, _imgBase: f.img})))
+        .catch(() => [])
+      );
 
-      $(document).on('click', '.card-head', function() {
-        var p = $(this).parent();
-        $('.card').not(p).removeClass('active').find('.channels').hide();
-        p.toggleClass('active').find('.channels').toggle();
-      });
+      const resultados = await Promise.all(promesas);
+      const eventos = resultados.flat();
 
-      $(document).on('click', '.btn', function(e) {
-        e.stopPropagation();
-        abrir($(this).data('r'));
-      });
-    });
-
-    async function cargarRapido() {
-      const loader = $('#loader');
-      
-      try {
-        // Promise.any espera a que la PRIMERA promesa tenga éxito
-        const response = await Promise.any(
-          ENDPOINTS.map(url => fetch(url + "&t=" + Date.now()).then(res => {
-            if (!res.ok) throw new Error("Fallo");
-            return res.json();
-          }))
-        );
-
-        if(response && response.data) {
-          render(response.data);
-          loader.hide();
-        } else {
-          throw new Error("Datos vacíos");
-        }
-
-      } catch (e) {
-        loader.html("Error de conexión. Reintentando...");
-        // Reintento automático en 3 seg
-        setTimeout(cargarRapido, 3000);
-      }
-    }
-
-    function render(list) {
-      const menu = $('#menu');
-      menu.empty();
-
-      if(list.length === 0) {
-        menu.html('<div class="loading">No hay eventos hoy.</div>');
+      if(!eventos.length) {
+        document.getElementById("agenda-date").innerText = "SIN EVENTOS DISPONIBLES";
         return;
       }
 
       // Ordenar por hora
-      list.sort((a,b) => (a.attributes.diary_hour||"").localeCompare(b.attributes.diary_hour||""));
-      
-      let html = "";
-      list.forEach((ev) => {
-        const at = ev.attributes;
-        
-        // Hora local
-        let time = at.diary_hour ? at.diary_hour.substring(0,5) : "--:--";
-        try { time = luxon.DateTime.fromFormat(time, "HH:mm", {zone:"America/Lima"}).toLocal().toFormat("HH:mm"); } catch(e){}
-        
-        // Imagen
-        const imgPath = at.country?.data?.attributes?.image?.data?.attributes?.url;
-        const img = imgPath ? IMG_BASE + imgPath : "https://via.placeholder.com/20";
+      eventos.sort((a,b) => (a.attributes.diary_hour || "").localeCompare(b.attributes.diary_hour || ""));
 
-        // Botones
+      let html = "";
+      eventos.forEach((ev, i) => {
+        const attr = ev.attributes;
+        const horaRaw = attr.diary_hour ? attr.diary_hour.substring(0,5) : "--:--";
+        
+        // Fix "Invalid DateTime"
+        let horaFinal = horaRaw;
+        try {
+          const dt = luxon.DateTime.fromFormat(horaRaw, "HH:mm", {zone: "America/Lima"});
+          if(dt.isValid) horaFinal = dt.toLocal().toFormat("HH:mm");
+        } catch(e) {}
+
+        const img = attr.country?.data?.attributes?.image?.data?.attributes?.url ? ev._imgBase + attr.country.data.attributes.image.data.attributes.url : "";
+
         let btns = "";
-        (at.embeds?.data || []).forEach(em => {
-          let url = em.attributes.embed_iframe || "";
+        (attr.embeds?.data || []).forEach(em => {
           let r = "";
-          
-          if(url.includes("?r=")) r = url.split("?r=")[1].split("&")[0];
-          else if(url.startsWith("http")) r = btoa(url);
-          
-          if(r) btns += `<div class="btn" data-r="${r}"><i class="fas fa-play"></i> ${em.attributes.embed_name}</div>`;
+          const ifr = em.attributes.embed_iframe || "";
+          if(ifr.includes("?r=")) r = ifr.split("?r=")[1].split("&")[0];
+          else if(ifr.startsWith("http")) r = btoa(ifr);
+
+          if(r) btns += `<li><div class="channel-btn" onclick="openPlayer('${r}')"><i class="fas fa-play"></i> ${em.attributes.embed_name}</div></li>`;
         });
 
-        if(!btns) btns = '<div style="text-align:center;font-size:10px;color:#555;">Sin señal</div>';
-
         html += `
-          <li class="card">
-            <div class="card-head">
-              <div class="time">${time}</div>
-              <div class="info">
-                <div class="title">${at.diary_description}</div>
-                <div class="league">
-                  <img class="flag" src="${img}"> ${at.league_name || "Mundo"}
-                </div>
+          <li class="match-card">
+            <div class="card-header">
+              <div class="time-badge">${horaFinal}</div>
+              <div class="match-info">
+                ${img ? `<img class="league-flag" src="${img}">` : ''}
+                <span class="match-title">${attr.diary_description}</span>
               </div>
-              <i class="fas fa-chevron-down" style="font-size:12px;color:#666"></i>
+              <i class="fas fa-chevron-down toggle-icon"></i>
             </div>
-            <div class="channels">
-              <div class="grid-btns">${btns}</div>
+            <div class="channels-container">
+              <ul class="channels-list">${btns || '<li>Sin canales</li>'}</ul>
             </div>
           </li>`;
       });
-
-      menu.html(html);
+      menu.innerHTML = html;
+      document.getElementById("agenda-date").innerText = "AGENDA ACTUALIZADA";
     }
 
-    // --- REPRODUCTOR ---
-    const v = document.getElementById('viewer');
-    const s = document.getElementById('shield');
-    let savedR = "";
-
-    function abrir(r) {
-      savedR = r;
-      $('#agenda-view').addClass('hidden');
-      $('#player-view').removeClass('hidden');
+    let currentUrl = "";
+    function openPlayer(r) {
+      currentUrl = atob(decodeURIComponent(r));
+      document.getElementById("view-agenda").classList.add("hidden");
+      document.getElementById("app-header").classList.add("hidden");
+      document.getElementById("view-player").classList.remove("hidden");
       
-      // Sandbox activado (bloquea popups)
+      const v = document.getElementById("viewer");
       v.setAttribute('sandbox', 'allow-forms allow-scripts allow-same-origin allow-pointer-lock allow-presentation');
-      v.src = EMBED_BASE + r;
-      s.style.display = 'block'; 
+      v.src = currentUrl;
     }
 
-    function cerrar() {
-      v.src = "";
+    function closePlayer() {
+      document.getElementById("viewer").src = "";
+      document.getElementById("view-player").classList.add("hidden");
+      document.getElementById("view-agenda").classList.remove("hidden");
+      document.getElementById("app-header").classList.remove("hidden");
+    }
+
+    function desbloquearReproductor() {
+      const v = document.getElementById("viewer");
       v.removeAttribute('sandbox');
-      $('#player-view').addClass('hidden');
-      $('#agenda-view').removeClass('hidden');
+      v.src = currentUrl;
     }
 
-    function desbloquear() {
-      if(confirm("¿Pantalla negra? Desbloquear permitirá anuncios.")) {
-        v.removeAttribute('sandbox');
-        v.src = EMBED_BASE + savedR;
-        s.style.display = 'none';
-      }
-    }
+    // Filtro
+    document.getElementById("searchInput").addEventListener("keyup", function() {
+      const v = this.value.toLowerCase();
+      document.querySelectorAll(".match-card").forEach(c => {
+        c.style.display = c.innerText.toLowerCase().includes(v) ? "block" : "none";
+      });
+    });
+
+    // Acordeon
+    $(document).on("click", ".card-header", function() {
+      const card = $(this).closest(".match-card");
+      $(".match-card").not(card).removeClass("active").find(".channels-container").slideUp(200);
+      card.toggleClass("active").find(".channels-container").slideToggle(200);
+    });
+
+    cargarAgenda();
+    setInterval(cargarAgenda, 60000);
   </script>
 </body>
 </html>
