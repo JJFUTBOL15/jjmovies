@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EN VIVO: Barcelona vs Atlético Madrid</title>
+    <title>JJFUTBOL - Evento Premium</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -14,258 +14,177 @@
             --bg: #050508;
             --card: #111118;
             --text: #ffffff;
-            --danger: #ff4444;
             --success: #00ff88;
+            --danger: #ff4444;
         }
 
         body {
             font-family: 'Outfit', sans-serif;
             background-color: var(--bg);
             color: var(--text);
-            margin: 0;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            min-height: 100vh;
+            margin: 0; padding: 0;
+            display: flex; flex-direction: column; align-items: center;
         }
 
         header {
+            padding: 30px 20px; text-align: center;
+            background: linear-gradient(to bottom, #0f0f15, transparent);
             width: 100%;
-            padding: 20px 0;
-            text-align: center;
-            background: linear-gradient(to bottom, #0a0a0f, transparent);
         }
 
-        .match-title {
-            font-size: 24px;
-            font-weight: 900;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin: 0;
-        }
-
-        .live-tag {
+        .live-indicator {
             background: var(--danger);
-            color: white;
-            padding: 2px 10px;
-            border-radius: 5px;
-            font-size: 12px;
-            font-weight: bold;
-            display: inline-block;
-            margin-bottom: 10px;
-            animation: blink 1s infinite;
+            padding: 4px 12px; border-radius: 6px;
+            font-weight: 800; font-size: 12px;
+            display: inline-block; margin-bottom: 10px;
+            animation: pulse 1.5s infinite;
         }
 
-        @keyframes blink { 50% { opacity: 0.5; } }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
 
-        .container {
-            width: 95%;
-            max-width: 1000px;
-            margin: 10px auto;
+        h1 { font-size: 26px; font-weight: 900; margin: 0; text-transform: uppercase; }
+
+        .player-container {
+            width: 95%; max-width: 1000px; margin-top: 20px;
         }
 
-        /* REPRODUCTOR */
-        .player-wrapper {
-            position: relative;
-            width: 100%;
-            padding-bottom: 56.25%; /* 16:9 */
-            background: #000;
-            border-radius: 15px;
-            overflow: hidden;
-            border: 2px solid var(--primary);
-            box-shadow: 0 0 30px rgba(212, 175, 55, 0.2);
+        .video-wrapper {
+            position: relative; padding-bottom: 56.25%;
+            background: #000; border-radius: 20px;
+            overflow: hidden; border: 2px solid var(--primary);
+            box-shadow: 0 0 40px rgba(0,0,0,0.8);
         }
 
-        .player-wrapper iframe {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            border: none;
+        iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
+
+        /* ESCUDO */
+        .shield-bar {
+            background: var(--card); margin-top: 15px;
+            padding: 15px 20px; border-radius: 12px;
+            display: flex; justify-content: space-between; align-items: center;
+            border: 1px solid #222;
         }
 
-        /* BOTONES DE SERVIDORES */
-        .server-list {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 10px;
-            margin-top: 20px;
+        .btn-shield {
+            background: transparent; border: 1px solid var(--success);
+            color: var(--success); padding: 8px 15px; border-radius: 8px;
+            font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 8px;
+        }
+        .btn-shield.off { border-color: var(--danger); color: var(--danger); }
+
+        /* SERVIDORES */
+        .server-grid {
+            display: grid; grid-template-columns: repeat(3, 1fr);
+            gap: 10px; margin-top: 20px; width: 95%; max-width: 1000px;
         }
 
-        .btn-server {
-            background: var(--card);
-            border: 1px solid #333;
-            color: white;
-            padding: 15px;
-            border-radius: 12px;
-            cursor: pointer;
-            font-weight: bold;
-            text-align: center;
-            transition: 0.3s;
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
+        .server-item {
+            background: var(--card); border: 1px solid #333;
+            padding: 18px; border-radius: 15px; text-align: center;
+            cursor: pointer; transition: 0.3s;
         }
 
-        .btn-server.active {
-            border-color: var(--primary);
-            background: rgba(212, 175, 55, 0.1);
-        }
-
-        .btn-server:hover {
-            transform: translateY(-3px);
-            background: #1a1a25;
-        }
-
-        .btn-server span {
-            font-size: 10px;
-            color: var(--primary);
-            text-transform: uppercase;
-        }
-
-        /* CONTROLES EXTRA */
-        .controls {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 15px;
-            background: var(--card);
-            padding: 15px;
-            border-radius: 12px;
-        }
-
-        .shield-toggle {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            cursor: pointer;
-            font-size: 14px;
-        }
-
-        .status-dot {
-            height: 10px;
-            width: 10px;
-            border-radius: 50%;
-            background: var(--success);
-            display: inline-block;
-        }
-
-        .refresh-btn {
-            background: transparent;
-            border: 1px solid #444;
-            color: white;
-            padding: 8px 15px;
-            border-radius: 8px;
-            cursor: pointer;
-        }
-
-        footer {
-            margin-top: auto;
-            padding: 30px;
-            text-align: center;
-            font-size: 12px;
-            color: #555;
-        }
+        .server-item.active { border-color: var(--primary); background: rgba(212, 175, 55, 0.1); }
+        .server-item:hover { transform: translateY(-3px); border-color: var(--primary); }
+        
+        .server-item span { display: block; font-size: 10px; color: var(--primary); font-weight: 800; margin-bottom: 5px; }
+        .server-item b { font-size: 14px; }
 
         @media (max-width: 600px) {
-            .match-title { font-size: 18px; }
-            .server-list { grid-template-columns: 1fr; }
+            .server-grid { grid-template-columns: 1fr; }
+            h1 { font-size: 20px; }
         }
     </style>
 </head>
 <body>
 
     <header>
-        <div class="live-tag">LIVE - COPA DEL REY</div>
-        <h1 class="match-title">Barcelona <span style="color:var(--primary)">vs</span> Atlético Madrid</h1>
+        <div class="live-indicator">EN VIVO</div>
+        <h1>Barcelona <span style="color:var(--primary)">vs</span> Atlético Madrid</h1>
     </header>
 
-    <div class="container">
-        
-        <div class="player-wrapper">
-            <iframe id="main-player" 
-                    src="https://enlaces.evaulthub.com/watch/copa-del-rey-barcelona-vs-atletico-madrid" 
-                    allowfullscreen 
-                    sandbox="allow-forms allow-scripts allow-same-origin allow-pointer-lock">
-            </iframe>
+    <div class="player-container">
+        <div class="video-wrapper">
+            <iframe id="main-iframe" src="" allowfullscreen sandbox="allow-forms allow-scripts allow-same-origin allow-pointer-lock"></iframe>
         </div>
 
-        <div class="controls">
-            <div class="shield-toggle" onclick="toggleShield()">
-                <i id="shield-icon" class="fas fa-shield-alt" style="color:var(--success)"></i>
-                <span>ESCUDO ANTI-ADS: <b id="shield-status" style="color:var(--success)">ON</b></span>
+        <div class="shield-bar">
+            <div id="status-text" style="font-size: 13px; font-weight: 700;">
+                <i class="fas fa-lock" style="color:var(--success)"></i> PROTECCIÓN ACTIVA
             </div>
-            <button class="refresh-btn" onclick="reloadPlayer()">
-                <i class="fas fa-sync-alt"></i> RECARGAR
+            <button id="shield-btn" class="btn-shield" onclick="toggleShield()">
+                <i class="fas fa-shield-alt"></i> ESCUDO: ON
             </button>
         </div>
-
-        <div class="server-list">
-            <div class="btn-server active" onclick="changeServer(this, 'https://enlaces.evaulthub.com/watch/copa-del-rey-barcelona-vs-atletico-madrid')">
-                <span>Servidor 1</span>
-                OPCIÓN ESTABLE
-            </div>
-            <div class="btn-server" onclick="changeServer(this, 'https://futbol.4rolls.com/match/copa-del-rey-barcelona-vs-atltico-madrid-32322?server=0')">
-                <span>Servidor 2</span>
-                OPCIÓN RÁPIDA
-            </div>
-            <div class="btn-server" onclick="changeServer(this, 'https://futbol.velcuri.io/football/barcelona-vs-atletico-madrid-live-stream')">
-                <span>Servidor 3</span>
-                OPCIÓN ALTERNA
-            </div>
-        </div>
-
     </div>
 
-    <footer>
-        JJFUTBOL - Todos los derechos reservados &copy; 2026<br>
-        Se recomienda conexión Wi-Fi para mejor estabilidad.
-    </footer>
+    <div class="server-grid">
+        <div class="server-item active" onclick="loadSource(0, this)">
+            <span>OPCIÓN 1</span>
+            <b>ESTABLE HD</b>
+        </div>
+        <div class="server-item" onclick="loadSource(1, this)">
+            <span>OPCIÓN 2</span>
+            <b>VELOZ</b>
+        </div>
+        <div class="server-item" onclick="loadSource(2, this)">
+            <span>OPCIÓN 3</span>
+            <b>REDUNDANTE</b>
+        </div>
+    </div>
+
+    <div style="margin: 40px 0; opacity: 0.3; font-size: 12px;">JJFUTBOL - PROTECTED STREAM</div>
 
     <script>
-        let currentUrl = "https://enlaces.evaulthub.com/watch/copa-del-rey-barcelona-vs-atletico-madrid";
-        let isShieldOn = true;
+        // ENLACES PROTEGIDOS (Base64)
+        const DATA = [
+            "aHR0cHM6Ly9lbmxhY2VzLmV2YXVsdGh1Yi5jb20vd2F0Y2gvY29wYS1kZWwtcmV5LWJhcmNlbG9uYS12cy1hdGxldGljby1tYWRyaWQ=",
+            "aHR0cHM6Ly9mdXRib2wuNHJvbGxzLmNvbS9tYXRjaC9jb3BhLWRlbC1yZXktYmFyY2Vsb25hLXZzLWF0bHRpY28tbWFkcmlkLTMyMzIyP3NlcnZlcj0w",
+            "aHR0cHM6Ly9mdXRib2wudmVsY3VyaS5pby9mb290YmFsbC9iYXJjZWxvbmEtdnMtYXRsZXRpY28tbWFkcmlkLWxpdmUtc3RyZWFt"
+        ];
 
-        function changeServer(btn, url) {
-            currentUrl = url;
-            // UI
-            document.querySelectorAll('.btn-server').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
+        let currentIdx = 0;
+        let shieldOn = true;
+
+        // Carga inicial
+        window.onload = () => { loadSource(0, document.querySelector('.server-item')); };
+
+        function loadSource(idx, el) {
+            currentIdx = idx;
             
-            // Cargar
-            reloadPlayer();
-        }
+            // UI
+            document.querySelectorAll('.server-item').forEach(s => s.classList.remove('active'));
+            el.classList.add('active');
 
-        function reloadPlayer() {
-            const iframe = document.getElementById('main-player');
-            iframe.src = "about:blank"; // Limpiar
+            const iframe = document.getElementById('main-iframe');
+            const decodedUrl = atob(DATA[idx]); // Decodifica el link solo al cargar
+            
+            iframe.src = "about:blank"; // Reset
             setTimeout(() => {
-                iframe.src = currentUrl;
+                iframe.src = decodedUrl;
             }, 100);
         }
 
         function toggleShield() {
-            isShieldOn = !isShieldOn;
-            const iframe = document.getElementById('main-player');
-            const statusText = document.getElementById('shield-status');
-            const icon = document.getElementById('shield-icon');
+            shieldOn = !shieldOn;
+            const iframe = document.getElementById('main-iframe');
+            const btn = document.getElementById('shield-btn');
+            const status = document.getElementById('status-text');
 
-            if(isShieldOn) {
+            if(shieldOn) {
                 iframe.setAttribute("sandbox", "allow-forms allow-scripts allow-same-origin allow-pointer-lock");
-                statusText.innerText = "ON";
-                statusText.style.color = "var(--success)";
-                icon.style.color = "var(--success)";
-                icon.className = "fas fa-shield-alt";
+                btn.classList.remove("off");
+                btn.innerHTML = '<i class="fas fa-shield-alt"></i> ESCUDO: ON';
+                status.innerHTML = '<i class="fas fa-lock" style="color:var(--success)"></i> PROTECCIÓN ACTIVA';
             } else {
                 iframe.removeAttribute("sandbox");
-                statusText.innerText = "OFF";
-                statusText.style.color = "var(--danger)";
-                icon.style.color = "var(--danger)";
-                icon.className = "fas fa-shield-virus";
+                btn.classList.add("off");
+                btn.innerHTML = '<i class="fas fa-shield-virus"></i> ESCUDO: OFF';
+                status.innerHTML = '<i class="fas fa-exclamation-triangle" style="color:var(--danger)"></i> PROTECCIÓN DESACTIVADA';
             }
-            reloadPlayer();
+
+            // Recargar para aplicar cambios de seguridad
+            loadSource(currentIdx, document.querySelector('.server-item.active'));
         }
     </script>
 </body>
