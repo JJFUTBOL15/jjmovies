@@ -49,7 +49,6 @@
             z-index: 500;
         }
 
-        /* --- CABECERA --- */
         header {
             padding: 15px 25px; display: flex; justify-content: space-between; align-items: center;
             background: rgba(10, 10, 15, 0.95); backdrop-filter: blur(10px);
@@ -61,7 +60,6 @@
 
         .main-content { max-width: 1100px; margin: 0 auto; padding: 15px; }
 
-        /* --- TABS --- */
         .tabs-row { display: flex; gap: 10px; margin-bottom: 20px; }
         .tab {
             flex: 1; padding: 14px; border-radius: 14px; background: var(--glass);
@@ -77,7 +75,6 @@
         }
         .search-area i { position: absolute; left: 20px; top: 50%; transform: translateY(-50%); color: var(--primary); }
 
-        /* --- LISTADO --- */
         .event-card {
             background: #111118; border: 1px solid var(--glass);
             border-radius: 22px; margin-bottom: 15px; transition: 0.3s; cursor: pointer;
@@ -105,14 +102,15 @@
         .signal-btn {
             padding: 12px; background: #1a1a25; border: 1px solid #333; border-radius: 12px;
             color: white; font-size: 12px; font-weight: 700; text-align: center; text-decoration: none;
+            display: flex; align-items: center; justify-content: center; gap: 8px;
         }
 
-        /* --- REPRODUCTOR V4 --- */
         #view-player { display: none; padding-top: 10px; }
         .player-header { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; }
         .back-btn {
             width: 48px; height: 48px; border-radius: 50%; background: var(--glass);
             border: 1px solid var(--glass); color: white; display: flex; align-items: center; justify-content: center;
+            cursor: pointer;
         }
 
         .video-box {
@@ -122,7 +120,6 @@
         }
         .video-box iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
 
-        /* CONTROLES REPRODUCTOR */
         .player-bar {
             margin-top: 15px; display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 10px;
         }
@@ -135,7 +132,6 @@
         .btn-chat { background: #111; color: white; border: 1px solid #333; }
         .btn-refresh { background: var(--glass); color: #fff; border: 1px solid #333; }
 
-        /* --- CHAT LATERAL --- */
         #chat-panel {
             position: fixed; right: -100%; top: 0; width: 380px; height: 100%;
             background: #08080a; z-index: 5000; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
@@ -143,9 +139,8 @@
         }
         #chat-panel.active { right: 0; }
         .chat-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        .close-chat { background: #ff4444; border: none; color: white; padding: 10px 15px; border-radius: 10px; font-weight: 800; }
+        .close-chat { background: #ff4444; border: none; color: white; padding: 10px 15px; border-radius: 10px; font-weight: 800; cursor: pointer; }
 
-        /* LOADING */
         .loading-skel { height: 100px; background: #111; border-radius: 20px; margin-bottom: 15px; position: relative; overflow: hidden; }
         .loading-skel::after {
             content: ""; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
@@ -223,8 +218,8 @@
             </div>
 
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px;">
-                <a href="https://t.me/+gFVPJ0M9Moo3YTEx" class="signal-btn focusable" style="background:#0088cc; border:none; padding:15px;">TELEGRAM</a>
-                <a href="https://jjmovies.lat" class="signal-btn focusable" style="background:var(--primary); color:black; border:none; padding:15px;">JJMOVIES</a>
+                <a href="https://t.me/+gFVPJ0M9Moo3YTEx" target="_blank" class="signal-btn focusable" style="background:#0088cc; border:none; padding:15px;">TELEGRAM</a>
+                <a href="https://jjmovies.lat" target="_blank" class="signal-btn focusable" style="background:var(--primary); color:black; border:none; padding:15px;">JJMOVIES</a>
             </div>
         </div>
 
@@ -257,13 +252,14 @@
             setInterval(startTime, 1000);
             loadMaster();
 
-            // Navegación TV
             $(window).on("keydown", (e) => {
-                if(!tvMode) { tvMode = true; $("#tv-cursor").fadeIn(); }
-                handleTV(e.which);
+                if(!tvMode && [37,38,39,40,13].includes(e.which)) { 
+                    tvMode = true; 
+                    $("#tv-cursor").fadeIn(); 
+                }
+                if(tvMode) handleTV(e.which);
             });
 
-            // Buscador
             $("#app-search").on("input", function() {
                 doSearch($(this).val());
             });
@@ -278,12 +274,12 @@
         async function loadMaster() {
             try {
                 const calls = APIS.map(a => fetch(a.url + "?z=" + Date.now()).then(r => r.json()));
-                const results = await Promise.all(calls);
+                const results = await Promise.allSettled(calls);
                 
                 MASTER_DATA = [];
                 results.forEach((res, i) => {
-                    if(res.data) {
-                        const items = res.data.map(item => ({ ...item, base: APIS[i].img }));
+                    if(res.status === "fulfilled" && res.value.data) {
+                        const items = res.value.data.map(item => ({ ...item, base: APIS[i].img }));
                         MASTER_DATA = MASTER_DATA.concat(items);
                     }
                 });
@@ -291,7 +287,7 @@
                 MASTER_DATA.sort((a,b) => (a.attributes.diary_hour || "").localeCompare(b.attributes.diary_hour || ""));
                 renderUI();
             } catch (err) {
-                $("#list-events").html('<div style="text-align:center; padding:50px;">Servidores fuera de línea. Reintente.</div>');
+                $("#list-events").html('<div style="text-align:center; padding:50px;">Error al cargar datos. Reintente.</div>');
             }
         }
 
@@ -302,7 +298,7 @@
             
             let html = "";
             if(filtered.length === 0) {
-                html = '<div style="text-align:center; padding:50px; color:#555;">No hay partidos programados.</div>';
+                html = '<div style="text-align:center; padding:50px; color:#555;">No hay partidos programados para este día.</div>';
             } else {
                 filtered.forEach(ev => {
                     const attr = ev.attributes;
@@ -330,13 +326,13 @@
                                 <div class="match-info">
                                     <div class="match-name">${attr.diary_description}</div>
                                     <div class="league-info">
-                                        <img src="${flag}" class="league-img">
-                                        <span>${attr.country?.data?.attributes?.name || 'Internacional'}</span>
+                                        <img src="${flag}" class="league-img" onerror="this.src='https://raw.githubusercontent.com/JJFUTBOL15/eventos/main/1762386751.png'">
+                                        <span>${attr.country?.data?.attributes?.name || 'Evento'}</span>
                                     </div>
                                 </div>
                                 <i class="fas fa-chevron-down" style="color:#333"></i>
                             </div>
-                            <div class="drawer">${channels || '<p style="font-size:10px; opacity:0.5;">Cargando señales...</p>'}</div>
+                            <div class="drawer">${channels || '<p style="font-size:10px; opacity:0.5; width:100%; text-align:center;">Canales próximamente...</p>'}</div>
                         </div>
                     `;
                 });
@@ -346,12 +342,14 @@
             refreshTV();
         }
 
-        // --- MANEJO TV ---
         function handleTV(key) {
             const focusables = $(".focusable:visible");
-            if(key == 40) cursorIdx++; // Down
-            if(key == 38) cursorIdx--; // Up
-            if(key == 13) focusables.eq(cursorIdx).click(); // OK
+            if(key == 40) cursorIdx++; 
+            if(key == 38) cursorIdx--; 
+            if(key == 13) {
+                focusables.eq(cursorIdx).click();
+                return;
+            }
 
             if(cursorIdx < 0) cursorIdx = 0;
             if(cursorIdx >= focusables.length) cursorIdx = focusables.length - 1;
@@ -367,12 +365,11 @@
 
             if(current.length && tvMode) {
                 const r = current[0].getBoundingClientRect();
-                $("#tv-cursor").css({ top: (r.top + window.scrollY + 10) + "px", left: (r.left - 25) + "px" });
+                $("#tv-cursor").css({ top: (r.top + window.scrollY + 5) + "px", left: (r.left - 40) + "px" });
                 current[0].scrollIntoView({ behavior: "smooth", block: "center" });
             }
         }
 
-        // --- FUNCIONES LOGICA ---
         function changeDay(offset, el) {
             dayOffset = offset;
             $(".tab").removeClass("active");
@@ -382,20 +379,28 @@
 
         function toggleDrawer(el) {
             const d = $(el).find(".drawer");
-            $(".drawer").not(d).slideUp(200);
-            d.slideToggle(200, () => refreshTV());
+            if(d.is(":visible")) {
+                d.slideUp(200);
+            } else {
+                $(".drawer").slideUp(200);
+                d.slideDown(200, () => refreshTV());
+            }
         }
 
         function startPlay(r, title) {
             activeR = r;
-            const url = atob(decodeURIComponent(r));
-            $("#view-agenda").hide();
-            $("#view-player").show();
-            $("#player-iframe").attr("src", url);
-            $("#current-match").text(title);
-            window.scrollTo(0,0);
-            cursorIdx = 0;
-            refreshTV();
+            try {
+                const url = atob(decodeURIComponent(r));
+                $("#view-agenda").hide();
+                $("#view-player").show();
+                $("#player-iframe").attr("src", url);
+                $("#current-match").text(title);
+                window.scrollTo(0,0);
+                cursorIdx = 0;
+                refreshTV();
+            } catch(e) {
+                alert("Error al decodificar el enlace.");
+            }
         }
 
         function exitPlayer() {
@@ -403,10 +408,9 @@
             $("#view-player").hide();
             $("#view-agenda").show();
             toggleChat(false);
-            refreshTV();
+            setTimeout(refreshTV, 100);
         }
 
-        // --- EL NUEVO SISTEMA DE ESCUDO ---
         function toggleShield() {
             shieldActive = !shieldActive;
             const iframe = $("#player-iframe");
